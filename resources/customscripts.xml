@@ -1,0 +1,2612 @@
+<plominodatabase id="iol_sp">
+  <design>
+    <resource id="customscripts" title="" type="Folder">
+      <resource id="getDataGridAttachmentsValue" title="" type="Script (Python)"><![CDATA[## Script (Python) "getDataGridAttachmentsValue"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None, fieldName='vincoli_suolo_dg', formName='sub_asseverata_tutelafunzionale'
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import json_loads
+#TODO FARE UN TIPO DI CAMPO DEDICATO DATAGRIDATTACHMENTS
+#accrocco per test veloci
+#if not doc:
+#    doc=context.getParentDatabase().getDocument('scia-00114-2017')
+    
+#0 id riga
+#1 id/nome del vincolo
+#2 vuoto
+#3 nome dell'ente
+#4 modal rilascio
+#5 protocollo
+#6 data protocollo
+                
+dataR = json_loads(doc.tojson(item=fieldName,formid=formName,rendered=True))
+dataV = json_loads(doc.tojson(item=fieldName,formid=formName))
+data = []
+for i in range(0,len(dataR)):
+    dataV[i][1] = dataR[i][1] #decodifica del nome del vincolo
+    row = dataV[i]
+    #impostazione della label del campo
+    if row[4]=='1':
+        lbl = 'Autocertificazione per il vincolo %s' %row[1]
+    elif row[4]=='2':
+        lbl = '''Documentazione necessaria al rilascio dell'atto di assenso per il vincolo %s''' %row[1]
+    elif row[4]=='3':
+        lbl = 'Atto di assenso per il vincolo %s rilasciato da %s prot. %s del %s' %(row[1],row[3],row[5],row[6])
+    
+    data.append(dict(id=row[0],label=lbl))
+
+return data
+]]></resource>
+      <resource id="getElencoComuni" title="" type="Script (Python)"><![CDATA[## Script (Python) "getElencoComuni"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=
+##title=
+##
+return context.aq_parent.config().get('elenco_comuni')
+]]></resource>
+      <resource id="getElencoTitoli" title="" type="Script (Python)"><![CDATA[## Script (Python) "getElencoTitoli"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=
+##title=
+##
+if context.aq_parent.config().get('elenco_titoli'):
+   return context.aq_parent.config().get('elenco_titoli')
+else:
+   return [
+        'Proprietario',
+        'Locatario',
+        'Conduttore',
+        'Usufruttuario',
+        'Comodatario',
+        'Amministratore condominiale',
+        "Legale rappresentante della proprieta'",
+        'Tutore Legale',
+        'Procuratore',
+        'Curatore',
+        'Erede o avente causa',
+        'Amministratore di Sostegno'
+    ]
+]]></resource>
+      <resource id="getLayersSettings" title="" type="Script (Python)"><![CDATA[## Script (Python) "getLayersSettings"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+settings = context.aq_parent.config_map().get('layerSettings')
+#override
+if doc and doc.getItem('iol_comune'):
+    customSettings = 'config_settings_%s' %doc.getItem('iol_comune')
+    if customSettings in context.aq_parent:
+        settings.update(context.aq_parent[customSettings]())
+return settings
+]]></resource>
+      <resource id="getMapSettings" title="" type="Script (Python)"><![CDATA[## Script (Python) "getMapSettings"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import json_dumps
+settings = context.aq_parent.config_map().get('mapSettings')
+#override
+if doc and doc.getItem('iol_comune'):
+    customSettings = 'config_settings_%s' %doc.getItem('iol_comune')
+    if customSettings in context.aq_parent:
+        settings.update(context.aq_parent[customSettings]())
+return json_dumps(settings)
+]]></resource>
+      <resource id="getMappingItems" title="" type="Script (Python)"><![CDATA[## Script (Python) "getMappingItems"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=test=0
+##title=
+##
+provider = context.aq_parent.config().get('provider','praticaweb')
+diz = dict()
+
+if ("config_mapping_"+provider) in context.aq_parent.keys():
+    diz = context.aq_parent["config_mapping_"+provider]()
+    
+if test=='1':
+    from Products.CMFPlomino.PlominoUtils import json_dumps
+    return json_dumps(diz)
+else:
+    return diz
+]]></resource>
+      <resource id="getSezioneSettings" title="" type="Script (Python)"><![CDATA[## Script (Python) "getSezioneSettings"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=
+##title=
+##
+return context.aq_parent.config().get('sezione_catasto')
+]]></resource>
+      <resource id="getDocumentId" title="" type="Script (Python)"><![CDATA[## Script (Python) "getDocumentId"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=tipo, doc
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import Now, DateToString
+return "%05d-%s-%s" %(doc.getItem("prog_id",0),DateToString(Now(),'%Y'),tipo)
+]]></resource>
+      <resource id="getDocumentTitle" title="" type="Script (Python)"><![CDATA[## Script (Python) "getDocumentTitle"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import Now,DateToString,userFullname
+db = doc.getParentDatabase()
+data = DateToString(doc.getItem('data_pratica',Now()),'%d/%m/%Y')
+id = "%05d-%s" %(doc.getItem("prog_id",0),DateToString(Now(),'%Y'))
+title = "Istanza n. %s del %s (%s)" %(id,data,userFullname(db,db.getCurrentUser().id)) 
+return title
+]]></resource>
+      <resource id="getDocSettingsId" title="" type="Script (Python)"><![CDATA[## Script (Python) "getDocSettingsId"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=
+##title=
+##
+return context.aq_parent.config().get('doc_settings','0-settings')
+]]></resource>
+      <resource id="getUbicazioniIndirizzo" title="" type="Script (Python)"><![CDATA[## Script (Python) "getUbicazioniIndirizzo"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+from iol.document.plomino_utils import serializeGrid
+indirizzi = serializeGrid(doc,fieldName='elenco_civici',formName='sub_ubicazione')
+if len(indirizzi)>0:
+    return "%s, %s" %(indirizzi[0]["civico_via"],indirizzi[0]["civico_civico"])
+else:
+    return ""
+]]></resource>
+      <resource id="getUbicazioniPosizione" title="" type="Script (Python)"><![CDATA[## Script (Python) "getUbicazioniPosizione"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+from iol.document.plomino_utils import serializeGrid
+indirizzi = serializeGrid(doc,fieldName='elenco_civici',formName='sub_ubicazioni_elenco')
+if len(indirizzi)>0:
+    return indirizzi[0]["civico_geometry"]
+else:
+    return ""
+]]></resource>
+      <resource id="getElencoAllegati" title="Elenco dei campi tipo allegato" type="Script (Python)"><![CDATA[## Script (Python) "getElencoAllegati"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=
+##title=Elenco dei campi tipo allegato
+##
+db=context.getParentDatabase()
+chkList=[]
+result = db.getCache('attachment_field_list')
+if not result:
+    result=[]
+    for frm in db.getForms():
+        for field in frm.getFormFields(includesubforms=False):
+            if field.FieldType == 'ATTACHMENT': 
+                if field.id not in chkList:
+                    #firma = 'SI' if 'digitalmente' in field.getHTMLAttributesFormula() else 'NO'
+                    #obbligatorio = 'SI' if field.getMandatory() else 'NO'
+                    chkList.append(field.id)
+                    result.append([field.title,field.id])    
+    
+    db.setCache('attachment_field_list', result)
+return result
+]]></resource>
+      <resource id="getElencoTipoDocumento" title="Elenco dei tipi documento da db praticaweb" type="Script (Python)"><![CDATA[## Script (Python) "getElencoTipoDocumento"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=
+##title=Elenco dei tipi documento da db praticaweb
+##
+db=context.getParentDatabase()
+result = db.getCache('attachment_type_list')
+if not result:
+    result=['|']
+    for res in context.aq_parent.zsql.ElencoTipoDocumento().dictionaries():
+        result.append('%s|%s' %(res['nome'],res['id']))
+    
+    db.setCache('attachment_type_list', result)
+ 
+return result
+]]></resource>
+      <resource id="getCodiceResponsabileProcedimento" title="" type="Script (Python)"><![CDATA[## Script (Python) "getCodiceResponsabileProcedimento"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+if doc:
+    sportello = doc.getItem('iol_tipo_proc')
+    app = doc.getItem('iol_tipo_app')
+    return context.aq_parent.config_pratica_responsabile_procedimento(sportello,app)
+else:
+    return ''
+]]></resource>
+      <resource id="getCodiceResponsabileOperativo" title="" type="Script (Python)"><![CDATA[## Script (Python) "getCodiceResponsabileOperativo"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+if doc:
+    sportello = doc.getItem('iol_tipo_proc')
+    app = doc.getItem('iol_tipo_app')
+    return context.aq_parent.config_pratica_responsabile_operativo(sportello,app)
+else:
+    return ''
+]]></resource>
+      <resource id="getElencoSezioni" title="" type="Script (Python)"><![CDATA[## Script (Python) "getElencoSezioni"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+result=['|']
+comuneDefault = context.aq_parent.config().get('comune_default')
+
+if doc and doc.isDocument():
+    comune=doc.getItem('iol_comune',comuneDefault)
+elif context.REQUEST.get('comune'):
+    comune = context.REQUEST.get('comune')
+else:
+    comune = comuneDefault
+   
+for res in context.aq_parent.zsql.ElencoSezioni(cod_cat = comune).dictionaries():
+    result.append('%s|%s' %(res['nome'],res['sezione']))
+     
+return ['|'] + result
+]]></resource>
+      <resource id="getElencoFogli" title="" type="Script (Python)"><![CDATA[## Script (Python) "getElencoFogli"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import json_dumps
+ret=[]
+comuneDefault = context.aq_parent.config().get('comune_default')
+  
+if doc and doc.isDocument():
+    comune=doc.getItem('iol_comune',comuneDefault)
+elif context.REQUEST.get('comune'):
+    comune = context.REQUEST.get('comune')
+else:
+    comune = comuneDefault  
+    
+for res in context.aq_parent.zsql.ElencoFogli(sezione=context.REQUEST.get('sezione',''),cod_cat=comune).dictionaries():
+    ret.append(res)
+return json_dumps({"success":1, "results":ret})
+]]></resource>
+      <resource id="getElencoParticelle" title="" type="Script (Python)"><![CDATA[## Script (Python) "getElencoParticelle"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import json_dumps
+ret=[]
+comuneDefault = context.aq_parent.config().get('comune_default')
+   
+if doc and doc.isDocument():
+    comune=doc.getItem('iol_comune',comuneDefault)
+elif context.REQUEST.get('comune'):
+    comune = context.REQUEST.get('comune')
+else:
+    comune = comuneDefault      
+    
+    
+for res in context.aq_parent.zsql.ElencoParticelle(sezione=context.REQUEST.get('sezione',''),foglio=context.REQUEST.get('foglio',''),cod_cat=comune).dictionaries():
+    ret.append(res)
+return json_dumps({"success":1, "results":ret})
+]]></resource>
+      <resource id="getElencoVie" title="" type="Script (Python)"><![CDATA[## Script (Python) "getElencoVie"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+result=['|']
+comuneDefault = context.aq_parent.config().get('comune_default')
+
+if doc and doc.isDocument():
+    comune=doc.getItem('iol_comune',comuneDefault)
+elif context.REQUEST.get('comune'):
+    comune = context.REQUEST.get('comune')
+else:
+    comune = comuneDefault  
+
+for res in context.aq_parent.zsql.ElencoVie(cod_cat=comune).dictionaries():
+    result.append('%s|%s' %(res['nome'],res['id']))
+     
+return result
+]]></resource>
+      <resource id="getElencoCivici" title="" type="Script (Python)"><![CDATA[## Script (Python) "getElencoCivici"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import json_dumps
+results=[]
+comuneDefault = context.aq_parent.config().get('comune_default')
+
+if doc and doc.isDocument():
+    comune=doc.getItem('iol_comune',comuneDefault)
+elif context.REQUEST.get('comune'):
+    comune = context.REQUEST.get('comune')
+else:
+    comune = comuneDefault  
+    
+for res in context.aq_parent.zsql.ElencoCivici(idvia = context.REQUEST.get('idvia',0),cod_cat = comune).dictionaries():
+    results.append(res)
+     
+return json_dumps({"success":1, "results":results})
+]]></resource>
+      <resource id="getDocSettings" title="" type="Script (Python)"><![CDATA[## Script (Python) "getDocSettings"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=
+##title=
+##
+docId = context.aq_parent.config().get('doc_settings','0-settings')
+return context.getDocument(docId)
+]]></resource>
+      <resource id="getElencoEnti" title="" type="Script (Python)"><![CDATA[## Script (Python) "getElencoEnti"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=
+##title=
+##
+db=context.getParentDatabase()
+result = db.getCache('codici_enti_list')
+if not result:
+    result=['|']
+    for res in context.aq_parent.zsql.ElencoEnti().dictionaries():
+        result.append('%s|%s' %(res['nome'],res['id']))
+    
+    db.setCache('codici_enti_list', result)
+ 
+return result
+]]></resource>
+      <resource id="getElencoPlominoField" title="" type="Script (Python)"><![CDATA[## Script (Python) "getElencoPlominoField"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=
+##title=
+##
+from Products.CMFCore.utils import getToolByName
+catalog = getToolByName(context, 'portal_catalog')
+folder_path = '/'.join(context.aq_parent.aq_parent.getPhysicalPath())
+results = ["%s (%s)|%s" %(a.id,a.Title,a.id) for a in catalog(path={'query': folder_path, 'depth': 2},content_type='PlominoField',sort_on='sortable_title',)]
+results = ['Seleziona un campo |'] + results
+return results
+]]></resource>
+      <resource id="getProvider" title="" type="Script (Python)"><![CDATA[## Script (Python) "getProvider"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=
+##title=
+##
+return context.aq_parent.config().get('provider','sue')
+]]></resource>
+      <resource id="getElencoModelli" title="" type="Script (Python)"><![CDATA[## Script (Python) "getElencoModelli"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=grp=''
+##title=
+##
+portal = context.portal_url.getPortalObject()
+modelli = context.aq_parent.config_printservice().get('template_folder')
+app = context.getParentDatabase().getId().replace('iol_','')
+
+
+folder = portal.get(modelli)
+if not folder:
+    return ['MANCA LA CARTELLA DEI MODELLI %s' %modelli]
+
+folder = folder.get(app)
+if not folder:
+    return ['MANCA LA CARTELLA DEI MODELLI %s/%s' %(modelli,app)]
+
+folder = folder.get(grp)
+if not folder:
+    return ['MANCA LA CARTELLA DEI MODELLI %s/%s/%s' %(modelli,app,grp)]
+try:
+    contents =  folder.listFolderContents(contentFilter={"portal_type" : "File"})
+    if len(contents)==0:
+        return ['LA CARTELLA DEI MODELLI %s/%s/%s NON CONTIENE FILE VALIDI' %(modelli,app,grp)]
+except Exception as err:
+    context.plone_utils.addPortalMessage('Elenco modelli non accessibile %s' %err,'error')
+    contents = []
+    
+return ["%s|%s" %(modelFile.title_or_id(),modelFile.id) for modelFile in contents]
+]]></resource>
+      <resource id="getElencoParticelleCU" title="" type="Script (Python)"><![CDATA[## Script (Python) "getElencoParticelleCU"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import json_dumps
+ret=[]
+comuneDefault = context.aq_parent.config().get('comune_default')
+   
+if doc and doc.isDocument():
+    comune=doc.getItem('iol_comune',comuneDefault)
+elif context.REQUEST.get('comune'):
+    comune = context.REQUEST.get('comune')
+else:
+    comune = comuneDefault      
+    
+for res in context.aq_parent.zsql.ElencoParticelleCU(sezione=context.REQUEST.get('sezione',''),foglio=context.REQUEST.get('foglio',''),cod_cat=comune).dictionaries():
+    ret.append(res)
+return json_dumps({"success":1, "results":ret})
+]]></resource>
+      <resource id="getElencoSubalterni" title="" type="Script (Python)"><![CDATA[## Script (Python) "getElencoSubalterni"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import json_dumps
+ret=[]
+comuneDefault = context.aq_parent.config().get('comune_default')
+   
+if doc and doc.isDocument():
+    comune=doc.getItem('iol_comune',comuneDefault)
+elif context.REQUEST.get('comune'):
+    comune = context.REQUEST.get('comune')
+else:
+    comune = comuneDefault      
+    
+    
+for res in context.aq_parent.zsql.ElencoSubalterni(sezione=context.REQUEST.get('sezione',''),foglio=context.REQUEST.get('foglio',''),mappale=context.REQUEST.get('mappale',''),cod_cat=comune).dictionaries():
+    ret.append(res)
+return json_dumps({"success":1, "results":ret})
+]]></resource>
+      <resource id="verificaElencoAllegati" title="" type="Script (Python)"><![CDATA[## Script (Python) "verificaElencoAllegati"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=
+##title=
+##
+db=context.getParentDatabase()
+elencoCampi = db.getCache('elenco_campiXXXX') or []
+if not elencoCampi:
+    for frm in db.getForms():
+        if '00-' not in frm.getId():
+            for field in frm.getFormFields(includesubforms=False):
+                if field.FieldType == 'ATTACHMENT': 
+                    if field.id not in elencoCampi:
+                        elencoCampi.append([frm.getId(),field.id])
+    db.setCache('elenco_campi', elencoCampi)
+
+doc = context.getDocument('0-settings-allegati')    
+settings = doc.getItem('allegati_istanza',[])+doc.getItem('allegati_scia_condizionata',[])
+
+ll=[l[1] for l in settings]
+elencoSettings=[]
+
+for l in ll:
+    for x in l:
+        elencoSettings.append(x)
+        
+#print 'in settings ma non esiste il campo'        
+#print [x for x in elencoSettings if x not in elencoCampi]
+#print
+#print 'campi allegati non in settings'        
+return '<br />'.join([x[0]+'.'+x[1] for x in elencoCampi if x[1] not in elencoSettings])          
+#print elenco
+#return printed
+]]></resource>
+      <resource id="trovaDocumento" title="" type="Script (Python)"><![CDATA[## Script (Python) "trovaDocumento"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=protocollo='0',anno='2000'
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import DateToString,StringToDate, json_dumps
+db=context.getParentDatabase()
+index=db.getIndex()
+
+#data_protocollo=StringToDate(data,format="%d/%m/%Y")
+numero_protocollo_testo='Anno %s n. % 6d' %(anno,int(protocollo))
+#numero_protocollo_testo='Anno 2019 n. 746'
+
+#query = {"numero_protocollo":nprotocollo,"data_protocollo":{"query":[datamin,datamax],"range":"min:max"}}    
+query = {"numero_protocollo":int(protocollo)}                          
+
+brains = index.dbsearch(query)
+if len(brains)>0:
+    return json_dumps({"success":1, "id":brains[0].id, "numero":brains[0].numero_pratica})
+else:
+    return json_dumps({"success":0})
+]]></resource>
+      <resource id="getUbicazioniMappali" title="" type="Script (Python)"><![CDATA[## Script (Python) "getUbicazioniMappali"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+from iol.document.plomino_utils import serializeGrid
+indirizzi = serializeGrid(doc,fieldName='elenco_civici',formName='sub_ubicazioni_elenco')
+if len(indirizzi)>0:
+    return "%s, %s" %(indirizzi[0]["civico_via"],indirizzi[0]["civico_civico"])
+else:
+    return ""
+]]></resource>
+      <resource id="getPagoPaEnabled" title="Vero se abilitato il pagamento con PagoPa" type="Script (Python)"><![CDATA[## Script (Python) "getPagoPaEnabled"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=Vero se abilitato il pagamento con PagoPa
+##
+if isinstance(doc, basestring):
+    doc = context.getDocument(doc)
+
+# Vero se abilitato il pagamento con PagoPa
+if context.getParentDatabase().resources.config().get('pagopa'):
+    return doc.isDocument() and doc.getItem('pagopa_enabled')==1
+else:
+    return False
+]]></resource>
+      <resource id="getPianificazione" title="" type="Script (Python)"><![CDATA[## Script (Python) "getPianificazione"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=
+##title=
+##
+# -*- coding: utf-8 -*-
+from Products.CMFPlomino.PlominoUtils import json_dumps
+ret = []
+sezioni = context.REQUEST.get('sezioni','').split(',')
+fogli = context.REQUEST.get('fogli','').split(',')
+mappali = context.REQUEST.get('mappali','').split(',')
+comune = context.REQUEST.get('comune','')
+
+orFilters = []
+for index in range(len(mappali)):
+    andFilters = []
+    andFilters.append("comune='%s'" %comune)
+    andFilters.append("mappale='%s'" %mappali[index])
+    andFilters.append("foglio='%s'" %fogli[index])
+    if context.REQUEST.get('sezioni'):
+        andFilters.append("sezione='%s'" %sezioni[index])
+    andFilters = "(" + " AND ".join(andFilters) + ")"
+    orFilters.append(andFilters)
+
+sFilter = " OR ".join(orFilters)
+
+pianificazione = 'Pianificazione_%s' %context.REQUEST.get('pianificazione','')
+
+if pianificazione in context.aq_parent.zsql:
+    for res in context.aq_parent.zsql[pianificazione](filter = sFilter).dictionaries():
+        ret.append(res)
+        
+return json_dumps({"success":1, "filter": sFilter, "results":ret})
+]]></resource>
+      <resource id="stampaModulo" title="" type="Script (Python)"><![CDATA[## Script (Python) "stampaModulo"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None,parent='',child='',model='',app='',grp='',pdf=0,field='',fromfield='',form='',addform='',parentform=''
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import json_loads, StringToDate
+
+if isinstance(doc, basestring):
+    doc = context.getDocument(doc)    
+      
+tipo_app = doc.getItem('parent_tipo_app',doc.getItem('iol_tipo_app'))
+if not form and tipo_app:
+    form = "sub_completa_" + tipo_app
+
+doc.REQUEST.set('parent',parent)
+doc.REQUEST.set('child',child)
+doc.REQUEST.set('app',app)
+doc.REQUEST.set('grp',grp)
+doc.REQUEST.set('model',model)
+doc.REQUEST.set('form',form)
+doc.REQUEST.set('parentform',parentform)
+doc.REQUEST.set('addform',addform)
+doc.REQUEST.set('pdf',pdf)
+doc.REQUEST.set('field',field)
+doc.REQUEST.set('fromfield',fromfield)
+
+view = doc.restrictedTraverse('@@iol-printdocument')
+
+return view.printDocument()
+
+
+if view:
+    try:
+        result = view.printDocument()
+        result = json_loads(result)
+        if result["success"]==0:
+            doc.plone_utils.addPortalMessage('Errore infase di stampa %s.' %result["message"],'error')
+
+################TODO MESSAGGI DI ERRORE ################
+    except Exception, e:
+        doc.plone_utils.addPortalMessage('Errore infase di stampa %s. Verificare il servizio di stampa' %e,'error')
+
+else:
+    doc.plone_utils.addPortalMessage('Servizio di stampa non configurato','error')
+]]></resource>
+      <resource id="sendMailPlone" title="" type="Script (Python)"><![CDATA[## Script (Python) "sendMailPlone"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None,azione=''
+##title=
+##
+from Products.CMFCore.utils import getToolByName
+from iol.document.plomino_utils import serialDoc, getMailAddress
+from Products.CMFPlomino.PlominoUtils import Now, DateToString, asUnicode
+
+if not doc:
+    doc=context.getDocument('00003-2019-commercio')
+
+settingsId = context.getDocSettingsId()
+#configurazione messaggi da settings
+docConfig = context.getDocSettings()
+
+if not docConfig:
+    err = "MANCA IL DOCUMENTO DI CONFIGURAZIONE %s" % settingsId
+    doc.plone_utils.addPortalMessage('invio mail fallita %s' %err,'error')
+    return
+
+formId = 'sub_completa_' + doc.getItem('iol_tipo_app')
+data = serialDoc(doc,formid=formId)
+if not data:
+    err = "Errore nella serializzazione del documento con form: %s" %formId
+    doc.plone_utils.addPortalMessage('invio mail fallita %s' %err,'error')
+    return
+
+data["CURRENT_DATE"] = DateToString(Now(),format="%d/%m/%Y")
+data["DOC_URL"] = doc.absolute_url()
+
+messageConfig = docConfig.getItem("mail_settings",[])
+messages = filter(lambda x: x[0] == azione, messageConfig)
+
+if len(messages)==0:
+    err = "MANCA LA CONFIGURAZIONE PER L'AZIONE %s" %azione
+    doc.plone_utils.addPortalMessage('invio mail fallita %s' %err,'error')
+    return
+
+tpl=context.mail_template
+mail_host = getToolByName(context, 'MailHost')
+
+for message in messages:
+    to = ', '.join(getMailAddress(doc, data, message[1]))
+    cc = ', '.join(getMailAddress(doc, data, message[2]))
+    bcc = ', '.join(getMailAddress(doc, data, message[3]))
+
+    try:         
+        oggetto = message[4] %data or ""
+        testo = message[5] %data or ""
+        
+        mail_text = tpl(to=to,
+                        cc=cc,
+                        bcc=bcc,
+                        oggetto=asUnicode(oggetto),
+                        testo=asUnicode(testo),
+                        charset='utf-8',
+                        request=doc.REQUEST)       
+
+        mail_host.send(mail_text.encode('utf-8'),  immediate=True)
+
+    except Exception as err:
+        doc.plone_utils.addPortalMessage('invio mail fallita %s' %err,'error')
+]]></resource>
+      <resource id="getElencoPEC" title="" type="Script (Python)"><![CDATA[## Script (Python) "getElencoPEC"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import StringToDate, DateToString, json_dumps,json_loads
+from iol.document.plomino_utils import GetMailJ
+
+db=context.getParentDatabase()
+
+if isinstance(doc, basestring):
+    doc = context.getDocument(doc)
+    
+url = db.resources.config().get("wsMailJ")
+if not url:
+    return []
+
+utente='gisweb_auth'
+objid=doc.getId()+'|'+db.getId()
+
+url = db.resources.config().get("wsMailJ")
+try:
+    data = json_loads(GetMailJ(url, utente, objid))
+    rows = data["PecList"]
+    for index in range(len(rows)):
+        rows[index]["data"]=DateToString(StringToDate(rows[index]["DataOra"]),format="%d/%m/%Y Ore %H:%M")
+        
+    return rows
+except Exception as err:
+    doc.plone_utils.addPortalMessage('Errore nella generazione elenco pec %s' %err,'error')
+    return [err]
+]]></resource>
+      <resource id="getIndirizzo" title="" type="Script (Python)"><![CDATA[## Script (Python) "getIndirizzo"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+if isinstance(doc, basestring):
+    doc = context.getDocument(doc)
+    
+val = doc.getItem('via')   
+ret = ''
+frm=context.getForm('sub_ubicazione')    
+fld = frm.getFormField('via')
+adapt = fld.getSettings()     
+ll = [f.split('|') for f in adapt.getSelectionList(doc)]
+result = [x for x in ll if x[1]==val]
+if len(result)>0:
+    ret = result[0][0]
+    if doc.getItem('civico'):
+        ret = ret +', '+doc.getItem('civico')
+    
+return ret
+]]></resource>
+      <resource id="getElencoModelliEURL" title="" type="Script (Python)"><![CDATA[## Script (Python) "getElencoModelliEURL"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=gruppo
+##title=
+##
+portal = context.portal_url.getPortalObject()
+filter={"portal_type" : "File"}
+printForm='00-print'
+modelli = portal.get('modelli').get('sue').get(gruppo)
+if not modelli:
+    return []
+
+contents =  modelli.listFolderContents(contentFilter=filter)
+return ["%s|%s&app=sue&grp=%s&form=%s" %(modelFile.title_or_id(),modelFile.id,gruppo,printForm) for modelFile in contents]
+]]></resource>
+      <resource id="getMailJ" title="" type="Script (Python)"><![CDATA[## Script (Python) "getMailJ"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=utente='gisweb_auth',objid=''
+##title=
+##
+from iol.document.plomino_utils import GetMailJ
+db=context.getParentDatabase()
+url = db.resources.config().get("wsMailJ")
+return GetMailJ(url, utente, objid)
+]]></resource>
+      <resource id="sendMail" title="" type="Script (Python)"><![CDATA[## Script (Python) "sendMail"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None,azione='presentazione-ok',form=''
+##title=
+##
+# metodo generico per invio email. TODO da vedere come discriminare meglio
+if not doc:
+    return 
+
+if isinstance(doc, basestring):
+    doc = context.getDocument(doc)
+
+if context.aq_parent.config().get('comune_default')=='E463':
+    context.sendMailJ(doc=doc,azione=azione,form=form)
+else:
+    form = form or 'sub_completa_' + doc.getItem('iol_tipo_app')
+    doc.iolSendMail(azione=azione, form=form)
+]]></resource>
+      <resource id="Presentazione" title="" type="Script (Python)"><![CDATA[## Script (Python) "Presentazione"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import StringToDate, DateToString, Now 
+
+if isinstance(doc, basestring):
+    doc = context.getDocument(doc)
+
+############## DIFFERENZA #################
+doc.setItem('Form','frm_presentata')
+doc.setItem('IOL_PREVIOUS_FORM','bo_procedimento')
+
+if not doc.getItem('numero_pratica'):
+    doc.setItem('numero_pratica',doc.getItem('prog_id'))
+
+doc.setItem('ws_response_message','<div class="alert alert-success"><h5>Istanza inviata correttamente</h5></div>')
+    
+#se avevo gia fatto un invio non aggiorno la data e non invio altra email
+if not doc.getItem('data_presentazione'):
+    #setto gli indici per le viste  
+    doc.setItem('data_presentazione',StringToDate(DateToString(Now())))
+    doc.setItem('data_presentazione_testo',DateToString(Now(),format="%Y/%m/%d %H:%M"))
+    context.sendMail(doc=doc,azione='presentazione-ok')
+  
+    
+db=context.getParentDatabase()
+#se c'e' protocollazione automatica protocollo
+if db.resources.config().get("wsprotocollo"):
+    doc.doAction('protocolla')
+else:
+    doc.doAction('richiedi_protocollo')
+    context.sendMail(doc=doc,azione='richiedi-protocollo')
+    msg="Comunicazione inviata correttamente, in attesa di essere protocollata"
+    doc.setItem('ws_response_message',"<div class='alert alert-success'><h5>%s</h5></div>" %msg)
+]]></resource>
+      <resource id="AvvioProcedimento" title="" type="Script (Python)"><![CDATA[## Script (Python) "AvvioProcedimento"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import StringToDate, DateToString, Now 
+
+
+if isinstance(doc, basestring):
+    doc = context.getDocument(doc)
+
+
+db=context.getParentDatabase()
+doc.setItem('data_comunicazione_avvio_procedimento',Now())
+doc.setWfActivity(activity="Comunicazione avvio del procedimento")
+context.sendMail(doc=doc,azione='avvio-procedimento')
+]]></resource>
+      <resource id="ImpostaTitolo" title="" type="Script (Python)"><![CDATA[## Script (Python) "ImpostaTitolo"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import StringToDate, DateToString, Now 
+
+if isinstance(doc, basestring):
+    doc = context.getDocument(doc)
+
+db=doc.getParentDatabase()
+doc.setItem('data_titolo',StringToDate(DateToString(Now())))
+doc.setItem('anno_titolo',int(DateToString(Now(),format='%Y')))
+doc.setItem('numero_titolo',doc.getDocNumber('numero_titolo'))
+doc.getParentDatabase().getIndex().indexDocument(doc)
+]]></resource>
+      <resource id="ProtocollaDocumento" title="" type="Script (Python)"><![CDATA[## Script (Python) "ProtocollaDocumento"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None,docField='comunicazione_digitale'
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import StringToDate,Now,DateToString
+
+if isinstance(doc, basestring):
+    doc = context.getDocument(doc)
+ 
+    
+doc.setItem('Form','frm_presentata')
+doc.setItem('IOL_PREVIOUS_FORM','bo_procedimento')   
+db = context.getParentDatabase()
+    
+def setIndiciProtocollo():  
+    nProtocollo=doc.getItem('numero_protocollo')
+    dProtocollo=doc.getItem('data_protocollo')
+    doc.setItem('anno_protocollo',int(DateToString(dProtocollo,format='%Y')))
+    doc.setItem('data_protocollo_testo',DateToString(Now(),format="%Y/%m/%d %H:%M"))
+    doc.setItem('numero_protocollo_testo','Anno %s n. % 6d' %(DateToString(dProtocollo,format='%Y'),int(nProtocollo)))    
+    db.getIndex().indexDocument(doc)
+    
+def setActivity():
+    #notifiche per integrazione inizio e fine
+    if doc.getItem('iol_tipo_app') in ['integrazione','iniziolavori','fineavori']:
+        parentDoc = db.getDocument(str(doc.getItem('documento_esistente_id')))
+        if parentDoc:
+            doc.setItem('istruttore',parentDoc.getItem('istruttore'))
+            doc.setItem('istruttore_nominativo',parentDoc.getItem('istruttore_nominativo'))
+            parentDoc.setWfActivity(
+                activity="Ricevuta istanza di %s" %doc.getItem('iol_tipo_app'), 
+                notifyTo=[parentDoc.getItem('istruttore')],
+                priority=1)
+    else:
+        doc.setWfActivity(
+                activity="Nuova %s" %doc.getItem('iol_form_title'),
+                notifyTo=[db.resources.config().get('assegnazione_istruttore')],
+                priority=1)
+
+      
+### Se ho gia il protocollo setto solo gli indici (caso protocollazione manuale)
+if doc.getItem('numero_protocollo'):
+    if not doc.getItem('numero_protocollo_testo'):
+        setIndiciProtocollo() 
+        context.sendMail(doc=doc,azione='protocollazione-ok')
+        setActivity()
+
+    
+# Provo a richiedere un protocollo al servizio:
+else:
+    viewName = context.aq_parent.config().get("wsprotocollo")
+    if viewName:
+        view = doc.restrictedTraverse(viewName)
+        result = view.protocollaDocumento(docField=docField)
+        
+        if result['success']==1:
+            doc.setItem('numero_protocollo',result['NumeroProtocollo'])
+            doc.setItem('data_protocollo',StringToDate(DateToString(Now())))
+            setIndiciProtocollo() 
+            context.sendMail(doc=doc,azione='protocollazione-ok')
+            doc.setItem('ws_response_message','<div class="alert alert-success"><h5>Istanza inviata correttamente</h5></div>')
+            setActivity()
+
+        else:
+            #protocollazione automatica KO mando mail di controllo ad assistenza con il servizio nostro
+            doc.plone_utils.addPortalMessage('''La richiesta e' stata inviata.Sono occorsi errori durante la protocollazione del documento %s''' %result['message'],'error')
+            msg='''Errore in fase di protocollazione automatica.'''
+            doc.setItem('ws_response_message',"<div class='alert alert-error'><h5>%s</h5></div>" %msg)
+            context.sendMail(doc=doc,azione='protocollazione-ko')
+]]></resource>
+      <resource id="getElencoTipiPratica" title="" type="Script (Python)"><![CDATA[## Script (Python) "getElencoTipiPratica"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=
+##title=
+##
+db=context.getParentDatabase()
+
+result = db.getCache('form_list')
+if not result:
+    result = []
+    for frm in context.getForms():
+        ff = [fld.id for fld in frm.getFormFields()]
+        if 'iol_workflow' in ff:
+            v=frm.id.split('_')
+            result.append("%s|%s" %(frm.Title(),v[1]))
+            
+    db.setCache('form_list', result)            
+    
+return result
+]]></resource>
+      <resource id="getElencoCommissioni" title="" type="Script (Python)"><![CDATA[## Script (Python) "getElencoCommissioni"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=docId=''
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import DateToString
+from Products.CMFCore.utils import getToolByName
+db = getToolByName(context, 'iol_commissioni')
+idx = db.getIndex()
+
+brains = idx.dbsearch(dict(elenco_pratiche=docId)) 
+dlgForm=db.getForm('dlg_parere_pratica')
+html=''
+
+for brain in brains:
+    doc=brain.getObject()
+    rows=doc.getItem('elenco_pratiche_pareri_dg')
+    row=[]
+    content=''
+    for row in rows:
+        if row[1]==context.getId():
+            break
+    ###vedere le vale la pena serializzare il datagrid per evitare che si rompa aggiungendo colonne           
+    if len(row)>0: 
+        ordine=row[0]
+        parere=row[4]
+        testo=row[5]
+        prescrizioni=row[6]
+        renderForm=db.getForm('sub_vista_commissione')
+        content=content + renderForm.displayDocument(doc) 
+        content=content+'''
+        <p><span class="label">Parere: </span></p>
+        <p><span class="TEXTFieldRead-TEXTAREA">%s</span></p>''' %parere
+        content=content+'''
+        <p><span class="label">Testo: </span></p>
+        <p><span class="TEXTFieldRead-TEXTAREA">%s</span></p>''' %testo
+        if prescrizioni:
+            content=content+'''
+        <p><span class="label">Prescrizioni: </span></p>
+        <p><span class="TEXTFieldRead-TEXTAREA">%s</span></p>''' %prescrizioni  
+    
+        if content:
+            html=html+'<fieldset class="scheduler-border"><legend class="scheduler-border"><a target="blank_" href="%s"> %s del %s ordine %s </a></legend>%s</fieldset>'%(doc.absolute_url(),doc.getItem('iol_form_title'),DateToString(doc.getItem('data_convocazione'),format="%d/%m/%Y"),ordine,content)
+
+    
+return html
+]]></resource>
+      <resource id="getElencoPraticheCollegateALTRA" title="" type="Script (Python)"><![CDATA[## Script (Python) "getElencoPraticheCollegateALTRA"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import DateToString
+from iol.document.plomino_utils import sortList
+
+# Elenco delle pratiche collegate:
+# Di base vedo se sono valorizzati i campi titolo_esistente_...
+# visualizzo la riga con i riferimenti del titolo collegato. 
+# cerco sul catalogo (o sul db) i riferimenti del titolo collegato
+# se il titolo collegato e un documento plomino (oppure su db) visualizzo altri dati del titolo in un fieldset
+# altrimenti solo la riga con i riferimenti
+# la ricerca deve essere ricorsiva in modo da recuperare tutti i titoli collegati
+# restituisce un array con id del documento plomino se esiste altrimenti solo la stringa con i riferimenti della pratica
+# nel template renderizzo la stringa oppure il documento con form appropriata. Esclusi inizio fine e integrazione (sca?)
+
+if doc is None:
+    doc=context.getDocument('00581-2018-scia')
+
+
+idx=context.getIndex()
+def trovaCollegate(mydoc):
+    ret=[]
+    if not mydoc.getItem('titolo_esistente_data'):
+        return ret
+    
+    anno = DateToString(mydoc.getItem('titolo_esistente_data'),format='%Y')
+    try:
+        protocollo = int(mydoc.getItem('titolo_esistente_protocollo'))
+    except:
+        protocollo=0
+    query = {'numero_protocollo':protocollo, 'anno_protocollo': int(anno)}
+    
+    brains = idx.dbsearch(query)
+    
+    if len(brains)>0:
+        for brain in brains:
+            if brain.iol_tipo_app not in ['iniziolavori','finelavori','integrazione']:
+                obj=brain.getObject()
+                ret.append([str(brain.iol_tipo_app),str(brain.numero_protocollo),DateToString(brain.data_protocollo, format='%d/%m/%Y')])
+                
+                ##### Attenzione deve esistere sia protocollo che data
+                if obj.getItem('titolo_esistente_protocollo') and obj.getItem('titolo_esistente_data'):
+                    ret=ret + trovaCollegate(obj)
+                    
+                if obj.getItem('elenco_titoli_edilizi'):
+                    ret=ret+obj.getItem('elenco_titoli_edilizi',[])
+                    #for row in rows:
+                    #    ret=ret + row
+                    #    context.plone_log(row)                    
+     
+    else:
+        #ret=["%s prot. %s del %s" %(mydoc.getItem('titolo_esistente_tipo','Pratica'),
+        #                  mydoc.getItem('titolo_esistente_protocollo'),
+        #                  DateToString(mydoc.getItem('titolo_esistente_data'), format='%d/%m/%Y'))]
+        ret.append([mydoc.getItem('titolo_esistente_tipo','Pratica'), 
+             mydoc.getItem('titolo_esistente_protocollo'),                        
+             DateToString(mydoc.getItem('titolo_esistente_data'), format='%d/%m/%Y')])
+        
+        
+        
+    if mydoc.getItem('elenco_titoli_edilizi'):
+        ret = ret + mydoc.getItem('elenco_titoli_edilizi',[])
+#        for row in rows:
+#            ret=ret + row
+#            context.plone_log(row)
+        
+
+    
+#### TODO: rimetto in ordine e aggiungo id del documento se esiste    
+    rows = []
+    for row in ret:
+        context.plone_log(row)
+        if len(row)>2 and row[2]:
+            anno = row[2].split("/")[2]
+            try:
+                protocollo = int(row[1])
+            except:
+                protocollo=0          
+            query = {'numero_protocollo':protocollo, 'anno_protocollo': int(anno)}
+            brains = idx.dbsearch(query)
+            if len(brains)>0:
+                for brain in brains:
+                    row.append(brain.getObject().absolute_url())
+                    row.append(''.join(row[2].split("/")[::-1]))
+                    rows.append(row)
+            else:
+                row.append('')
+                row.append(''.join(row[2].split("/")[::-1]))
+                rows.append(row)
+
+    if len(rows)>0:
+        rows = sortList(rows,4)
+    return rows
+
+
+return trovaCollegate(doc)
+]]></resource>
+      <resource id="sendMailJ" title="" type="Script (Python)"><![CDATA[## Script (Python) "sendMailJ"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None,azione='presentazione-ok',form=''
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import StringToDate, DateToString, Now, asUnicode
+from iol.document.plomino_utils import SendMailJ,serialDoc,getMailAddress
+
+disclaimer='''
+
+====================
+Questo e' un messaggio di posta elettronica generato automaticamente dal sistema.
+La preghiamo di non rispondere/inviare email all'indirizzo mittente, perche' e' una casella applicativa, pertanto qualsiasi messaggio non sara' letto.
+
+Clausola di riservatezza
+Le informazioni contenute in questo messaggio di posta elettronica sono riservate e confidenziali e ne e' vietata la diffusione in qualunque modo eseguita. Qualora Lei non fosse la persona a cui il presente messaggio e' destinato, La invitiamo gentilmente ad eliminarlo dopo averne dato tempestiva comunicazione al mittente e a non utilizzare in alcun caso il suo contenuto. Qualsiasi utilizzo non autorizzato di questo messaggio e dei suoi eventuali allegati espone il responsabile alle relative conseguenze civili e penali.
+
+Notice to recipient
+This e-mail is strictly confidential and meant for only the intended recipient of the transmission. If you received this e-mail by mistake, any review, use, dissemination, distribution, or copying of this e-mail is strictly prohibited. Please notify us immediately of the error by return e-mail and please delete this message from your system. Thank you in advance for your cooperation.
+====================
+'''
+
+if isinstance(doc, basestring):
+    doc = context.getDocument(doc)
+
+db = context.getParentDatabase()
+
+url = db.resources.config().get("wsMailJ")
+
+if not url:
+    return
+
+if isinstance(doc, basestring):
+    doc = context.getDocument(doc)
+
+#configurazione messaggi da settings    
+settingsId = context.getDocSettingsId()
+docConfig = context.getDocSettings()
+
+if not docConfig:
+    err = "MANCA IL DOCUMENTO DI CONFIGURAZIONE %s" % settingsId
+    doc.plone_utils.addPortalMessage('invio mail fallita %s' %err,'error')
+    return
+
+#serializzazione dati documento
+formId = form or 'sub_completa_' + doc.getItem('iol_tipo_app')
+messageConfig = docConfig.getItem("mail_settings",[])
+data = serialDoc(doc,formid=formId)
+if not data:
+    err = "Errore nella serializzazione del documento con form: %s" %formId
+    doc.plone_utils.addPortalMessage('invio mail fallita %s' %err,'error')
+    return
+
+#dati fissi
+data["CURRENT_DATE"] = DateToString(Now(),format="%d/%m/%Y")
+data["DOC_URL"] = doc.absolute_url()    
+
+#id di riferimento nel db pec
+docId = doc.getId()+"|"+db.getId()   
+
+
+destinatari = []
+if doc.getItem('delegato_opt'):
+    destinatari.append(doc.getItem('delegato_pec'))
+    #anche al richiedente
+    if not doc.getItem('consenso_pec'):
+        destinatari.append(doc.getItem('giuridica_pec'))
+else:
+    #solo richiedente
+    destinatari.append(doc.getItem('giuridica_pec'))
+    
+if not doc.getItem('fisica_pec') in destinatari:
+    destinatari.append(doc.getItem('fisica_pec'))
+   
+
+#messaggio template da config: filtro quelli relativi all'azione
+messages = filter(lambda x: x[0] == azione, messageConfig)
+
+if len(messages)==0:
+    err = "MANCA LA CONFIGURAZIONE PER L'AZIONE %s" %azione
+    doc.plone_utils.addPortalMessage('invio mail fallita %s' %err,'error')
+    return
+    
+    
+###prendo solo il primo (potrei gestire piu azioni di invio email) e genero il messaggio
+message = messages[0]
+try:         
+    oggetto = asUnicode(message[4] %data) or ""
+    oggetto=oggetto.replace("&","e")
+    #patch per far funzionare template
+    oggetto = "__GENERICA__"+oggetto
+    testo = asUnicode(message[5] %data) or ""
+    testo=testo + asUnicode(disclaimer)
+    testo=testo.replace("\n","<BR />")
+    testo=testo.replace("&","e")
+
+except Exception as err:
+    doc.plone_utils.addPortalMessage('invio mail fallita, errore nel campo %s' %err,'error')
+    return
+
+
+for destinatario in destinatari:
+    try: 
+        SendMailJ(url, "FORJMAIL", docId, "1", "suap.comune.laspezia@legalmail.it", destinatario, '', oggetto, testo, "") 
+    except Exception as err:
+        doc.plone_utils.addPortalMessage('invio mail a %s fallita: %s' %(destinatario,err),'error')
+]]></resource>
+      <resource id="getMapKey" title="" type="Script (Python)"><![CDATA[## Script (Python) "getMapKey"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=
+##title=
+##
+return context.aq_parent.config_map().get('mapKey')
+]]></resource>
+      <resource id="xCLONE" title="" type="Folder">
+        <resource id="setCloneDsi" title="" type="Script (Python)"><![CDATA[## Script (Python) "setCloneDsi"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+if isinstance(doc, basestring):
+    doc = context.getDocument(doc)
+
+app='dsi'
+
+v = doc.getId().split('-')
+newId = v[0]+'-'+v[1]+'-'+ app
+#se l'ho gia duplicato esco
+if context.getDocument(newId):
+    return
+
+newDoc=context.createDocument(docid=newId)
+for item in doc.getItems():
+    newDoc.setItem(item, doc.getItem(item))
+
+for f in doc.getFilenames():
+    attached_file = doc.getfile(f)
+    newDoc.setfile(attached_file,f)
+    
+newDoc.setItem('iol_tipo_app',app)   
+newDoc.setItem('titolo_esistente_protocollo',doc.getItem('numero_protocollo'))   
+newDoc.setItem('titolo_esistente_data',doc.getItem('data_protocollo')) 
+newDoc.setItem('identificativo',newDoc.getId())   
+newDoc.setItem('pagopa_enabled',0)
+
+
+newDoc.removeItem('data_invio_pw')
+newDoc.removeItem('data_protocollo')	
+newDoc.removeItem('numero_protocollo')	
+newDoc.removeItem('qualificazione_intervento_opt')	
+newDoc.removeItem('interventi_strutturali_opt')	
+newDoc.removeItem('vincolo_idrogeologico_opt')
+newDoc.removeItem('procedimento_autorizzazione_paesaggistica_opt')	
+newDoc.removeItem('elenco_pagamenti')	
+newDoc.removeItem('elenco_importi_pagamenti')	
+newDoc.removeItem('elenco_importi_dg')	
+newDoc.removeItem('elenco_importi_aggiuntivi_dg')	
+newDoc.removeItem('pagopa_response')	
+
+
+
+
+
+if doc.getItem('interventi_strutturali_opt') == '3':
+    newDoc.setItem('tipologia_procedura_opt','1')
+elif doc.getItem('interventi_strutturali_opt') == '4':    
+    newDoc.setItem('tipologia_procedura_opt','2')
+
+newDoc.doAction('init')
+newDoc.doAction('presentazione')
+newDoc.doAction('protocolla')
+
+msg = doc.getItem('ws_response_message')
+msgNew = "<div class='alert alert-success'><h5><a href='%s'>Denuncia Sismica Integrata acquisita con numero pratica  %s </a> </h5></div>" %(newDoc.absolute_url(),newDoc.getItem('numero_pratica'))
+doc.setItem('ws_response_message',msg + msgNew)
+
+msg = newDoc.getItem('ws_response_message')
+msgNew = "<div class='alert alert-success'><h5><a href='%s'>Denuncia Sismica Integrata relativa a pratica %s </a> </h5></div>" %(doc.absolute_url(),doc.getItem('numero_pratica'))
+newDoc.setItem('ws_response_message',msg + msgNew)
+
+
+newDoc.save(onSaveEvent=False)  
+                      
+return newDoc.getId()
+]]></resource>
+        <resource id="setCloneIdrogeologico" title="" type="Script (Python)"><![CDATA[## Script (Python) "setCloneIdrogeologico"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+if isinstance(doc, basestring):
+    doc = context.getDocument(doc)
+    
+
+app='idrogeologico-aut'
+
+newId = v[0]+'-'+v[1]+'-'+ app
+#se l'ho gia duplicato esco
+if context.getDocument(newId):
+    return
+
+newDoc=context.createDocument(docid=newId)
+for item in doc.getItems():
+    newDoc.setItem(item, doc.getItem(item))
+
+for f in doc.getFilenames():
+    attached_file = doc.getfile(f)
+    newDoc.setfile(attached_file,f)
+    
+newDoc.setItem('iol_tipo_app',app)   
+newDoc.setItem('titolo_esistente_protocollo',doc.getItem('numero_protocollo'))   
+newDoc.setItem('titolo_esistente_data',doc.getItem('data_protocollo')) 
+newDoc.setItem('identificativo',newDoc.getId())   
+newDoc.setItem('pagopa_enabled',0)
+
+
+##specifico
+newDoc.setItem('titolo_esistente_opt',1)
+if doc.getItem('iol_tipo_app')=='pdc':
+    newDoc.setItem('titolo_esistente_tipo','PERMESSO DI COSTRUIRE') 
+else:
+    newDoc.setItem('titolo_esistente_tipo','SCIA') 
+
+newDoc.removeItem('data_invio_pw')
+newDoc.removeItem('data_protocollo')	
+newDoc.removeItem('numero_protocollo')	
+newDoc.removeItem('qualificazione_intervento_opt')	
+newDoc.removeItem('interventi_strutturali_opt')	
+newDoc.removeItem('vincolo_idrogeologico_opt')	
+newDoc.removeItem('elenco_pagamenti')	
+newDoc.removeItem('elenco_importi_pagamenti')	
+newDoc.removeItem('elenco_importi_dg')	
+newDoc.removeItem('elenco_importi_aggiuntivi_dg')	
+newDoc.removeItem('pagopa_response')
+
+newDoc.doAction('init')
+newDoc.doAction('presentazione')
+newDoc.doAction('protocolla')
+
+msg = doc.getItem('ws_response_message')
+msgNew = "<div class='alert alert-success'><h5><a href='%s'>Richiesta autorizzazione in merito al vincolo idrogeologico acquisita con numero pratica  %s </a> </h5></div>" %(newDoc.absolute_url(),newDoc.getItem('numero_pratica'))
+doc.setItem('ws_response_message',msg + msgNew)
+
+msg = newDoc.getItem('ws_response_message')
+msgNew = "<div class='alert alert-success'><h5><a href='%s'>Richiesta autorizzazione in merito al vincolo idrogeologico relativa a pratica %s </a> </h5></div>" %(doc.absolute_url(),doc.getItem('numero_pratica'))
+newDoc.setItem('ws_response_message',msg + msgNew)
+
+newDoc.save(onSaveEvent=False)  
+                      
+return newDoc.getId()
+]]></resource>
+        <resource id="setClonePaesaggistica" title="" type="Script (Python)"><![CDATA[## Script (Python) "setClonePaesaggistica"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import DateToString
+
+if isinstance(doc, basestring):
+    doc = context.getDocument(doc)
+    
+s='paesaggistica'
+app=s
+
+prot = doc.getItem('numero_protocollo')
+data_prot = DateToString(doc.getItem('data_protocollo'),format="%d/%m/%Y")
+
+
+if doc.getItem('procedimento_autorizzazione_paesaggistica_opt')=='1':
+    s='psemplificata'
+    app='paesaggistica-semplificata'
+    msg1='''Istanza di autorizzazione paesaggistica semplificata pervenuta contestualmente all'istanza/comunicazione prot %s del %s''' %(prot,data_prot)
+    msg2='''L'efficacia dell'istanza/comunicazione e' condizionata dall'approvazione dell'autorizzazione paesaggistica semplificata'''
+
+if doc.getItem('procedimento_autorizzazione_paesaggistica_opt')=='2':
+    s='pordinaria'
+    app='paesaggistica-ordinaria'
+    msg1='''Istanza di autorizzazione paesaggistica ordinaria pervenuta contestualmente all'istanza/comunicazione prot %s del %s''' %(prot,data_prot)
+    msg2='''L'efficacia dell'istanza/comunicazione e' condizionata dall'approvazione dell'autorizzazione paesaggistica ordinaria'''
+
+    
+v = doc.getId().split('-')
+newId = v[0]+'-'+v[1]+'-'+ s
+#se l'ho gia duplicato esco
+if context.getDocument(newId):
+    return
+
+newDoc=context.createDocument(docid=newId)
+
+for item in doc.getItems():
+    newDoc.setItem(item, doc.getItem(item))
+
+for f in doc.getFilenames():
+    attached_file = doc.getfile(f)
+    newDoc.setfile(attached_file,f)
+ 
+frm = context.getParentDatabase().getForm('frm_' + app)    
+newDoc.setItem('iol_tipo_app',app)
+newDoc.setItem('iol_form_title',frm.Title())
+newDoc.setItem('identificativo',newDoc.getId())
+newDoc.setItem('titolo_esistente_id',doc.getId())
+newDoc.setItem('msg_paesaggistica',msg1)
+newDoc.setItem('pagopa_enabled',0)
+
+
+ref = doc.getItem('titolo_esistente_id')
+if not ref:
+    ref=newDoc.getId()
+elif isinstance(ref, basestring): 
+    ref=[ref,newDoc.getId()]
+else:
+    try:
+        ref.append(newDoc.getId())
+    except:
+        pass
+doc.setItem('titolo_esistente_id',ref)
+doc.setItem('msg_paesaggistica',msg2)
+context.getParentDatabase().getIndex().indexDocument(doc)
+
+newDoc.removeItem('data_invio_pw')
+newDoc.removeItem('data_protocollo')	
+newDoc.removeItem('numero_protocollo')	
+newDoc.removeItem('qualificazione_intervento_opt')	
+newDoc.removeItem('interventi_strutturali_opt')	
+newDoc.removeItem('vincolo_idrogeologico_opt')
+newDoc.removeItem('procedimento_autorizzazione_paesaggistica_opt')	
+newDoc.removeItem('elenco_pagamenti')	
+newDoc.removeItem('elenco_importi_pagamenti')	
+newDoc.removeItem('elenco_importi_dg')	
+newDoc.removeItem('elenco_importi_aggiuntivi_dg')	
+newDoc.removeItem('pagopa_response')
+
+
+newDoc.doAction('init')
+newDoc.doAction('presentazione')
+newDoc.doAction('protocolla')
+
+msg = doc.getItem('ws_response_message')
+msgNew = "<div class='alert alert-success'><h5><a href='%s'>Autorizzazione paesaggistica acquisita con numero pratica  %s </a> </h5></div>" %(newDoc.absolute_url(),newDoc.getItem('numero_pratica'))
+doc.setItem('ws_response_message',msg + msgNew)
+
+msg = newDoc.getItem('ws_response_message')
+msgNew = "<div class='alert alert-success'><h5><a href='%s'>Autorizzazione paesaggistica relativa a pratica %s </a> </h5></div>" %(doc.absolute_url(),doc.getItem('numero_pratica'))
+newDoc.setItem('ws_response_message',msg + msgNew)
+
+newDoc.save(onSaveEvent=False)  
+                      
+return newDoc.getId()
+]]></resource>
+      </resource>
+      <resource id="setCloneDsi" title="" type="Script (Python)"><![CDATA[## Script (Python) "setCloneDsi"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+if isinstance(doc, basestring):
+    doc = context.getDocument(doc)
+
+app='dsi'
+
+v = doc.getId().split('-')
+newId = v[0]+'-'+v[1]+'-'+ app
+#se l'ho gia duplicato esco
+if context.getDocument(newId):
+    return
+
+newDoc=context.createDocument(docid=newId)
+for item in doc.getItems():
+    newDoc.setItem(item, doc.getItem(item))
+
+for f in doc.getFilenames():
+    attached_file = doc.getfile(f)
+    newDoc.setfile(attached_file,f)
+    
+newDoc.setItem('iol_tipo_app',app)   
+newDoc.setItem('titolo_esistente_protocollo',doc.getItem('numero_protocollo'))   
+newDoc.setItem('titolo_esistente_data',doc.getItem('data_protocollo')) 
+newDoc.setItem('identificativo',newDoc.getId())   
+newDoc.setItem('pagopa_enabled',0)
+
+
+newDoc.removeItem('data_invio_pw')
+newDoc.removeItem('data_protocollo')	
+newDoc.removeItem('numero_protocollo')	
+newDoc.removeItem('qualificazione_intervento_opt')	
+newDoc.removeItem('interventi_strutturali_opt')	
+newDoc.removeItem('vincolo_idrogeologico_opt')
+newDoc.removeItem('procedimento_autorizzazione_paesaggistica_opt')	
+newDoc.removeItem('elenco_pagamenti')	
+newDoc.removeItem('elenco_importi_pagamenti')	
+newDoc.removeItem('elenco_importi_dg')	
+newDoc.removeItem('elenco_importi_aggiuntivi_dg')	
+newDoc.removeItem('pagopa_response')	
+
+
+
+
+
+if doc.getItem('interventi_strutturali_opt') == '3':
+    newDoc.setItem('tipologia_procedura_opt','1')
+elif doc.getItem('interventi_strutturali_opt') == '4':    
+    newDoc.setItem('tipologia_procedura_opt','2')
+
+newDoc.doAction('init')
+newDoc.doAction('presentazione')
+newDoc.doAction('protocolla')
+
+msg = doc.getItem('ws_response_message')
+msgNew = "<div class='alert alert-success'><h5><a href='%s'>Denuncia Sismica Integrata acquisita con numero pratica  %s </a> </h5></div>" %(newDoc.absolute_url(),newDoc.getItem('numero_pratica'))
+doc.setItem('ws_response_message',msg + msgNew)
+
+msg = newDoc.getItem('ws_response_message')
+msgNew = "<div class='alert alert-success'><h5><a href='%s'>Denuncia Sismica Integrata relativa a pratica %s </a> </h5></div>" %(doc.absolute_url(),doc.getItem('numero_pratica'))
+newDoc.setItem('ws_response_message',msg + msgNew)
+
+
+newDoc.save(onSaveEvent=False)  
+                      
+return newDoc.getId()
+]]></resource>
+      <resource id="setCloneIdrogeologico" title="" type="Script (Python)"><![CDATA[## Script (Python) "setCloneIdrogeologico"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+if isinstance(doc, basestring):
+    doc = context.getDocument(doc)
+    
+
+app='idrogeologico-aut'
+
+newId = v[0]+'-'+v[1]+'-'+ app
+#se l'ho gia duplicato esco
+if context.getDocument(newId):
+    return
+
+newDoc=context.createDocument(docid=newId)
+for item in doc.getItems():
+    newDoc.setItem(item, doc.getItem(item))
+
+for f in doc.getFilenames():
+    attached_file = doc.getfile(f)
+    newDoc.setfile(attached_file,f)
+    
+newDoc.setItem('iol_tipo_app',app)   
+newDoc.setItem('titolo_esistente_protocollo',doc.getItem('numero_protocollo'))   
+newDoc.setItem('titolo_esistente_data',doc.getItem('data_protocollo')) 
+newDoc.setItem('identificativo',newDoc.getId())   
+newDoc.setItem('pagopa_enabled',0)
+
+
+##specifico
+newDoc.setItem('titolo_esistente_opt',1)
+if doc.getItem('iol_tipo_app')=='pdc':
+    newDoc.setItem('titolo_esistente_tipo','PERMESSO DI COSTRUIRE') 
+else:
+    newDoc.setItem('titolo_esistente_tipo','SCIA') 
+
+newDoc.removeItem('data_invio_pw')
+newDoc.removeItem('data_protocollo')	
+newDoc.removeItem('numero_protocollo')	
+newDoc.removeItem('qualificazione_intervento_opt')	
+newDoc.removeItem('interventi_strutturali_opt')	
+newDoc.removeItem('vincolo_idrogeologico_opt')	
+newDoc.removeItem('elenco_pagamenti')	
+newDoc.removeItem('elenco_importi_pagamenti')	
+newDoc.removeItem('elenco_importi_dg')	
+newDoc.removeItem('elenco_importi_aggiuntivi_dg')	
+newDoc.removeItem('pagopa_response')
+
+newDoc.doAction('init')
+newDoc.doAction('presentazione')
+newDoc.doAction('protocolla')
+
+msg = doc.getItem('ws_response_message')
+msgNew = "<div class='alert alert-success'><h5><a href='%s'>Richiesta autorizzazione in merito al vincolo idrogeologico acquisita con numero pratica  %s </a> </h5></div>" %(newDoc.absolute_url(),newDoc.getItem('numero_pratica'))
+doc.setItem('ws_response_message',msg + msgNew)
+
+msg = newDoc.getItem('ws_response_message')
+msgNew = "<div class='alert alert-success'><h5><a href='%s'>Richiesta autorizzazione in merito al vincolo idrogeologico relativa a pratica %s </a> </h5></div>" %(doc.absolute_url(),doc.getItem('numero_pratica'))
+newDoc.setItem('ws_response_message',msg + msgNew)
+
+newDoc.save(onSaveEvent=False)  
+                      
+return newDoc.getId()
+]]></resource>
+      <resource id="setClonePaesaggistica" title="" type="Script (Python)"><![CDATA[## Script (Python) "setClonePaesaggistica"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import DateToString
+
+if isinstance(doc, basestring):
+    doc = context.getDocument(doc)
+    
+s='paesaggistica'
+app=s
+
+prot = doc.getItem('numero_protocollo')
+data_prot = DateToString(doc.getItem('data_protocollo'),format="%d/%m/%Y")
+
+
+if doc.getItem('procedimento_autorizzazione_paesaggistica_opt')=='1':
+    s='psemplificata'
+    app='paesaggistica-semplificata'
+    msg1='''Istanza di autorizzazione paesaggistica semplificata pervenuta contestualmente all'istanza/comunicazione prot %s del %s''' %(prot,data_prot)
+    msg2='''L'efficacia dell'istanza/comunicazione e' condizionata dall'approvazione dell'autorizzazione paesaggistica semplificata'''
+
+if doc.getItem('procedimento_autorizzazione_paesaggistica_opt')=='2':
+    s='pordinaria'
+    app='paesaggistica-ordinaria'
+    msg1='''Istanza di autorizzazione paesaggistica ordinaria pervenuta contestualmente all'istanza/comunicazione prot %s del %s''' %(prot,data_prot)
+    msg2='''L'efficacia dell'istanza/comunicazione e' condizionata dall'approvazione dell'autorizzazione paesaggistica ordinaria'''
+
+    
+v = doc.getId().split('-')
+newId = v[0]+'-'+v[1]+'-'+ s
+#se l'ho gia duplicato esco
+if context.getDocument(newId):
+    return
+
+newDoc=context.createDocument(docid=newId)
+
+for item in doc.getItems():
+    newDoc.setItem(item, doc.getItem(item))
+
+for f in doc.getFilenames():
+    attached_file = doc.getfile(f)
+    newDoc.setfile(attached_file,f)
+ 
+frm = context.getParentDatabase().getForm('frm_' + app)    
+newDoc.setItem('iol_tipo_app',app)
+newDoc.setItem('iol_form_title',frm.Title())
+newDoc.setItem('identificativo',newDoc.getId())
+newDoc.setItem('titolo_esistente_id',doc.getId())
+newDoc.setItem('msg_paesaggistica',msg1)
+newDoc.setItem('pagopa_enabled',0)
+
+
+ref = doc.getItem('titolo_esistente_id')
+if not ref:
+    ref=newDoc.getId()
+elif isinstance(ref, basestring): 
+    ref=[ref,newDoc.getId()]
+else:
+    try:
+        ref.append(newDoc.getId())
+    except:
+        pass
+doc.setItem('titolo_esistente_id',ref)
+doc.setItem('msg_paesaggistica',msg2)
+context.getParentDatabase().getIndex().indexDocument(doc)
+
+newDoc.removeItem('data_invio_pw')
+newDoc.removeItem('data_protocollo')	
+newDoc.removeItem('numero_protocollo')	
+newDoc.removeItem('qualificazione_intervento_opt')	
+newDoc.removeItem('interventi_strutturali_opt')	
+newDoc.removeItem('vincolo_idrogeologico_opt')
+newDoc.removeItem('procedimento_autorizzazione_paesaggistica_opt')	
+newDoc.removeItem('elenco_pagamenti')	
+newDoc.removeItem('elenco_importi_pagamenti')	
+newDoc.removeItem('elenco_importi_dg')	
+newDoc.removeItem('elenco_importi_aggiuntivi_dg')	
+newDoc.removeItem('pagopa_response')
+
+
+newDoc.doAction('init')
+newDoc.doAction('presentazione')
+newDoc.doAction('protocolla')
+
+msg = doc.getItem('ws_response_message')
+msgNew = "<div class='alert alert-success'><h5><a href='%s'>Autorizzazione paesaggistica acquisita con numero pratica  %s </a> </h5></div>" %(newDoc.absolute_url(),newDoc.getItem('numero_pratica'))
+doc.setItem('ws_response_message',msg + msgNew)
+
+msg = newDoc.getItem('ws_response_message')
+msgNew = "<div class='alert alert-success'><h5><a href='%s'>Autorizzazione paesaggistica relativa a pratica %s </a> </h5></div>" %(doc.absolute_url(),doc.getItem('numero_pratica'))
+newDoc.setItem('ws_response_message',msg + msgNew)
+
+newDoc.save(onSaveEvent=False)  
+                      
+return newDoc.getId()
+]]></resource>
+      <resource id="trovaProtocollo" title="" type="Script (Python)"><![CDATA[## Script (Python) "trovaProtocollo"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=numero='0',anno='2000'
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import StringToDate, DateToString, json_dumps
+db=context.getParentDatabase()
+index=db.getIndex()
+
+brains = index.dbsearch({"numero_protocollo":int(numero),"anno_protocollo":int(anno),"iol_integrabile":1})
+if len(brains)>0:
+    doc=brains[0].getObject()
+    return json_dumps({
+        "success":1, 
+        "message":"La pratica e' stata trovata, e' possibile continuare con la compilazione",
+        "id":brains[0].id, 
+        "pratica":doc.getItem('numero_pratica',brains[0].id), 
+        "data":DateToString(doc.getItem('data_protocollo'),format="%d/%m/%Y"),
+        "anagrafica":doc.getItem('anagrafica_search')
+        })
+else:
+    return json_dumps({"success":0,"message":"Attenzione, la pratica indicata non risulta presente in archivio oppure non si dispone dei diritti di accesso, verificare i dati inseriti. Non e' possibile continuare con la compilazione"})
+]]></resource>
+      <resource id="checkLockInfo" title="" type="Script (Python)"><![CDATA[## Script (Python) "checkLockInfo"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import StringToDate,DateToString,Now
+
+if not doc.isEditMode():
+    return
+
+lockInfo=doc.getItem('IOL_LOCK_INFO')
+if lockInfo:
+    if not doc.getCurrentUserId() in lockInfo:
+        doc.REQUEST.RESPONSE.redirect("%s/EditDocument?openwithform=frm_lockinfo" %doc.absolute_url())
+else:
+    doc.setItem('IOL_LOCK_INFO', "%s %s" %(doc.getCurrentUserId(),DateToString(Now())))
+]]></resource>
+      <resource id="Assegnazione" title="" type="Script (Python)"><![CDATA[## Script (Python) "Assegnazione"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+if isinstance(doc, basestring):
+    doc = context.getDocument(doc)
+
+doc.setWfActivity(activity="Pratica assegnata a %s" %doc.getItem('istruttore_nominativo'), notifyTo=[doc.getItem('istruttore')],priority=1)
+]]></resource>
+      <resource id="getIstanzaAllegati_XX" title="Elenco degli allegati istanza" type="Script (Python)"><![CDATA[## Script (Python) "getIstanzaAllegati_XX"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None, field='allegati_istanza',hidden=False
+##title=Elenco degli allegati istanza
+##
+if isinstance(doc, basestring):
+    doc = context.getDocument(doc)
+
+elenco_campi = context.getElencoAllegati()
+
+result = list()
+for row in elenco_campi:
+    fieldValue = doc.getItem(row[1],{})
+    if fieldValue!={}:
+        titolo=row[0]
+        field=row[1]
+        names=[]
+        for name in fieldValue.keys():
+            names.append(name)
+        if len(names)>0:
+            result.append({"label":titolo,"field":field,"files":names})
+                
+return result
+]]></resource>
+      <resource id="getIstanzaAllegati" title="Elenco degli allegati istanza" type="Script (Python)"><![CDATA[## Script (Python) "getIstanzaAllegati"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None, field='allegati_istanza',hidden=False
+##title=Elenco degli allegati istanza
+##
+db=context.getParentDatabase()
+elenco_campi = context.getElencoAllegati()
+docId = "%s-allegati" %context.getDocSettingsId()
+settings = db.getDocument(docId)
+
+if isinstance(doc, basestring):
+    doc = context.getDocument(doc)
+
+
+rows = settings.getItem(field)
+elenco_ok = [l[0] for l in rows]
+
+  
+hiddenFiles = doc.getItem('IOL_ATTACHMENTS',[]) if hidden else []; 
+  
+result = list()
+for row in elenco_campi:
+    if row[1] in elenco_ok:
+        fieldValue = doc.getItem(row[1],{})
+        
+        if fieldValue and fieldValue!={}:
+            titolo=row[0]
+            field=row[1]
+            names=[]
+            for name in fieldValue.keys():
+                if name not in hiddenFiles:
+                    names.append(name)
+            if len(names)>0:
+                result.append({"label":titolo,"field":field,"files":names})
+                
+return result
+]]></resource>
+      <resource id="getElencoPraticheCollegate_titolo" title="" type="Script (Python)"><![CDATA[## Script (Python) "getElencoPraticheCollegate_titolo"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=docId=''
+##title=
+##
+#NB il documento viene renderizzato usando la form specificata in settings/labelcolumn
+db=context.getParentDatabase()
+idx = db.getIndex()
+if not 'titolo_esistente_id' in idx.indexes():
+    return []
+#la ricerca deve restituire i documenti dei queli l'utente corrente  author
+brains = idx.dbsearch(dict(titolo_esistente_id=docId),sortindex="data_protocollo")
+html=''
+for brain in brains:
+    doc=brain.getObject()
+    html=html+'<p><h5><a target="_blank" href="%s">%s prot. %s del %s </a></h5></p>'%(doc.absolute_url(),doc.getItem('iol_form_title','Documento'),doc.getItem('numero_protocollo'),doc.getItem('data_protocollo_testo'))  
+
+if not html:
+    html = '<p><h5>Nessuna pratica collegata</h5></p>'
+    
+html='<fieldset class="scheduler-border"><legend class="scheduler-border"><a href="%s/EditDocument?openwithform=bo_pratiche_collegate"> Elenco delle pratiche collegate <i class="icon-edit"></i></a></legend>%s</fieldset>'%(context.absolute_url(),html)    
+    
+return html
+]]></resource>
+      <resource id="getElencoPraticheCollegate" title="" type="Script (Python)"><![CDATA[## Script (Python) "getElencoPraticheCollegate"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+#NB il documento viene renderizzato usando la form specificata in settings/labelcolumn
+db=context.getParentDatabase()
+idx = db.getIndex()
+if not 'numero_pratica' in idx.indexes():
+    return ''
+
+if isinstance(doc, basestring):
+    doc = context.getDocument(doc)  
+    
+html=''
+#la ricerca deve restituire i documenti dei quelli l'utente corrente  author
+brains = idx.dbsearch(dict(numero_pratica=doc.getItem('numero_pratica')),sortindex="data_protocollo")
+for brain in brains:
+    if brain.id!=doc.getId():
+        dc=brain.getObject()
+        html=html+'<p><h5><a target="_blank" href="%s">%s prot. %s del %s </a></h5></p>'%(dc.absolute_url(),dc.getItem('iol_form_title','Documento'),dc.getItem('numero_protocollo'),dc.getItem('data_protocollo_testo'))  
+
+if not html:
+    html = '<p><h5>Nessuna pratica collegata</h5></p>'
+    
+html='<fieldset class="scheduler-border"><legend class="scheduler-border"><a href="%s/EditDocument?openwithform=bo_pratiche_collegate"> Elenco delle pratiche collegate <i class="icon-edit"></i></a></legend>%s</fieldset>'%(doc.absolute_url(),html)    
+    
+return html
+]]></resource>
+      <resource id="getPraticheCollegate_XXXXXXXXXXXXXXx" title="" type="Script (Python)"><![CDATA[## Script (Python) "getPraticheCollegate_XXXXXXXXXXXXXXx"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import DateToString
+
+if doc==None:
+    doc=context.getDocument('00615-2017-pdc')
+    
+if not doc.isDocument():
+    return    
+if not doc.getItem('numero_pratica'):
+    return
+
+db=context.getParentDatabase()
+index=db.getIndex()
+query={'numero_pratica':str(doc.getItem('numero_pratica'))}
+
+titoli = dict(iniziolavori="Inizio lavori",finelavori="Fine lavori",integrazione="Integrazione",sca="SCA")
+
+s=''
+brains = index.dbsearch(
+        query,
+        sortindex='data_protocollo',
+        only_allowed=True)
+
+for brain in brains:
+    if brain.id != doc.getId():
+        titolo = titoli.get(brain.iol_tipo_app)
+        url = brain.getObject().absolute_url()
+        s+= '<p><h3 class="plomino-accordion-header"><a href="%s">%s prot. %s del. %s</a></h3><div>Content</div></p>'%(url,titolo, brain.numero_protocollo, DateToString(brain.data_protocollo,format="%d/%m/%Y"))
+
+if s:
+    return '<div><h3>Pratiche collegate</h3>' + s + '</div>'
+]]></resource>
+      <resource id="copy_of_sendMailJ" title="" type="Script (Python)"><![CDATA[## Script (Python) "copy_of_sendMailJ"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None,azione='presentazione-ok',form=''
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import StringToDate, DateToString, Now, asUnicode
+from iol.document.plomino_utils import SendMailJ,serialDoc,getMailAddress
+
+disclaimer='''
+
+====================
+Questo e' un messaggio di posta elettronica generato automaticamente dal sistema.
+La preghiamo di non rispondere/inviare email all'indirizzo mittente, perche' e' una casella applicativa, pertanto qualsiasi messaggio non sara' letto.
+
+Clausola di riservatezza
+Le informazioni contenute in questo messaggio di posta elettronica sono riservate e confidenziali e ne e' vietata la diffusione in qualunque modo eseguita. Qualora Lei non fosse la persona a cui il presente messaggio e' destinato, La invitiamo gentilmente ad eliminarlo dopo averne dato tempestiva comunicazione al mittente e a non utilizzare in alcun caso il suo contenuto. Qualsiasi utilizzo non autorizzato di questo messaggio e dei suoi eventuali allegati espone il responsabile alle relative conseguenze civili e penali.
+
+Notice to recipient
+This e-mail is strictly confidential and meant for only the intended recipient of the transmission. If you received this e-mail by mistake, any review, use, dissemination, distribution, or copying of this e-mail is strictly prohibited. Please notify us immediately of the error by return e-mail and please delete this message from your system. Thank you in advance for your cooperation.
+====================
+'''
+
+if isinstance(doc, basestring):
+    doc = context.getDocument(doc)
+
+db = context.getParentDatabase()
+
+url = db.resources.config().get("wsMailJ")
+
+if not url:
+    return
+
+if isinstance(doc, basestring):
+    doc = context.getDocument(doc)
+
+#configurazione messaggi da settings    
+settingsId = context.getDocSettingsId()
+docConfig = context.getDocSettings()
+
+if not docConfig:
+    err = "MANCA IL DOCUMENTO DI CONFIGURAZIONE %s" % settingsId
+    doc.plone_utils.addPortalMessage('invio mail fallita %s' %err,'error')
+    return
+
+#serializzazione dati documento
+formId = form or 'sub_completa_' + doc.getItem('iol_tipo_app')
+messageConfig = docConfig.getItem("mail_settings",[])
+data = serialDoc(doc,formid=formId)
+if not data:
+    err = "Errore nella serializzazione del documento con form: %s" %formId
+    doc.plone_utils.addPortalMessage('invio mail fallita %s' %err,'error')
+    return
+
+#dati fissi
+data["CURRENT_DATE"] = DateToString(Now(),format="%d/%m/%Y")
+data["DOC_URL"] = doc.absolute_url()    
+
+#id di riferimento nel db pec
+docId = doc.getId()+"|"+db.getId()   
+
+
+destinatari = []
+if doc.getItem('progettista_pec'):
+    destinatari.append(doc.getItem('progettista_pec'))
+if doc.getItem('tecnico_pec'):
+    destinatari.append(doc.getItem('tecnico_pec'))
+if doc.getItem('delegato_pec'):
+    destinatari.append(doc.getItem('delegato_pec'))    
+if not doc.getItem('consenso_pec') or doc.getItem('iol_tipo_app')=='aua':
+    if doc.getItem('fisica_pec'):
+        destinatari.append(doc.getItem('fisica_pec'))    
+
+    
+#messaggio template da config: filtro quelli relativi all'azione
+messages = filter(lambda x: x[0] == azione, messageConfig)
+
+if len(messages)==0:
+    err = "MANCA LA CONFIGURAZIONE PER L'AZIONE %s" %azione
+    doc.plone_utils.addPortalMessage('invio mail fallita %s' %err,'error')
+    return
+    
+    
+###prendo solo il primo (potrei gestire piu azioni di invio email) e genero il messaggio
+message = messages[0]
+try:         
+    oggetto = asUnicode(message[4] %data) or ""
+    oggetto=oggetto.replace("&","e")
+    
+    #patch per far funzionare template
+    oggetto = "__GENERICA__"+oggetto
+    testo = asUnicode(message[5] %data) or ""
+    testo=testo + asUnicode(disclaimer)
+    testo=testo.replace("\n","<BR />")
+    testo=testo.replace("&","e")
+except Exception as err:
+    doc.plone_utils.addPortalMessage('invio mail fallita, errore nel campo %s' %err,'error')
+    return
+
+
+for destinatario in destinatari:
+    try: 
+        print destinatario,oggetto,testo
+        #SendMailJ(url, "FORJMAIL", docId, "1", "suap.comune.laspezia@legalmail.it", destinatario, '', oggetto, testo, "") 
+    except Exception as err:
+        doc.plone_utils.addPortalMessage('invio mail a %s fallita: %s' %(destinatario,err),'error')
+return printed
+]]></resource>
+      <resource id="Assegna" title="" type="Script (Python)"><![CDATA[## Script (Python) "Assegna"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+if isinstance(doc, basestring):
+    doc = context.getDocument(doc)
+
+doc.setWfActivity(activity="Pratica assegnata a %s" %doc.getItem('istruttore_nominativo'), notifyTo=[doc.getItem('istruttore')],priority=1)
+]]></resource>
+      <resource id="PreavvisoRigetto" title="" type="Script (Python)"><![CDATA[## Script (Python) "PreavvisoRigetto"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import Now
+
+db=doc.getParentDatabase()
+db.resources.customscripts.sendMail(doc=doc,azione='preavviso-rigetto')
+doc.setWfActivity(activity="Preavviso di rigetto istanza")
+doc.setItem('data_comunicazione_preavviso_rigetto',Now())
+doc.setItem('pagopa_locked',1)
+]]></resource>
+      <resource id="Rigetto" title="" type="Script (Python)"><![CDATA[## Script (Python) "Rigetto"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import Now
+
+db=doc.getParentDatabase()
+db.resources.customscripts.sendMail(doc=doc,azione='rigetto')
+doc.setWfActivity(activity="Rigetto dell'istanza")
+doc.setItem('data_comunicazione_rigetto',Now())
+]]></resource>
+      <resource id="RilascioTitolo" title="" type="Script (Python)"><![CDATA[## Script (Python) "RilascioTitolo"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+db=doc.getParentDatabase()
+db.resources.customscripts.sendMail(doc=doc,azione='titolo-ok')
+doc.setWfActivity(activity="Rilascio titolo")
+]]></resource>
+      <resource id="TerminaIstruttoria" title="" type="Script (Python)"><![CDATA[## Script (Python) "TerminaIstruttoria"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import StringToDate, DateToString, Now 
+
+if isinstance(doc, basestring):
+    doc = context.getDocument(doc)
+
+#db=doc.getParentDatabase()
+#doc.setItem('data_titolo',StringToDate(DateToString(Now())))
+#doc.setItem('anno_titolo',int(DateToString(Now(),format='%Y')))
+#doc.setItem('numero_titolo',doc.getDocNumber('numero_titolo'))
+#doc.getParentDatabase().getIndex().indexDocument(doc)
+
+#crea il pdf del titolo e lo sostiuisce al docx
+#db.resources.customscripts.stampaModulo(doc,app='sp',model='',pdf=1,field='allegato_titolo',fromfield='allegato_titolo',addform='bo_titolo')
+]]></resource>
+      <resource id="RichiestaIntegrazione" title="" type="Script (Python)"><![CDATA[## Script (Python) "RichiestaIntegrazione"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+db=doc.getParentDatabase()
+db.resources.customscripts.sendMail(doc=doc,azione='richiesta-integrazione-ok')
+doc.setWfActivity(activity="Richiesta documentazione integrativa")
+]]></resource>
+      <resource id="SetImportiPresentazione" title="" type="Script (Python)"><![CDATA[## Script (Python) "SetImportiPresentazione"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+db=doc.getParentDatabase()
+#per i rinnovi mando direttamente alla firma
+if doc.getItem('iol_tipo_app') in ['rinnovo-dehor','rinnovo-commercio']:
+    db.resources.config_pagopa(doc=doc,azione='alla_firma_rinnovo')
+else:
+    db.resources.config_pagopa(doc=doc,azione='presentazione')
+]]></resource>
+      <resource id="SetImportiRilascio" title="" type="Script (Python)"><![CDATA[## Script (Python) "SetImportiRilascio"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+db=doc.getParentDatabase()
+db.resources.config_pagopa(doc=doc, azione='alla_firma')
+]]></resource>
+      <resource id="getBloccoRinnovo" title="" type="Script (Python)"><![CDATA[## Script (Python) "getBloccoRinnovo"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=
+##title=
+##
+if context.getParentDatabase().hasCurrentUserRight('PlominoEditor'):
+    return False
+else:
+    return context.getParentDatabase().resources.config().get('BLOCCO_RINNOVI')
+]]></resource>
+      <resource id="sendMailJTEST" title="" type="Script (Python)"><![CDATA[## Script (Python) "sendMailJTEST"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None,azione='presentazione-ok',form=''
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import StringToDate, DateToString, Now, asUnicode
+from iol.document.plomino_utils import SendMailJ,serialDoc,getMailAddress
+
+disclaimer='''
+
+====================
+Questo e' un messaggio di posta elettronica generato automaticamente dal sistema.
+La preghiamo di non rispondere/inviare email all'indirizzo mittente, perche' e' una casella applicativa, pertanto qualsiasi messaggio non sara' letto.
+
+Clausola di riservatezza
+Le informazioni contenute in questo messaggio di posta elettronica sono riservate e confidenziali e ne e' vietata la diffusione in qualunque modo eseguita. Qualora Lei non fosse la persona a cui il presente messaggio e' destinato, La invitiamo gentilmente ad eliminarlo dopo averne dato tempestiva comunicazione al mittente e a non utilizzare in alcun caso il suo contenuto. Qualsiasi utilizzo non autorizzato di questo messaggio e dei suoi eventuali allegati espone il responsabile alle relative conseguenze civili e penali.
+
+Notice to recipient
+This e-mail is strictly confidential and meant for only the intended recipient of the transmission. If you received this e-mail by mistake, any review, use, dissemination, distribution, or copying of this e-mail is strictly prohibited. Please notify us immediately of the error by return e-mail and please delete this message from your system. Thank you in advance for your cooperation.
+====================
+'''
+
+if isinstance(doc, basestring):
+    doc = context.getDocument(doc)
+
+db = context.getParentDatabase()
+
+url = db.resources.config().get("wsMailJ")
+
+if not url:
+    return
+
+if isinstance(doc, basestring):
+    doc = context.getDocument(doc)
+
+#configurazione messaggi da settings    
+settingsId = context.getDocSettingsId()
+docConfig = context.getDocSettings()
+
+if not docConfig:
+    err = "MANCA IL DOCUMENTO DI CONFIGURAZIONE %s" % settingsId
+    doc.plone_utils.addPortalMessage('invio mail fallita %s' %err,'error')
+    return
+
+#serializzazione dati documento
+formId = form or 'sub_completa_' + doc.getItem('iol_tipo_app')
+messageConfig = docConfig.getItem("mail_settings",[])
+data = serialDoc(doc,formid=formId)
+if not data:
+    err = "Errore nella serializzazione del documento con form: %s" %formId
+    doc.plone_utils.addPortalMessage('invio mail fallita %s' %err,'error')
+    return
+
+#dati fissi
+data["CURRENT_DATE"] = DateToString(Now(),format="%d/%m/%Y")
+data["DOC_URL"] = doc.absolute_url()    
+
+#id di riferimento nel db pec
+docId = doc.getId()+"|"+db.getId()   
+
+
+destinatari = []
+if doc.getItem('delegato_opt'):
+    destinatari.append(doc.getItem('delegato_pec'))
+    #anche al richiedente
+    if not doc.getItem('consenso_pec'):
+        destinatari.append(doc.getItem('giuridica_pec'))
+else:
+    #solo richiedente
+    destinatari.append(doc.getItem('giuridica_pec'))
+    
+if not doc.getItem('fisica_pec') in destinatari:
+    destinatari.append(doc.getItem('fisica_pec'))
+   
+
+#messaggio template da config: filtro quelli relativi all'azione
+messages = filter(lambda x: x[0] == azione, messageConfig)
+
+if len(messages)==0:
+    err = "MANCA LA CONFIGURAZIONE PER L'AZIONE %s" %azione
+    doc.plone_utils.addPortalMessage('invio mail fallita %s' %err,'error')
+    return
+    
+    
+###prendo solo il primo (potrei gestire piu azioni di invio email) e genero il messaggio
+message = messages[0]
+try:         
+    oggetto = asUnicode(message[4] %data) or ""
+    oggetto=oggetto.replace("&","e")
+    #patch per far funzionare template
+    oggetto = "__GENERICA__"+oggetto
+    testo = asUnicode(message[5] %data) or ""
+    testo=testo + asUnicode(disclaimer)
+    testo=testo.replace("\n","<BR />")
+    testo=testo.replace("&","e")
+
+except Exception as err:
+    doc.plone_utils.addPortalMessage('invio mail fallita, errore nel campo %s' %err,'error')
+    return
+
+
+###test
+destinatari=['roberto.starnini@gmail.com']
+
+for destinatario in destinatari:
+    try: 
+        SendMailJ(url, "FORJMAIL", docId, "1", "suap.comune.laspezia@legalmail.it", destinatario, '', oggetto, testo, "") 
+    except Exception as err:
+        doc.plone_utils.addPortalMessage('invio mail a %s fallita: %s' %(destinatario,err),'error')
+]]></resource>
+      <resource id="RichiediPagamentoTitolo" title="" type="Script (Python)"><![CDATA[## Script (Python) "RichiediPagamentoTitolo"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+db=doc.getParentDatabase()
+db.resources.customscripts.sendMail(doc=doc,azione='pagamento-titolo')
+]]></resource>
+      <resource id="alla_firma_rinnovo" title="" type="Script (Python)"><![CDATA[## Script (Python) "alla_firma_rinnovo"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import StringToDate, DateToString, Now 
+
+if isinstance(doc, basestring):
+    doc = context.getDocument(doc)
+
+db=context.getParentDatabase()
+parentDoc = db.getDocument(doc.getItem('documento_esistente_id'))
+tipo_app=parentDoc.getItem('iol_tipo_app')
+
+doc.setItem('numero_titolo',doc.getDocNumber('numero_titolo'))
+doc.setItem('data_titolo',StringToDate(DateToString(Now())))
+doc.setItem('anno_titolo',int(DateToString(Now(),format='%Y')))  
+
+context.stampaModulo(doc,
+            model='autorizzazione-dehor',
+            app=context.getParentDatabase().getId().replace('iol_',''),
+            grp='back-office',
+            pdf=1,
+            field='allegato_allafirma_titolo',
+            addform='bo_istruttoria')
+
+
+
+#todo da mandare alla firma
+]]></resource>
+      <resource id="setParentInfo" title="Copia dati su rinnovo" type="Script (Python)"><![CDATA[## Script (Python) "setParentInfo"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=Copia dati su rinnovo
+##
+from Products.CMFPlomino.PlominoUtils import StringToDate, DateToString
+
+if isinstance(doc, basestring):
+    doc = context.getDocument(doc)
+
+db=context.getParentDatabase()
+doc.setItem('identificativo',doc.getId())
+doc.setItem('tipo_occupazione','permanente')
+parentDoc = db.getDocument(doc.getItem('documento_esistente_id'))
+
+### id autorizzazione = id autorizzazione originale propagato nei rinnovi successivi
+if parentDoc:
+    
+    idAutorizzazione = str(parentDoc.getItem('id_autorizzazione',parentDoc.getId()))
+    #anno=str(int(DateToString(parentDoc.getItem('autorizzata_dal'),format="%Y"))+1)
+    doc.setItem('id_autorizzazione', idAutorizzazione)
+    autDoc = db.getDocument(idAutorizzazione)
+    if autDoc:
+        doc.setItem('parent_tipo_app', autDoc.getItem('iol_tipo_app'))    
+    
+    anno=str(parentDoc.getItem('anno_autorizzazione')+1)
+    doc.setItem('anno_autorizzazione',int(anno))
+    doc.setItem('autorizzata_dal',StringToDate("01/01/"+anno, format="%d/%m/%Y"))
+    doc.setItem('autorizzata_al',StringToDate("31/12/"+anno, format="%d/%m/%Y"))
+    ss = "%s %s" %(DateToString(doc.getItem('autorizzata_dal'),format="%d/%m/%Y"),DateToString(doc.getItem('autorizzata_al'),format="%d/%m/%Y"))       
+    doc.setItem('autorizzata_dal_al',ss)
+      
+    ss =  "%s %s %s" %(doc.getItem('fisica_cognome'), doc.getItem('delegato_cognome'), doc.getItem('giuridica_denominazione'))            
+    doc.setItem('anagrafica_search', ss)
+    doc.setItem('fisica_search', parentDoc.getItem('fisica_search'))
+    doc.setItem('giuridica_denominazione', parentDoc.getItem('giuridica_denominazione'))
+    doc.setItem('iol_tipo_proc', parentDoc.getItem('iol_tipo_proc'))
+    doc.setItem('indirizzo_search', parentDoc.getItem('indirizzo_search'))
+    doc.setItem('istruttoria_prescrizioni', parentDoc.getItem('istruttoria_prescrizioni'))
+    doc.setItem('istruttoria_prescrizioni_opt', parentDoc.getItem('istruttoria_prescrizioni_opt'))
+    doc.setItem('istruttoria_annotazioni', parentDoc.getItem('istruttoria_annotazioni'))
+    doc.setItem('superficie_interna', parentDoc.getItem('superficie_interna'))
+    doc.setItem('superficie_old', parentDoc.getItem('superficie_old',0))
+    doc.setItem('zona_cosap', parentDoc.getItem('zona_cosap'))
+    
+    ### COPIO I DATI DA sub_dehor_dati
+    frmDati = context.getForm('sub_dehor_dati')
+    for field in frmDati.getFormFields():
+        if parentDoc.getItem(field.id):
+            doc.setItem(field.id,parentDoc.getItem(field.id))
+    
+    doc.removeItem('importo_cosap')
+    doc.setItem('tariffa', context.getParentDatabase().resources.cosap.getTariffa(data=doc.getItem('autorizzata_dal'),temp=0))
+    doc.setItem('importo_cosap',db.resources.cosap.getImportoCosap(doc, dal="01/01/"+anno))  
+    doc.setItem('info_cosap',db.resources.cosap.getImportoCosap(doc, dal="01/01/"+anno,textinfo=1))    
+
+
+db.getIndex().indexDocument(doc)
+]]></resource>
+      <resource id="AnnullaProcedimento" title="" type="Script (Python)"><![CDATA[## Script (Python) "AnnullaProcedimento"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import StringToDate, DateToString, Now 
+
+
+if isinstance(doc, basestring):
+    doc = context.getDocument(doc)
+
+
+db=context.getParentDatabase()
+doc.setItem('data_comunicazione_annullo_procedimento',Now())
+context.sendMail(doc=doc,azione='annullo-procedimento')
+]]></resource>
+    </resource>
+  </design>
+</plominodatabase>

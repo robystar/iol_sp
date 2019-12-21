@@ -1,0 +1,23 @@
+<plominodatabase id="iol_sp">
+  <design>
+    <resource id="AvvisoRinnovi" title="Invia mail di avviso rinnovi" type="Script (Python)"><![CDATA[## Script (Python) "AvvisoRinnovi"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=
+##title=Invia mail di avviso rinnovi
+##
+for doc in context.getAllDocuments():
+    if doc.getItem('iol_tipo_app','') != '' and doc.getItem('tipo_occupazione') == 'permanente' and doc.getItem('data_titolo','')!='' and str(doc.getItem('anno_autorizzazione','')) == '2019':
+        print doc.getId()
+        context.customscripts.sendMailJ(doc=doc,azione="avviso-rinnovo")
+
+        
+        
+        
+return printed
+]]></resource>
+  </design>
+</plominodatabase>

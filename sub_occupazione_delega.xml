@@ -1,0 +1,180 @@
+<plominodatabase id="iol_sp">
+  <design>
+    <element id="sub_occupazione_delega" title="sub_occupazione_delega" type="PlominoForm">
+      <id type="Products.Archetypes.Field.StringField">sub_occupazione_delega</id>
+      <onCreateDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></onCreateDocument>
+      <onOpenDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></onOpenDocument>
+      <beforeSaveDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></beforeSaveDocument>
+      <onSaveDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></onSaveDocument>
+      <onDeleteDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></onDeleteDocument>
+      <onSearch type="Products.Archetypes.Field.TextField"><![CDATA[]]></onSearch>
+      <beforeCreateDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></beforeCreateDocument>
+      <FormLayout type="Products.Archetypes.Field.TextField"><![CDATA[<div class="v-content well">
+<fieldset class="scheduler-border">
+<legend class="scheduler-border"> Estremi per l'individuazione della pratica </legend>
+<div class="row-fluid">
+<div class="span4">
+<span class="plominoLabelClass">numero_pratica_delega</span><span class="plominoFieldClass">numero_pratica_delega</span>
+</div>
+<div class="span4">
+<span class="plominoLabelClass">numero_autorizzazione_delega</span><span class="plominoFieldClass">numero_autorizzazione_delega</span>
+</div>
+<div class="span4">
+<span class="plominoLabelClass">cf_delega</span><span class="plominoFieldClass">cf_delega</span>
+</div>
+</div>
+</fieldset>
+<div>
+<span class="plominoLabelClass">motivazione_delega</span><span class="plominoFieldClass">motivazione_delega</span>
+</div>
+<div class="row-fluid">
+<div class="span7">
+<span class="plominoLabelClass">delega_allegato</span><span class="plominoFieldClass">delega_allegato</span>
+</div>
+<div class="span5">
+<span class="plominoLabelClass">allega_delega</span><span class="plominoFieldClass">allega_delega</span>
+</div>
+</div>
+</div>]]></FormLayout>
+      <FormMethod type="Products.Archetypes.Field.TextField"><![CDATA[Auto]]></FormMethod>
+      <DocumentTitle type="Products.Archetypes.Field.TextField"><![CDATA[]]></DocumentTitle>
+      <DynamicDocumentTitle type="Products.Archetypes.Field.BooleanField">False</DynamicDocumentTitle>
+      <StoreDynamicDocumentTitle type="Products.Archetypes.Field.BooleanField">False</StoreDynamicDocumentTitle>
+      <DocumentId type="Products.Archetypes.Field.TextField"><![CDATA[]]></DocumentId>
+      <ActionBarPosition type="Products.Archetypes.Field.StringField">TOP</ActionBarPosition>
+      <HideDefaultActions type="Products.Archetypes.Field.BooleanField">False</HideDefaultActions>
+      <HideInMenu type="Products.Archetypes.Field.BooleanField">True</HideInMenu>
+      <isSearchForm type="Products.Archetypes.Field.BooleanField">False</isSearchForm>
+      <isPage type="Products.Archetypes.Field.BooleanField">False</isPage>
+      <SearchView type="Products.Archetypes.Field.StringField"/>
+      <SearchFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></SearchFormula>
+      <Position type="Products.Archetypes.Field.IntegerField"/>
+      <ResourcesJS type="Products.Archetypes.Field.TextField"><![CDATA[]]></ResourcesJS>
+      <ResourcesCSS type="Products.Archetypes.Field.TextField"><![CDATA[++resource++iol.document/css/bootstrap.min.css
+++resource++iol.document/css/bootstrap-accessibile.min.css
+++resource++iol.document/css/bootstrap-responsive.min.css
+++resource++iol.document/css/iol.css
+resources/iol-custom.css]]></ResourcesCSS>
+      <excludeFromNav type="Products.Archetypes.Field.BooleanField">False</excludeFromNav>
+      <elements>
+        <element id="numero_pratica_delega" title="Numero pratica" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">numero_pratica_delega</id>
+          <FieldType type="Products.Archetypes.Field.StringField">TEXT</FieldType>
+          <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[]]></Formula>
+          <FieldReadTemplate type="Products.Archetypes.Field.StringField"/>
+          <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
+          <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>
+          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[from Products.CMFPlomino.PlominoUtils import StringToDate, Now, DateToString
+db=context.getParentDatabase()
+idx = db.getIndex()
+stato = context.getItem('stato','avvio')
+
+query = idx.dbsearch({'numero_autorizzazione_delega':context.getItem('numero_autorizzazione_delega').strip(),'cf_delega':context.getItem('cf_delega').strip()})
+
+if len(query)>0 and context.getItem('delega_fallita','')=='0' and stato == 'avvio':
+    return '''Attenzione! Per il numero di autorizzazione: %s e codice fiscale: %s e' gia' stata effettuata richiesta di rinnovo in delega. Consultare la sezione "Le mie pratiche" per ricercare il documento desiderato''' %(context.getItem('numero_autorizzazione_delega'),context.getItem('cf_delega'))]]></ValidationFormula>
+          <ToBeIndexed type="Products.Archetypes.Field.BooleanField">True</ToBeIndexed>
+          <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
+          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></HTMLAttributesFormula>
+        </element>
+        <element id="numero_autorizzazione_delega" title="Numero autorizzazione " type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">numero_autorizzazione_delega</id>
+          <FieldType type="Products.Archetypes.Field.StringField">TEXT</FieldType>
+          <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[]]></Formula>
+          <FieldReadTemplate type="Products.Archetypes.Field.StringField"/>
+          <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
+          <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>
+          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[from Products.CMFPlomino.PlominoUtils import StringToDate, Now, DateToString
+db=context.getParentDatabase()
+idx = db.getIndex()
+stato = context.getItem('stato','avvio')
+
+query = idx.dbsearch({'numero_autorizzazione_delega':context.getItem('numero_autorizzazione_delega').strip(),'cf_delega':context.getItem('cf_delega').strip()})
+
+if len(query)>0 and context.getItem('delega_fallita','')=='0' and stato == 'avvio':
+    return '''Attenzione! Per il numero di autorizzazione: %s e codice fiscale: %s e' gia' stata effettuata richiesta di rinnovo in delega. Consultare la sezione "Le mie pratiche" per ricercare il documento desiderato''' %(context.getItem('numero_autorizzazione_delega'),context.getItem('cf_delega'))]]></ValidationFormula>
+          <ToBeIndexed type="Products.Archetypes.Field.BooleanField">True</ToBeIndexed>
+          <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
+          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></HTMLAttributesFormula>
+        </element>
+        <element id="allega_delega" title="Allega delega" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">allega_delega</id>
+          <FieldType type="Products.Archetypes.Field.StringField">ATTACHMENT</FieldType>
+          <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[]]></Formula>
+          <FieldReadTemplate type="Products.Archetypes.Field.StringField">ATTACHMENTFieldRead</FieldReadTemplate>
+          <FieldEditTemplate type="Products.Archetypes.Field.StringField">ATTACHMENTFieldEdit</FieldEditTemplate>
+          <Mandatory type="Products.Archetypes.Field.BooleanField">True</Mandatory>
+          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
+          <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>
+          <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
+          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA['data-plugin = "iolUploadFile" data-plugin-options={"emptyMessage":"Caricare ..."}']]></HTMLAttributesFormula>
+        </element>
+        <element id="cf_delega" title="P.IVA / Codice Fiscale titolare" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">cf_delega</id>
+          <FieldType type="Products.Archetypes.Field.StringField">TEXT</FieldType>
+          <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[]]></Formula>
+          <FieldReadTemplate type="Products.Archetypes.Field.StringField"/>
+          <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
+          <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>
+          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
+          <ToBeIndexed type="Products.Archetypes.Field.BooleanField">True</ToBeIndexed>
+          <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
+          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></HTMLAttributesFormula>
+        </element>
+        <element id="delega_allegato" title="Scarica il documento di delega (firma digitale per soggetto delegato)" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">delega_allegato</id>
+          <FieldType type="Products.Archetypes.Field.StringField">TEXT</FieldType>
+          <FieldMode type="Products.Archetypes.Field.StringField">DISPLAY</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[allegati='%s/resources/delega.pdf' %(context.getParentDatabase().absolute_url())
+
+allegato='.'.join(allegati)
+attachment = '%s/getfile?filename=%s' %(context.getParentDatabase().absolute_url(),allegati)
+
+return '''<div class="span4"><ul aria-labelledby="dLabel"><li><a target="new" href =%s><img src="pdf_icon.png" /><span>%s</span></a></li></ul></div> ''' %(allegati,'Delega')]]></Formula>
+          <FieldReadTemplate type="Products.Archetypes.Field.StringField">WORKFLOWFieldRead</FieldReadTemplate>
+          <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
+          <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>
+          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
+          <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>
+          <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
+          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></HTMLAttributesFormula>
+        </element>
+        <element id="motivazione_delega" title="Motivazione della richiesta" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">motivazione_delega</id>
+          <FieldType type="Products.Archetypes.Field.StringField">TEXT</FieldType>
+          <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[]]></Formula>
+          <FieldReadTemplate type="Products.Archetypes.Field.StringField"/>
+          <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
+          <Mandatory type="Products.Archetypes.Field.BooleanField">True</Mandatory>
+          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
+          <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>
+          <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
+          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></HTMLAttributesFormula>
+          <params>
+<param>
+<value><array><data>
+<value><struct>
+<member>
+<name>size</name>
+<value><string>4</string></value>
+</member>
+</struct></value>
+<value><struct>
+<member>
+<name>widget</name>
+<value><string>TEXTAREA</string></value>
+</member>
+</struct></value>
+</data></array></value>
+</param>
+</params>
+        </element>
+      </elements>
+    </element>
+  </design>
+</plominodatabase>

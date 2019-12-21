@@ -1,0 +1,25 @@
+<plominodatabase id="iol_sp">
+  <design>
+    <element id="onPagoPaOk" title="onPagoPaOk" type="PlominoAgent">
+      <id type="Products.Archetypes.Field.StringField">onPagoPaOk</id>
+      <Content type="Products.Archetypes.Field.TextField"><![CDATA[docId = args[0]
+data = args[1]
+db=context.getParentDatabase()
+
+if 'esito' in data and data['esito']=='OK' and 'azioni' in data:
+    doc=db.getDocument(docId)
+    
+    #fix eventuali valori duplicati
+    v=data['azioni'].split(',')
+    azioni=[]
+    for azione in v:
+        if not azione in azioni:
+            azioni.append(azione)
+    
+    for azione in azioni:
+        if doc and doc.isActionSupported(azione):
+            doc.doAction(azione)]]></Content>
+      <RunAs type="Products.Archetypes.Field.StringField">OWNER</RunAs>
+    </element>
+  </design>
+</plominodatabase>

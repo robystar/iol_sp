@@ -1,0 +1,44 @@
+<plominodatabase id="iol_sp">
+  <design>
+    <resource id="PagamentiMancanti" title="" type="Script (Python)"><![CDATA[## Script (Python) "PagamentiMancanti"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import json_dumps,json_loads,StringToDate,DateToString,decimal
+
+for doc in context.getAllDocuments():
+    if doc.getItem('numero_autorizzazione') and doc.getItem('autorizzata_dal')>=StringToDate('2019-01-01'):
+        
+        importi=doc.getItem('elenco_importi_dg',[])
+        pagamenti="".join([row[0] for row in doc.getItem('elenco_pagamenti_dg',[])])
+        
+        
+        
+        s='<a target="blank_" href="%s">%s</a>' %(doc.absolute_url(),doc.getId().ljust(23, '#'))
+        
+        if doc.getItem('accertamento_opt'):
+            print "<p>%s --- PRATICA IN ACCERTAMENTO</p>" %s
+        else:
+            ret = [s]
+            for row in importi:
+                if row[0] not in pagamenti:
+                    ret.append(row[2])
+                          
+            if len(ret)>1:
+                print "<p>" + " --- ".join(ret) + "</p>"
+                #invio email di avviso
+                #context.customscripts.sendMailJ(doc=doc,azione="avviso-4rata")
+                #context.plone_log(doc.getId())
+                
+                
+                
+             
+return printed
+]]></resource>
+  </design>
+</plominodatabase>

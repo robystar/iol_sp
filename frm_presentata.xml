@@ -1,0 +1,225 @@
+<plominodatabase id="iol_sp">
+  <design>
+    <element id="frm_presentata" title="Pratica presentata" type="PlominoForm">
+      <id type="Products.Archetypes.Field.StringField">frm_presentata</id>
+      <onCreateDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></onCreateDocument>
+      <onOpenDocument type="Products.Archetypes.Field.TextField"><![CDATA[if context.isEditMode():
+    context.REQUEST.RESPONSE.redirect(context.absolute_url())]]></onOpenDocument>
+      <beforeSaveDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></beforeSaveDocument>
+      <onSaveDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></onSaveDocument>
+      <onDeleteDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></onDeleteDocument>
+      <onSearch type="Products.Archetypes.Field.TextField"><![CDATA[]]></onSearch>
+      <beforeCreateDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></beforeCreateDocument>
+      <FormLayout type="Products.Archetypes.Field.TextField"><![CDATA[
+<div class="iol-toolbar"></div>
+<p><span class="plominoHidewhenClass">start:hw_no_istruttore</span></p>
+<div id="mydoc"></div>
+<p><span class="plominoHidewhenClass">end:hw_no_istruttore</span></p>
+<p><span class="plominoHidewhenClass">start:hw_istruttore</span></p>
+<p><span class="plominoFieldClass">ws_response_message</span></p>
+<p><span class="plominoFieldClass">iol_workflow_title</span></p>
+<p><span class="plominoSubformClass">base_sub_pagopa</span></p>
+<p><span class="plominoFieldClass">autorizzazione</span></p>
+<p><span class="plominoFieldClass">display_document</span></p>
+<p><span class="plominoFieldClass">pratiche_collegate</span></p>
+<p><span class="plominoHidewhenClass">end:hw_istruttore</span></p>
+<p><span class="plominoFieldClass">google_map_key</span></p>
+]]></FormLayout>
+      <FormMethod type="Products.Archetypes.Field.TextField"><![CDATA[Auto]]></FormMethod>
+      <DocumentTitle type="Products.Archetypes.Field.TextField"><![CDATA[]]></DocumentTitle>
+      <DynamicDocumentTitle type="Products.Archetypes.Field.BooleanField">False</DynamicDocumentTitle>
+      <StoreDynamicDocumentTitle type="Products.Archetypes.Field.BooleanField">False</StoreDynamicDocumentTitle>
+      <DocumentId type="Products.Archetypes.Field.TextField"><![CDATA[]]></DocumentId>
+      <ActionBarPosition type="Products.Archetypes.Field.StringField">TOP</ActionBarPosition>
+      <HideDefaultActions type="Products.Archetypes.Field.BooleanField">True</HideDefaultActions>
+      <HideInMenu type="Products.Archetypes.Field.BooleanField">True</HideInMenu>
+      <isSearchForm type="Products.Archetypes.Field.BooleanField">False</isSearchForm>
+      <isPage type="Products.Archetypes.Field.BooleanField">True</isPage>
+      <SearchView type="Products.Archetypes.Field.StringField"/>
+      <SearchFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></SearchFormula>
+      <Position type="Products.Archetypes.Field.IntegerField"/>
+      <ResourcesJS type="Products.Archetypes.Field.TextField"><![CDATA[++resource++iol.document/js/controller_combo_civici.js
+++resource++iol.document/js/controller_posizione.js
+resources/controller_occupazione_edit.js]]></ResourcesJS>
+      <ResourcesCSS type="Products.Archetypes.Field.TextField"><![CDATA[++resource++iol.document/css/bootstrap.min.css
+++resource++iol.document/css/bootstrap-accessibile.min.css
+++resource++iol.document/css/bootstrap-responsive.min.css
+++resource++iol.document/css/iol.css
+++resource++iol.document/css/iolmap.css
+resources/iol-custom.css]]></ResourcesCSS>
+      <excludeFromNav type="Products.Archetypes.Field.BooleanField">False</excludeFromNav>
+      <elements>
+        <element id="btn_close" title="Chiudi" type="PlominoAction">
+          <id type="Products.Archetypes.Field.StringField">btn_close</id>
+          <ActionType type="Products.Archetypes.Field.StringField">CLOSE</ActionType>
+          <ActionDisplay type="Products.Archetypes.Field.StringField">BUTTON</ActionDisplay>
+          <Content type="Products.Archetypes.Field.TextField"><![CDATA[]]></Content>
+          <Hidewhen type="Products.Archetypes.Field.TextField"><![CDATA[]]></Hidewhen>
+          <InActionBar type="Products.Archetypes.Field.BooleanField">True</InActionBar>
+        </element>
+        <element id="hw_istruttore" title="hw_istruttore" type="PlominoHidewhen">
+          <id type="Products.Archetypes.Field.StringField">hw_istruttore</id>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[if context.getItem('iol_tipo_app') in ['integrazione']:
+    return False
+
+if not context.getwfVariables(varId='wf_presentata'):
+    return False
+
+try:
+    return context.getParentDatabase().hasCurrentUserRight('PlominoEditor')
+except:
+    return True]]></Formula>
+          <isDynamicHidewhen type="Products.Archetypes.Field.BooleanField">False</isDynamicHidewhen>
+        </element>
+        <element id="hw_no_istruttore" title="hw_no_istruttore" type="PlominoHidewhen">
+          <id type="Products.Archetypes.Field.StringField">hw_no_istruttore</id>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[if context.getItem('iol_tipo_app') in ['integrazione']:
+    return True
+
+
+try:
+    return not context.getParentDatabase().hasCurrentUserRight('PlominoEditor')
+except:
+    return True]]></Formula>
+          <isDynamicHidewhen type="Products.Archetypes.Field.BooleanField">False</isDynamicHidewhen>
+        </element>
+        <element id="display_document" title="display_document" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">display_document</id>
+          <FieldType type="Products.Archetypes.Field.StringField">TEXT</FieldType>
+          <FieldMode type="Products.Archetypes.Field.StringField">DISPLAY</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[db=context.getParentDatabase()
+tipo_app = context.getItem('iol_tipo_app')
+renderForm=db.getForm('sub_completa_' + tipo_app)
+if renderForm:
+   return asUnicode(renderForm.displayDocument(context))
+else:
+    return '']]></Formula>
+          <FieldReadTemplate type="Products.Archetypes.Field.StringField">TEXTFieldCell</FieldReadTemplate>
+          <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
+          <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>
+          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
+          <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>
+          <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
+          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></HTMLAttributesFormula>
+        </element>
+        <element id="ws_response_message" title="ws_response_message" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">ws_response_message</id>
+          <FieldType type="Products.Archetypes.Field.StringField">TEXT</FieldType>
+          <FieldMode type="Products.Archetypes.Field.StringField">DISPLAY</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[return context.getItem('ws_response_message',"COMUNICAZIONE INVIATA")]]></Formula>
+          <FieldReadTemplate type="Products.Archetypes.Field.StringField">TEXTFieldCell</FieldReadTemplate>
+          <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
+          <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>
+          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
+          <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>
+          <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
+          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></HTMLAttributesFormula>
+        </element>
+        <element id="pratiche_collegate" title="Pratiche collegate" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">pratiche_collegate</id>
+          <FieldType type="Products.Archetypes.Field.StringField">TEXT</FieldType>
+          <FieldMode type="Products.Archetypes.Field.StringField">DISPLAY</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[#NB il documento viene renderizzato usando la form specificata in settings/labelcolumn
+db=context.getParentDatabase()
+idx = db.getIndex()
+if not 'numero_pratica' in idx.indexes():
+    return []
+#la ricerca deve restituire i documenti dei queli l'utente corrente è author
+brains = idx.dbsearch(dict(numero_pratica=context.getItem('numero_pratica')),sortindex="data_protocollo")
+html=''
+for brain in brains:
+    doc=brain.getObject()
+    if doc.getId()!=context.getId():
+        html=html+'<p><h5><a target="_blank" href="%s">%s prot. %s del %s </a></h5></p>'%(doc.absolute_url(),doc.getItem('iol_form_title','Documento'),doc.getItem('numero_protocollo'),doc.getItem('data_protocollo_testo'))  
+
+if not html:
+    html = '<p><h5>Nessuna pratica collegata</h5></p>'
+    
+html='<fieldset class="scheduler-border"><legend class="scheduler-border"><a href="%s/EditDocument?openwithform=bo_pratiche_collegate"> Elenco delle pratiche collegate <i class="icon-edit"></i></a></legend>%s</fieldset>'%(context.absolute_url(),html)    
+    
+return html]]></Formula>
+          <FieldReadTemplate type="Products.Archetypes.Field.StringField">TEXTFieldCell</FieldReadTemplate>
+          <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
+          <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>
+          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
+          <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>
+          <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
+          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></HTMLAttributesFormula>
+        </element>
+        <element id="iol_workflow_title" title="iol_workflow_title" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">iol_workflow_title</id>
+          <FieldType type="Products.Archetypes.Field.StringField">TEXT</FieldType>
+          <FieldMode type="Products.Archetypes.Field.StringField">DISPLAY</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[info = context.getwfInfo()
+return '''<div class = "alert alert-info"><h5>%s</h5></div>''' %info["state_title"]]]></Formula>
+          <FieldReadTemplate type="Products.Archetypes.Field.StringField">TEXTFieldCell</FieldReadTemplate>
+          <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
+          <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>
+          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
+          <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>
+          <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
+          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></HTMLAttributesFormula>
+        </element>
+        <element id="ricevute_pec" title="Ricevute PEC" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">ricevute_pec</id>
+          <FieldType type="Products.Archetypes.Field.StringField">TEXT</FieldType>
+          <FieldMode type="Products.Archetypes.Field.StringField">DISPLAY</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[return context.getParentDatabase().resources.customscripts.getElencoPEC(context)]]></Formula>
+          <FieldReadTemplate type="Products.Archetypes.Field.StringField">tabella_elenco_pec</FieldReadTemplate>
+          <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
+          <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>
+          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
+          <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>
+          <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
+          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></HTMLAttributesFormula>
+        </element>
+        <element id="google_map_key" title="google_map_key" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">google_map_key</id>
+          <FieldType type="Products.Archetypes.Field.StringField">TEXT</FieldType>
+          <FieldMode type="Products.Archetypes.Field.StringField">DISPLAY</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[#se sono in ajax le lib map sono caricate in frm_presentata
+if 'xOpenDocument' in context.REQUEST.get('URL'):
+    return
+
+db=context.getParentDatabase()
+mapKey = db.resources.customscripts.getMapKey()
+return '''  
+... 
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=%s&libraries=drawing"></script><script type="text/javascript" src="++resource++iol.document/js/proj4js.js"></script><script type="text/javascript" src="++resource++iol.document/js/proj4js-defs.js"></script><script type="text/javascript" src="++resource++iol.document/js/iolGoogleMap.js"></script>
+''' %mapKey]]></Formula>
+          <FieldReadTemplate type="Products.Archetypes.Field.StringField">TEXTFieldCell</FieldReadTemplate>
+          <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
+          <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>
+          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
+          <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>
+          <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
+          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></HTMLAttributesFormula>
+        </element>
+        <element id="autorizzazione" title="Autorizzazione" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">autorizzazione</id>
+          <FieldType type="Products.Archetypes.Field.StringField">TEXT</FieldType>
+          <FieldMode type="Products.Archetypes.Field.StringField">DISPLAY</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[#se non ce titolo non mostro
+if not context.getItem('data_titolo'):
+    return ''
+
+db=context.getParentDatabase()
+renderForm=db.getForm('bo_titolo')
+content=asUnicode(renderForm.displayDocument(context))
+html=''
+if content:
+    html='<div class="v-content well"><fieldset class="scheduler-border"><legend class="scheduler-border"> Autorizzazione rilasciata </legend>%s</fieldset></div>'%content
+    
+return html]]></Formula>
+          <FieldReadTemplate type="Products.Archetypes.Field.StringField">TEXTFieldCell</FieldReadTemplate>
+          <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
+          <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>
+          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
+          <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>
+          <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
+          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></HTMLAttributesFormula>
+        </element>
+      </elements>
+    </element>
+  </design>
+</plominodatabase>

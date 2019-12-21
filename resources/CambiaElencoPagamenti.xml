@@ -1,0 +1,35 @@
+<plominodatabase id="iol_sp">
+  <design>
+    <resource id="CambiaElencoPagamenti" title="" type="Script (Python)"><![CDATA[## Script (Python) "CambiaElencoPagamenti"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import DateToString,StringToDate,decimal
+
+for doc in context.getAllDocuments():
+    if doc.getItem('elenco_pagamenti_dg',[])!=[]:
+        context.plone_log(doc.getId())
+
+        newrows=[]
+        rows=doc.getItem('elenco_pagamenti_dg',[])
+        try:
+            for row in rows:
+                if row[3]:
+                    row[3] = decimal(row[3])/100
+                if row[6]:
+                    row[6] = DateToString(StringToDate(row[6],format="%Y%m%d"),format="%d/%m/%Y")
+                newrows.append(row)
+            doc.setItem('elenco_pagamenti_dg',newrows)
+        except:
+            print doc.getId()
+
+print 'ok'
+return printed
+]]></resource>
+  </design>
+</plominodatabase>

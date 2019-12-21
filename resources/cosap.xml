@@ -1,0 +1,1154 @@
+<plominodatabase id="iol_sp">
+  <design>
+    <resource id="cosap" title="" type="Folder">
+      <resource id="calcoloRate" title="" type="Script (Python)"><![CDATA[## Script (Python) "calcoloRate"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import StringToDate, DateToString, json_dumps, decimal
+
+if not doc:
+    doc='00019-2019-rinnovo'
+    #return
+
+if isinstance(doc, basestring):
+    doc = context.getDocument(doc)
+    
+cosap = doc.getItem('importo_cosap',0)  
+
+if cosap < 400:
+    doc.setItem('rate_opt','no')
+       
+if doc.getItem('rate_opt')!='si':
+    doc.removeItem('elenco_rate_dg')
+
+
+    
+if doc.getItem('tipo_occupazione') == 'permanente':
+    data_inizio = doc.getItem('autorizzata_dal')
+    
+    #Calcolo le rate in funzione della data di inizio
+    anno = DateToString(data_inizio,'%Y')
+
+    scadenza_rate = ['31/05','31/07','31/10']
+    
+    #se dopo la scadenza riduco il numero di rate
+    if data_inizio >= StringToDate(anno+'-10-31'):
+        scadenza_rate = []  
+    
+    elif data_inizio >= StringToDate(anno+'-07-31'):
+        scadenza_rate = scadenza_rate[2:] 
+        
+    elif data_inizio >= StringToDate(anno+'-05-31'):
+        scadenza_rate = scadenza_rate[1:]  
+    
+
+else:
+    ### comunque 4 rate l'ultima con l'ultima scadenza le intermedie con scadenza il 5 del mese
+
+    rows = doc.getItem('periodo_occupazione_dg')
+    data_inizio = StringToDate(rows[0][0],format="%d/%m/%Y")
+    data_fine = StringToDate(rows[len(rows)-1][1],format="%d/%m/%Y")
+    ngg = int(data_fine - data_inizio) + 1 #date inizio e fine incluse
+    delta = int(ngg/3) #4 rate 3 intervalli temporali
+    anno = DateToString(data_inizio,'%Y')
+
+    scadenza_rate = ['05'+DateToString(data_inizio + delta,format="/%m"), '05'+DateToString(data_inizio + delta*2,format="/%m"), DateToString(data_fine,format="%d/%m")]
+    
+nrate = len(scadenza_rate) + 1
+rata = int(cosap/nrate)
+resto = cosap-rata*nrate
+dec = resto-math.floor(resto)
+
+if dec!=0:
+    resto = math.floor(resto) + (0.5 if dec <=0.5 else 1)
+
+    
+prima_rata = [rata,'']    
+rows=[prima_rata]
+for i in range(nrate-1):
+    x = scadenza_rate[i]
+    if i==nrate-2:
+        rata=rata + resto
+    rows.append([decimal(rata),x+"/"+anno])
+
+return rows
+]]></resource>
+      <resource id="calcoloCosapDehor" title="" type="Script (Python)"><![CDATA[## Script (Python) "calcoloCosapDehor"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=sup_occupazione=10,sup_interna=100,sup_esistente=0,sup_tenda=0,sup_sosta=0,ridotta_opt=0,temporaneo_opt=0,zona='1',data_inizio='1/1/2019',data_fine='31/12/2019',ngg=0,textinfo=0
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import StringToDate, DateToString, json_dumps
+import math
+###VERIFICATO CON FABIO IL 15/4/19
+
+sup_occupazione = float(sup_occupazione)
+sup_interna = float(sup_interna)
+sup_esistente = math.ceil(float(sup_esistente))
+sup_tenda = math.ceil(float(sup_tenda))
+sup_sosta = math.ceil(float(sup_sosta))
+ridotta_opt = int(ridotta_opt)
+ngg = int(ngg)
+rapp_sup = 0
+
+text = "Data inizio:%s; Data fine: %s\n" %(data_inizio,data_fine)
+
+data_inizio = StringToDate(data_inizio, format="%d/%m/%Y")
+if data_fine:
+    data_fine = StringToDate(data_fine, format="%d/%m/%Y")
+else:
+    anno = DateToString(data_inizio,'%Y')
+    data_fine = StringToDate(anno+'-12-31')
+    
+
+#Tariffe da settings
+tariffa = context.getTariffa(data_inizio,temporaneo_opt)
+
+#Coefficiente da settings
+coefficiente = context.getCoefficiente(zona,temporaneo_opt,'dehor')
+
+text=text + "Tariffa: %s; Coefficiente: %s\n" %(tariffa,coefficiente)
+
+
+#arrotondo per eccesso la superficie
+sup_occupazione=math.ceil(sup_occupazione)
+
+sup_totale = sup_esistente + sup_occupazione - sup_sosta
+
+if sup_interna>0:
+    rapp_sup = (sup_occupazione + sup_esistente)/sup_interna * 100
+    
+perc_sup_interna = math.ceil(sup_interna*0.3)
+
+text=text + "Sup occupazione: %s mq.; Sup Totale (Sup Esistente + Sup Occupazione - Sup Sosta): %s mq.; 30%% Sup Interna: %s\n" %(sup_occupazione,sup_totale,perc_sup_interna)
+
+maggiorazione = 0
+
+#Viene applicata la tariffa base se la superficie del del dehor non supera il 30 % della superficie interna del locale
+if rapp_sup <= 30:
+    cosap = coefficiente * tariffa * sup_occupazione
+    text=text + "Tariffa base: la superficie del del dehor non supera il 30%% della superficie interna del locale = coefficiente * tariffa * sup_occupazione = %s\n" %cosap
+
+elif perc_sup_interna > 15:
+    text=text + "30%% superficie interna > 15\n"
+    if sup_totale > perc_sup_interna:
+        text=text + "Sup Totale > 30%% superficie interna\n"
+        if sup_esistente < perc_sup_interna:
+            text=text + "Sup Esistente < 30%% superficie interna\n"
+            cosap = coefficiente * tariffa * (perc_sup_interna - sup_esistente)
+            maggiorazione = coefficiente * tariffa * (sup_totale - perc_sup_interna) * 1.5
+            text=text + "Cosap = coefficiente * tariffa * (perc_sup_interna - sup_esistente) = %s\n" %cosap
+            text=text + "Maggiorazione = coefficiente * tariffa * (sup_totale - perc_sup_interna) * 1.5 = %s\n" %maggiorazione
+        else:
+            text=text + "Sup Esistente >= 30%% superficie interna\n"
+            cosap = 0
+            maggiorazione = coefficiente * tariffa * sup_occupazione * 1.5
+            text=text + "Cosap = %s\n" %cosap
+            text=text + "Maggiorazione = coefficiente * tariffa * sup_occupazione * 1.5 = %s\n" %maggiorazione                  
+    else:
+        text=text + "Sup Totale <= 30%% superficie interna\n"
+        cosap = coefficiente * tariffa * perc_sup_interna
+        text=text + "Cosap = coefficiente * tariffa * perc_sup_interna = %s\n" %cosap
+        text=text + "Maggiorazione = %s\n" %maggiorazione  
+        
+# interviene la franchigia di 15 m
+elif perc_sup_interna <= 15 and sup_occupazione > 15:
+    text=text + "30%% superficie interna < 15 mq. e Sup occupazione > 15 mq.\n"
+    if sup_esistente == 0:
+        text=text + "Sup esistente = 0\n"
+        cosap = coefficiente * tariffa * 15
+        maggiorazione = coefficiente * tariffa * (sup_totale - 15) * 1.5
+        text=text + "Cosap = coefficiente * tariffa * 15 = %s\n" %cosap
+        text=text + "Maggiorazione = coefficiente * tariffa * (sup_totale - 15) * 1.5 = %s\n" %maggiorazione  
+        
+    elif sup_esistente <= 15:    
+        text=text + "Sup esistente <= 15 mq.\n"
+        cosap = (coefficiente * tariffa * (15-sup_esistente))            
+        maggiorazione = coefficiente * tariffa * (sup_occupazione - (15-sup_esistente)) * 1.5
+        text=text + "Cosap = (coefficiente * tariffa * (15-sup_esistente))  = %s\n" %cosap
+        text=text + "Maggiorazione = coefficiente * tariffa * (sup_occupazione - (15-sup_esistente)) * 1.5 = %s\n" %maggiorazione         
+        
+    elif sup_esistente > 15: 
+        text=text + "Sup esistente > 15 mq.\n"
+        cosap=0
+        maggiorazione = (coefficiente * tariffa * sup_occupazione) * 1.5
+        text=text + "Cosap = %s\n" %cosap
+        text=text + "Maggiorazione = (coefficiente * tariffa * sup_occupazione) * 1.5 = %s\n" %maggiorazione  
+        
+elif perc_sup_interna <= 15 and sup_occupazione <= 15 and sup_esistente > 0:
+    text=text + "30%% superficie interna <= 15 mq. e Sup occupazione <= 15 mq.\n"
+    if sup_totale <= 15:
+        text=text + "Sup totale <= 15 mq.\n"
+        cosap = coefficiente * tariffa * sup_occupazione
+        text=text + "Cosap = coefficiente * tariffa * sup_occupazione = %s\n" %cosap
+        text=text + "Maggiorazione = %s\n" %maggiorazione  
+
+    elif sup_esistente > 15:
+        text=text + "Sup esistente > 15 mq.\n"
+        cosap = 0
+        maggiorazione = coefficiente * tariffa * sup_occupazione * 1.5
+        text=text + "Cosap = %s\n" %cosap
+        text=text + "Maggiorazione = coefficiente * tariffa * sup_occupazione * 1.5 = %s\n" %maggiorazione  
+
+    elif sup_esistente <= 15:
+        text=text + "Sup esistente <= 15 mq.\n"
+        cosap = coefficiente * tariffa * (15 - sup_esistente)
+        maggiorazione = coefficiente * tariffa * (sup_occupazione - (15-sup_esistente)) * 1.5
+        text=text + "Cosap = coefficiente * tariffa * (sup_occupazione - (15-sup_esistente)) * 1.5 = %s\n" %cosap
+        text=text + "Maggiorazione = coefficiente * tariffa * (sup_occupazione - (15-sup_esistente)) * 1.5 = %s\n" %maggiorazione          
+
+else:
+    cosap = coefficiente * tariffa * sup_occupazione
+    text=text + "Cosap = coefficiente * tariffa * sup_occupazione = %s\n" %cosap
+    text=text + "Maggiorazione = %s\n" %maggiorazione  
+
+
+totale = cosap + maggiorazione
+text=text + "Totale COSAP = cosap + maggiorazione = %s\n" %totale  
+
+
+#####VISTA CON FABIO 7/6/19
+if sup_sosta:
+    #non posso aggiungere maggiorazione a maggiorazione
+    totale = totale + coefficiente * tariffa * sup_sosta
+    text=text + "Maggiorazione sosta = coefficiente * tariffa * sup_sosta =%s\n" %(coefficiente * tariffa * sup_sosta)
+    
+#cosap ridotta (solo se non ha beneficiato di riduzioni ?)
+if ridotta_opt: # and rapp_sup > 30 and sup_totale > 15:
+    totale = (cosap + maggiorazione)/2
+    text=text + "RIDUZIONE 50%% = %s\n" %totale  
+    if sup_sosta:
+        totale = cosap #non posso aggiungere maggiorazione a maggiorazione
+    
+#superficie occupazione tenda esterna al dehor    
+if sup_tenda:
+    cosap_tenda = 0.15 * tariffa * sup_tenda
+    text=text + "Cosap superficie tenda = 0.15 * tariffa * sup_tenda = %s\n" %cosap_tenda 
+    totale = totale + cosap_tenda
+    text=text + "Totale COSAP = totale + cosap_tenda = %s\n" %totale  
+
+     
+#se temporanea moltiplico per in numero di giorni
+if temporaneo_opt:
+    ngg = ngg or int(data_fine - data_inizio) + 1 #date inizio e fine incluse
+    totale = totale * ngg
+    text= ("Occupazione temporanea gg %s = totale * gg = %s\n" %(ngg,totale)) + text
+
+#se permanente ma l'autorizzazione vale per meno di 8 mesi paga 2/3, se vale per meno di 4 mesi paga 1/3     
+else:
+    anno = DateToString(data_inizio,'%Y')
+    text= ("Occupazione permanente anno %s:\n" %anno) + text 
+
+    if data_inizio >= StringToDate(anno+'-09-01'):       
+        totale = totale * 1/3
+        text=text + "Riduzione a 1/3 del totale pratica dopo il 1/9 \n"
+
+    elif data_inizio >= StringToDate(anno+'-05-01'):
+        totale = totale * 2/3
+        text=text + "Riduzione a 2/3 del totale pratica dopo il 5/1 \n"
+        
+if textinfo:
+    return text  + "\n"
+else:
+    return totale
+]]></resource>
+      <resource id="calcoloCosapCommercio" title="" type="Script (Python)"><![CDATA[## Script (Python) "calcoloCosapCommercio"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=sup_occupazione=10,sup_interna=100,sup_esistente=0,sup_tenda=0,sup_sosta=0,ridotta_opt=0,temporaneo_opt=0,zona='1',data_inizio='1/1/2019',data_fine='31/12/2019',ngg=0,textinfo=0
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import StringToDate, DateToString, json_dumps
+import math
+###VERIFICATO CON FABIO IL 15/4/19
+
+sup_occupazione = float(sup_occupazione)
+ridotta_opt = int(ridotta_opt)
+ngg = int(ngg)
+
+text = "Data inizio:%s; Data fine: %s\n" %(data_inizio,data_fine)
+
+data_inizio = StringToDate(data_inizio, format="%d/%m/%Y")
+if data_fine:
+    data_fine = StringToDate(data_fine, format="%d/%m/%Y")
+else:
+    anno = DateToString(data_inizio,'%Y')
+    data_fine = StringToDate(anno+'-12-31')
+
+#Tariffe da settings
+tariffa = context.getTariffa(data_inizio,temporaneo_opt)
+
+#Coefficiente da settings
+coefficiente = context.getCoefficiente(zona,temporaneo_opt,'commercio')
+
+text=text + "Tariffa: %s; Coefficiente: %s\n" %(tariffa,coefficiente)
+
+#arrotondo per eccesso la superficie
+if sup_occupazione < 0.5:
+    sup_occupazione = 0
+sup_occupazione=math.ceil(sup_occupazione)
+
+text=text + "Sup occupazione: %s mq.\n" %sup_occupazione
+
+totale = coefficiente * tariffa * sup_occupazione
+
+text=text + "COSAP: %s\n" %totale
+
+
+#se < 4 non paga
+if totale < 4:
+    totale = 0
+    text=text + "Totale < 4 euro: %s\n" %totale
+
+if ridotta_opt:
+    totale = totale/2 
+    text=text + "Totale ridotto 50%%: %s\n" %totale
+   
+#se temporanea moltiplico per in numero di giorni
+if temporaneo_opt:
+    ngg = ngg or int(data_fine - data_inizio) + 1 #date inizio e fine incluse
+    totale = totale * ngg
+    text= ("Occupazione temporanea gg %s = totale * gg = %s\n" %(ngg,totale)) + text
+
+#se permanente ma l'autorizzazione vale per meno di 8 mesi paga 2/3, se vale per meno di 4 mesi paga 1/3     
+else:
+    anno = DateToString(data_inizio,'%Y')
+    text= ("Occupazione permanente anno %s:\n" %anno) + text 
+    
+    if data_inizio >= StringToDate(anno+'-09-01'):       
+        totale = totale * 1/3
+        text=text + "Riduzione a 1/3 del totale pratica dopo il 1/9 \n"
+        
+    elif data_inizio >= StringToDate(anno+'-05-01'):
+        totale = totale * 2/3
+        text=text + "Riduzione a 2/3 del totale pratica dopo il 5/1 \n"
+
+if textinfo:
+    return text  + "\n"
+else:
+    return totale
+]]></resource>
+      <resource id="getImportoCosap" title="" type="Script (Python)"><![CDATA[## Script (Python) "getImportoCosap"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None,sup_occupazione=0,sup_sosta=0,dal='',al='',textinfo=0
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import StringToDate, DateToString, json_dumps
+import math
+
+if not doc:
+    return
+
+if isinstance(doc, basestring):
+    doc = context.getDocument(doc)
+        
+sup_occupazione = sup_occupazione or doc.getItem('superficie_occupazione',0)
+sup_interna = float(doc.getItem('superficie_interna',0))
+sup_esistente = doc.getItem('superficie_old') or 0
+zona = doc.getItem('zona_cosap',0)
+sup_tenda =  doc.getItem('sup_soprastanti_tende') or 0
+sup_sosta = float(sup_sosta) or doc.getItem('superficie_sosta') or 0
+#ridotta_opt = 1 if (doc.getItem('ridotta_opt')=='si' or doc.getItem('zona_kennedy')=='1')  else 0
+ridotta_opt = 1 if doc.getItem('ridotta_opt')=='si' else 0
+
+
+
+if textinfo:
+    totale=''
+else:
+    totale=0
+       
+tipo_app = doc.getItem('parent_tipo_app', doc.getItem('iol_tipo_app'))
+
+if tipo_app=='dehor':
+    calcoloCosap = context.calcoloCosapDehor      
+elif tipo_app=='commercio':
+    calcoloCosap =  context.calcoloCosapCommercio  
+elif tipo_app=='lift':
+    calcoloCosap = context.calcoloCosapInsegna        
+elif tipo_app=='passocarraio':
+    calcoloCosap = context.calcoloCosapPassocarraio  
+    
+if doc.getItem('tipo_occupazione')=='temporanea':
+    rows = doc.getItem('periodo_occupazione_dg',[])
+    for row in rows:
+        totale = totale + calcoloCosap(
+            sup_occupazione=sup_occupazione,
+            sup_interna=sup_interna,
+            sup_esistente=sup_esistente,
+            sup_tenda=sup_tenda,
+            sup_sosta=sup_sosta,
+            ridotta_opt=ridotta_opt,
+            temporaneo_opt=1,
+            zona=zona,
+            data_inizio=row[0],
+            data_fine=row[1],
+            textinfo=textinfo)
+else:
+
+    #per i rinnovi uso le date passate come parametro
+    totale = calcoloCosap(
+        sup_occupazione=sup_occupazione,
+        sup_interna=sup_interna,
+        sup_esistente=sup_esistente,
+        sup_tenda=sup_tenda,
+        sup_sosta=sup_sosta,
+        ridotta_opt=ridotta_opt,
+        temporaneo_opt=0,
+        zona=zona,
+        data_inizio= dal or DateToString(doc.getItem('autorizzata_dal'),format="%d/%m/%Y"),
+        textinfo=textinfo)
+ 
+
+if textinfo:
+    return totale
+    
+    
+#arrotondamenti
+dec = totale-math.floor(totale)
+if dec!=0:
+    totale = math.floor(totale) + (0.5 if dec <=0.5 else 1)    
+    
+if context.REQUEST.get('sup_occupazione'):
+    return json_dumps({"success":1, "totale":totale})
+else:
+    return totale
+]]></resource>
+      <resource id="getTariffa" title="" type="Script (Python)"><![CDATA[## Script (Python) "getTariffa"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=data=None,temp=0
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import StringToDate, DateToString, Now
+
+docSettings=context.aq_parent.customscripts.getDocSettings()
+rows=docSettings.getItem('tariffe_settings',[])
+if not data:
+    data=Now()
+    
+if isinstance(data, basestring):
+    data=StringToDate(data,format="%d/%m/%Y")
+    
+for row in rows:
+    #print data, StringToDate(row[0],format="%d/%m/%Y"),data - StringToDate(row[0],format="%d/%m/%Y")
+    if (data - StringToDate(row[0],format="%d/%m/%Y")) < 365:
+        break
+
+        
+if not row:
+    return 0
+
+if temp:
+    return float(row[2]) 
+else:
+    return float(row[1])
+]]></resource>
+      <resource id="getCoefficiente" title="" type="Script (Python)"><![CDATA[## Script (Python) "getCoefficiente"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=zona='',temp=0,tipo=''
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import StringToDate, DateToString, Now
+
+docSettings=context.aq_parent.customscripts.getDocSettings()
+rows=docSettings.getItem('zone_'+tipo,[])
+  
+for row in rows:
+    if zona==row[0]:
+        break
+
+if not row:
+    return 0
+
+if temp:
+    return float(row[2]) 
+else:
+    return float(row[1])
+]]></resource>
+      <resource contenttype="application/javascript" id="controller_passocarraio.js" title="" type="File"><![CDATA[JCggZG9jdW1lbnQgKS5yZWFkeShmdW5jdGlvbigpIHsKCiAgZnVuY3Rpb24gYWdnaW9ybmFDb3Nh
+cCgpewogICAgLy9zZSBub24gcGFzc28gbGEgc3VwIGxhIGNhbGNvbGEgZGEgZGF0YWdyaWQKICAg
+IHZhciBvY2N1cGF6aW9uZSA9ICQodGhpcykudmFsKCk7CiAgICB2YXIgZG9jdW1lbnRJZCA9ICQo
+dGhpcykuZGF0YSgiZG9jaWQiKTsKICAgIAogICAgJC5hamF4KHsKICAgICAgICd1cmwnOiJyZXNv
+dXJjZXMvY29zYXAvZ2V0SW1wb3J0b0Nvc2FwIiwKICAgICAgICd0eXBlJzonR0VUJywKICAgICAg
+ICdkYXRhJzp7ImRvYyI6ZG9jdW1lbnRJZCwic3VwX29jY3VwYXppb25lIjpvY2N1cGF6aW9uZX0s
+CiAgICAgICAnZGF0YVR5cGUnOidKU09OJywKICAgICAgICdzdWNjZXNzJzpmdW5jdGlvbihkYXRh
+LCB0ZXh0U3RhdHVzLCBqcVhIUil7CiAgICAgICAgICAkKCJbbmFtZT0naW1wb3J0b19jb3NhcCdd
+IikudGV4dChkYXRhLnRvdGFsZS50b0ZpeGVkKDIpKTsKICAgICAgICAgIHZhciAkaHcgPSAkKCIj
+cGxvbWlub19mb3JtIikuZmluZCgnLmhpZGV3aGVuLWh3X25vX3JhdGUnKQogICAgICAgICAgJGh3
+LmNzcygnZGlzcGxheScsIChkYXRhLnRvdGFsZTw9NDAwKT8nbm9uZSc6J2Jsb2NrJyk7CgogICAg
+ICAgfQogICAgfSk7CiAgfQoKICAkKCIjb2NjdXBhemlvbmUiKS5vbigna2V5dXAnLCBhZ2dpb3Ju
+YUNvc2FwKTsKCn0pOwo=
+]]></resource>
+      <resource id="calcoloCosapPassocarraio" title="" type="Script (Python)"><![CDATA[## Script (Python) "calcoloCosapPassocarraio"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=sup_occupazione=1,sup_interna=100,sup_esistente=0,sup_tenda=0,sup_sosta=0,ridotta_opt=0,temporaneo_opt=0,zona='1',data_inizio='1/1/2019',data_fine='31/12/2019',ngg=0,textinfo=0
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import StringToDate, DateToString, json_dumps
+import math
+###VERIFICATO CON FABIO IL 15/4/19
+
+occupazione = float(sup_occupazione)
+ngg = int(ngg)
+
+text = "Data inizio:%s; Data fine: %s\n" %(data_inizio,data_fine)
+
+data_inizio = StringToDate(data_inizio, format="%d/%m/%Y")
+if data_fine:
+    data_fine = StringToDate(data_fine, format="%d/%m/%Y")
+else:
+    anno = DateToString(data_inizio,'%Y')
+    data_fine = StringToDate(anno+'-12-31')
+
+#Tariffe da settings
+tariffa = context.getTariffa(data_inizio,temporaneo_opt)
+
+#Coefficiente da settings
+coefficiente = context.getCoefficiente(zona[:1],temporaneo_opt,'passocarraio')
+
+text=text + "Tariffa: %s; Coefficiente: %s\n" %(tariffa,coefficiente)
+
+#arrotondo per eccesso la superficie
+occupazione=math.ceil(occupazione)
+
+text=text + "Occupazione: %s m.\n" %occupazione
+
+totale = coefficiente * tariffa * occupazione
+
+text=text + "COSAP: %s\n" %totale
+
+
+#se <= 4 non paga
+if totale <= 4:
+    totale = 0
+    text=text + "Totale < 4 euro: %s\n" %totale
+
+#se temporanea moltiplico per in numero di giorni
+if temporaneo_opt:
+    ngg = ngg or int(data_fine - data_inizio) + 1 #date inizio e fine incluse
+    totale = totale * ngg
+    text= ("Occupazione temporanea gg %s = totale * gg = %s\n" %(ngg,totale)) + text
+
+#se permanente ma l'autorizzazione vale per meno di 8 mesi paga 2/3, se vale per meno di 4 mesi paga 1/3     
+else:
+    anno = DateToString(data_inizio,'%Y')
+    text= ("Occupazione permanente anno %s:\n" %anno) + text 
+    
+    if data_inizio >= StringToDate(anno+'-09-01'):       
+        totale = totale * 1/3
+        text=text + "Riduzione a 1/3 del totale pratica dopo il 1/9 \n"
+        
+    elif data_inizio >= StringToDate(anno+'-05-01'):
+        totale = totale * 2/3
+        text=text + "Riduzione a 2/3 del totale pratica dopo il 5/1 \n"
+
+if textinfo:
+    return text  + "\n"
+else:
+    return totale
+]]></resource>
+      <resource id="TESTgetImportoCosap" title="" type="Script (Python)"><![CDATA[## Script (Python) "TESTgetImportoCosap"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None,sup_occupazione=0,sup_sosta=0,dal='',al='',textinfo=0
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import StringToDate, DateToString, json_dumps
+import math
+
+if not doc:
+    return
+
+if isinstance(doc, basestring):
+    doc = context.getDocument(doc)
+        
+sup_occupazione = sup_occupazione or doc.getItem('superficie_occupazione',0)
+sup_interna = float(doc.getItem('superficie_interna',0))
+sup_esistente = doc.getItem('superficie_old',0)
+zona = doc.getItem('zona_cosap',0)
+sup_tenda =  doc.getItem('sup_soprastanti_tende',0)
+sup_sosta = float(sup_sosta) or doc.getItem('superficie_sosta',0)
+#ridotta_opt = 1 if (doc.getItem('ridotta_opt')=='si' or doc.getItem('zona_kennedy')=='1')  else 0
+ridotta_opt = 1 if doc.getItem('ridotta_opt')=='si' else 0
+
+
+if textinfo:
+    totale=''
+else:
+    totale=0
+       
+tipo_app = doc.getItem('parent_tipo_app', doc.getItem('iol_tipo_app'))
+
+if tipo_app=='dehor':
+    calcoloCosap =  context.TESTcalcoloCosapDehor      
+elif tipo_app=='commercio':
+    calcoloCosap =  context.calcoloCosapCommercio   
+elif tipo_app=='passocarraio':
+    calcoloCosap =  context.calcoloCosapPassocarraio  
+    
+if doc.getItem('tipo_occupazione')=='temporanea':
+    rows = doc.getItem('periodo_occupazione_dg',[])
+    for row in rows:
+        totale = totale + calcoloCosap(
+            sup_occupazione=sup_occupazione,
+            sup_interna=sup_interna,
+            sup_esistente=sup_esistente,
+            sup_tenda=sup_tenda,
+            sup_sosta=sup_sosta,
+            ridotta_opt=ridotta_opt,
+            temporaneo_opt=1,
+            zona=zona,
+            data_inizio=row[0],
+            data_fine=row[1],
+            textinfo=textinfo)
+else:
+
+    #per i rinnovi uso le date passate come parametro
+    totale = calcoloCosap(
+        sup_occupazione=sup_occupazione,
+        sup_interna=sup_interna,
+        sup_esistente=sup_esistente,
+        sup_tenda=sup_tenda,
+        sup_sosta=sup_sosta,
+        ridotta_opt=ridotta_opt,
+        temporaneo_opt=0,
+        zona=zona,
+        data_inizio= dal or DateToString(doc.getItem('autorizzata_dal'),format="%d/%m/%Y"),
+        textinfo=textinfo)
+ 
+
+if textinfo:
+    return totale
+    
+return totale    
+    
+#arrotondamenti
+dec = totale-math.floor(totale)
+if dec!=0:
+    totale = math.floor(totale) + (0.5 if dec <=0.5 else 1)    
+  
+    
+if context.REQUEST.get('sup_occupazione'):
+    return json_dumps({"success":1, "totale":totale})
+else:
+    return totale
+]]></resource>
+      <resource id="TESTcalcoloCosapDehor" title="" type="Script (Python)"><![CDATA[## Script (Python) "TESTcalcoloCosapDehor"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=sup_occupazione=10,sup_interna=100,sup_esistente=0,sup_tenda=0,sup_sosta=0,ridotta_opt=0,temporaneo_opt=0,zona='1',data_inizio='1/1/2019',data_fine='31/12/2019',ngg=0,textinfo=0
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import StringToDate, DateToString, json_dumps
+import math
+###VERIFICATO CON FABIO IL 15/4/19
+
+sup_occupazione = float(sup_occupazione)
+sup_interna = float(sup_interna)
+sup_esistente = math.ceil(float(sup_esistente))
+sup_tenda = math.ceil(float(sup_tenda))
+sup_sosta = math.ceil(float(sup_sosta))
+ridotta_opt = int(ridotta_opt)
+ngg = int(ngg)
+rapp_sup = 0
+
+text = "Data inizio:%s; Data fine: %s\n" %(data_inizio,data_fine)
+
+data_inizio = StringToDate(data_inizio, format="%d/%m/%Y")
+if data_fine:
+    data_fine = StringToDate(data_fine, format="%d/%m/%Y")
+else:
+    anno = DateToString(data_inizio,'%Y')
+    data_fine = StringToDate(anno+'-12-31')
+    
+
+#Tariffe da settings
+tariffa = context.getTariffa(data_inizio,temporaneo_opt)
+
+#Coefficiente da settings
+coefficiente = context.getCoefficiente(zona,temporaneo_opt,'dehor')
+
+text=text + "Tariffa: %s; Coefficiente: %s\n" %(tariffa,coefficiente)
+
+
+#arrotondo per eccesso la superficie
+sup_occupazione=math.ceil(sup_occupazione)
+
+sup_totale = sup_esistente + sup_occupazione - sup_sosta
+
+if sup_interna>0:
+    rapp_sup = (sup_occupazione + sup_esistente)/sup_interna * 100
+    
+perc_sup_interna = math.ceil(sup_interna*0.3)
+
+text=text + "Sup occupazione: %s mq.; Sup Totale (Sup Esistente + Sup Occupazione - Sup Sosta): %s mq.; 30%% Sup Interna: %s\n" %(sup_occupazione,sup_totale,perc_sup_interna)
+
+maggiorazione = 0
+
+#Viene applicata la tariffa base se la superficie del del dehor non supera il 30 % della superficie interna del locale
+if rapp_sup <= 30:
+    cosap = coefficiente * tariffa * sup_occupazione
+    text=text + "Tariffa base: la superficie del del dehor non supera il 30%% della superficie interna del locale = coefficiente * tariffa * sup_occupazione = %s\n" %cosap
+
+elif perc_sup_interna > 15:
+    text=text + "30%% superficie interna > 15\n"
+    if sup_totale > perc_sup_interna:
+        text=text + "Sup Totale > 30%% superficie interna\n"
+        if sup_esistente < perc_sup_interna:
+            text=text + "Sup Esistente < 30%% superficie interna\n"
+            cosap = coefficiente * tariffa * (perc_sup_interna - sup_esistente)
+            maggiorazione = coefficiente * tariffa * (sup_totale - perc_sup_interna) * 1.5
+            text=text + "Cosap = coefficiente * tariffa * (perc_sup_interna - sup_esistente) = %s\n" %cosap
+            text=text + "Maggiorazione = coefficiente * tariffa * (sup_totale - perc_sup_interna) * 1.5 = %s\n" %maggiorazione
+        else:
+            text=text + "Sup Esistente >= 30%% superficie interna\n"
+            cosap = 0
+            maggiorazione = coefficiente * tariffa * sup_occupazione * 1.5
+            text=text + "Cosap = %s\n" %cosap
+            text=text + "Maggiorazione = coefficiente * tariffa * sup_occupazione * 1.5 = %s\n" %maggiorazione                  
+    else:
+        text=text + "Sup Totale <= 30%% superficie interna\n"
+        cosap = coefficiente * tariffa * perc_sup_interna
+        text=text + "Cosap = coefficiente * tariffa * perc_sup_interna = %s\n" %cosap
+        text=text + "Maggiorazione = %s\n" %maggiorazione  
+        
+# interviene la franchigia di 15 m
+elif perc_sup_interna <= 15 and sup_occupazione > 15:
+    text=text + "30%% superficie interna < 15 mq. e Sup occupazione > 15 mq.\n"
+    if sup_esistente == 0:
+        text=text + "Sup esistente = 0\n"
+        cosap = coefficiente * tariffa * 15
+        maggiorazione = coefficiente * tariffa * (sup_totale - 15) * 1.5
+        text=text + "Cosap = coefficiente * tariffa * 15 = %s\n" %cosap
+        text=text + "Maggiorazione = coefficiente * tariffa * (sup_totale - 15) * 1.5 = %s\n" %maggiorazione  
+        
+    elif sup_esistente <= 15:    
+        text=text + "Sup esistente <= 15 mq.\n"
+        cosap = (coefficiente * tariffa * (15-sup_esistente))            
+        maggiorazione = coefficiente * tariffa * (sup_occupazione - (15-sup_esistente)) * 1.5
+        text=text + "Cosap = (coefficiente * tariffa * (15-sup_esistente))  = %s\n" %cosap
+        text=text + "Maggiorazione = coefficiente * tariffa * (sup_occupazione - (15-sup_esistente)) * 1.5 = %s\n" %maggiorazione         
+        
+    elif sup_esistente > 15: 
+        text=text + "Sup esistente > 15 mq.\n"
+        cosap=0
+        maggiorazione = (coefficiente * tariffa * sup_occupazione) * 1.5
+        text=text + "Cosap = %s\n" %cosap
+        text=text + "Maggiorazione = (coefficiente * tariffa * sup_occupazione) * 1.5 = %s\n" %maggiorazione  
+        
+elif perc_sup_interna <= 15 and sup_occupazione <= 15 and sup_esistente > 0:
+    text=text + "30%% superficie interna <= 15 mq. e Sup occupazione <= 15 mq.\n"
+    if sup_totale <= 15:
+        text=text + "Sup totale <= 15 mq.\n"
+        cosap = coefficiente * tariffa * sup_occupazione
+        text=text + "Cosap = coefficiente * tariffa * sup_occupazione = %s\n" %cosap
+        text=text + "Maggiorazione = %s\n" %maggiorazione  
+
+    elif sup_esistente > 15:
+        text=text + "Sup esistente > 15 mq.\n"
+        cosap = 0
+        maggiorazione = coefficiente * tariffa * sup_occupazione * 1.5
+        text=text + "Cosap = %s\n" %cosap
+        text=text + "Maggiorazione = coefficiente * tariffa * sup_occupazione * 1.5 = %s\n" %maggiorazione  
+
+    elif sup_esistente <= 15:
+        text=text + "Sup esistente <= 15 mq.\n"
+        cosap = coefficiente * tariffa * (15 - sup_esistente)
+        maggiorazione = coefficiente * tariffa * (sup_occupazione - (15-sup_esistente)) * 1.5
+        text=text + "Cosap = coefficiente * tariffa * (sup_occupazione - (15-sup_esistente)) * 1.5 = %s\n" %cosap
+        text=text + "Maggiorazione = coefficiente * tariffa * (sup_occupazione - (15-sup_esistente)) * 1.5 = %s\n" %maggiorazione          
+
+else:
+    cosap = coefficiente * tariffa * sup_occupazione
+    text=text + "Cosap = coefficiente * tariffa * sup_occupazione = %s\n" %cosap
+    text=text + "Maggiorazione = %s\n" %maggiorazione  
+
+
+totale = cosap + maggiorazione
+text=text + "Totale COSAP = cosap + maggiorazione = %s\n" %totale  
+
+
+#####VISTA CON FABIO 7/6/19
+if sup_sosta:
+    #non posso aggiungere maggiorazione a maggiorazione
+    totale = totale + coefficiente * tariffa * sup_sosta
+    text=text + "Maggiorazione sosta = coefficiente * tariffa * sup_sosta =%s\n" %(coefficiente * tariffa * sup_sosta)
+    
+#cosap ridotta (solo se non ha beneficiato di riduzioni ?)
+if ridotta_opt: # and rapp_sup > 30 and sup_totale > 15:
+    totale = (cosap + maggiorazione)/2
+    text=text + "RIDUZIONE 50%% = %s\n" %totale  
+    if sup_sosta:
+        totale = cosap #non posso aggiungere maggiorazione a maggiorazione
+    
+#superficie occupazione tenda esterna al dehor    
+if sup_tenda:
+    cosap_tenda = 0.15 * tariffa * sup_tenda
+    text=text + "Cosap superficie tenda = 0.15 * tariffa * sup_tenda = %s\n" %cosap_tenda 
+    totale = totale + cosap_tenda
+    text=text + "Totale COSAP = totale + cosap_tenda = %s\n" %totale  
+
+     
+#se temporanea moltiplico per in numero di giorni
+if temporaneo_opt:
+    ngg = ngg or int(data_fine - data_inizio) + 1 #date inizio e fine incluse
+    totale = totale * ngg
+    text= ("Occupazione temporanea gg %s = totale * gg = %s\n" %(ngg,totale)) + text
+
+#se permanente ma l'autorizzazione vale per meno di 8 mesi paga 2/3, se vale per meno di 4 mesi paga 1/3     
+else:
+    anno = DateToString(data_inizio,'%Y')
+    text= ("Occupazione permanente anno %s:\n" %anno) + text 
+
+    if data_inizio >= StringToDate(anno+'-09-01'):       
+        totale = totale * 1/3
+        text=text + "Riduzione a 1/3 del totale pratica dopo il 1/9 \n"
+
+    elif data_inizio >= StringToDate(anno+'-05-01'):
+        totale = totale * 2/3
+        text=text + "Riduzione a 2/3 del totale pratica dopo il 5/1 \n"
+        
+if textinfo:
+    return text  + "\n"
+else:
+    return totale
+]]></resource>
+      <resource id="calcoloCosapInsegna" title="" type="Script (Python)"><![CDATA[## Script (Python) "calcoloCosapInsegna"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=sup_occupazione=1,sup_interna=100,sup_esistente=0,sup_tenda=0,sup_sosta=0,ridotta_opt=0,temporaneo_opt=0,zona='1',data_inizio='1/1/2019',data_fine='31/12/2019',ngg=0,textinfo=0
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import StringToDate, DateToString, json_dumps
+import math
+
+occupazione = float(sup_occupazione)
+ngg = int(ngg)
+
+text = "Data inizio:%s; Data fine: %s\n" %(data_inizio,data_fine)
+
+#fino a 2 mq non paga
+if occupazione <=2:
+    return 0
+
+
+data_inizio = StringToDate(data_inizio, format="%d/%m/%Y")
+if data_fine:
+    data_fine = StringToDate(data_fine, format="%d/%m/%Y")
+else:
+    anno = DateToString(data_inizio,'%Y')
+    data_fine = StringToDate(anno+'-12-31')
+
+#Tariffe da settings
+tariffa = context.getTariffa(data_inizio,temporaneo_opt)
+
+#Coefficiente da settings
+coefficiente = context.getCoefficiente(zona[:1],temporaneo_opt,'passocarraio')
+
+text=text + "Tariffa: %s; Coefficiente: %s\n" %(tariffa,coefficiente)
+
+#arrotondo per eccesso la superficie
+occupazione=math.ceil(occupazione)
+
+text=text + "Occupazione: %s m.\n" %occupazione
+
+totale = coefficiente * tariffa * occupazione
+
+text=text + "COSAP: %s\n" %totale
+
+
+#se <= 2 non paga
+if totale <= 2:
+    totale = 0
+    text=text + "Totale < 4 euro: %s\n" %totale
+
+#se temporanea moltiplico per in numero di giorni
+if temporaneo_opt:
+    ngg = ngg or int(data_fine - data_inizio) + 1 #date inizio e fine incluse
+    totale = totale * ngg
+    text= ("Occupazione temporanea gg %s = totale * gg = %s\n" %(ngg,totale)) + text
+
+#se permanente ma l'autorizzazione vale per meno di 8 mesi paga 2/3, se vale per meno di 4 mesi paga 1/3     
+else:
+    anno = DateToString(data_inizio,'%Y')
+    text= ("Occupazione permanente anno %s:\n" %anno) + text 
+    
+    if data_inizio >= StringToDate(anno+'-09-01'):       
+        totale = totale * 1/3
+        text=text + "Riduzione a 1/3 del totale pratica dopo il 1/9 \n"
+        
+    elif data_inizio >= StringToDate(anno+'-05-01'):
+        totale = totale * 2/3
+        text=text + "Riduzione a 2/3 del totale pratica dopo il 5/1 \n"
+
+if textinfo:
+    return text  + "\n"
+else:
+    return totale
+]]></resource>
+      <resource contenttype="application/javascript" id="controller_insegna.js" title="" type="File"><![CDATA[JCggZG9jdW1lbnQgKS5yZWFkeShmdW5jdGlvbigpIHsKICBmdW5jdGlvbiBhZ2dpb3JuYUNvc2Fw
+KHN1cD0wKXsKICAgIC8vc2Ugbm9uIHBhc3NvIGxhIHN1cCBsYSBjYWxjb2xhIGRhIGRhdGFncmlk
+CiAgICAgICB2YXIgc3VwID0gMDsKICAgICAgIHZhciBzaXplOwogICAgICAgdmFyIHJvd3MgPSAk
+LmV2YWxKU09OKCQoIiNlbGVtZW50aV9pbnNlZ25lX2RnX2dyaWR2YWx1ZSIpLnZhbCgpKTsKICAg
+ICAgIGZvcih2YXIgaT0wO2k8cm93cy5sZW5ndGg7aSsrKXsKICAgICAgICAgIC8vQ0FMQ09MTyBM
+QSBTVVBFUkZJQ0lFIERFTExBIEZBQ0NJQSBQSVUnIEdSQU5ERSBERUxMJ0lOU0VHTkEKICAgICAg
+ICAgIHNpemUgPSBbcm93c1tpXVsxXSxyb3dzW2ldWzJdLHJvd3NbaV1bM11dLnNvcnQoKTsKICAg
+ICAgICAgIC8vQWdnaXVuZ28gbGEgc3VwZXJmaWNpZSBzb2xvIHNlIHNwb3JnZSArIGRpIDMwIGNt
+CiAgICAgICAgICBpZiAocm93c1tpXVs1XSA+IDMwKXsKICAgICAgICAgICAgICBzdXAgPSBzdXAg
+KyBzaXplWzFdKnNpemVbMl07CiAgICAgICAgICB9CiAgICAgICB9CiAgICAgICBzdXAgPSBzdXAg
+LyAxMDAwMDsKICAgICAgICQoIiNzdXBlcmZpY2llX29jY3VwYXppb25lIikudmFsKHN1cC50b0Zp
+eGVkKDIpKTsKCiAgICB2YXIgZG9jdW1lbnRJZCA9ICQoIiNzdXBlcmZpY2llX29jY3VwYXppb25l
+IikuZGF0YSgiZG9jaWQiKTsKCiAgICAkLmFqYXgoewogICAgICAgJ3VybCc6InJlc291cmNlcy9j
+b3NhcC9nZXRJbXBvcnRvQ29zYXAiLAogICAgICAgJ3R5cGUnOidHRVQnLAogICAgICAgJ2RhdGEn
+OnsiZG9jIjpkb2N1bWVudElkLCJzdXBfb2NjdXBhemlvbmUiOnN1cH0sCiAgICAgICAnZGF0YVR5
+cGUnOidKU09OJywKICAgICAgICdzdWNjZXNzJzpmdW5jdGlvbihkYXRhLCB0ZXh0U3RhdHVzLCBq
+cVhIUil7CiAgICAgICAgICAkKCJbbmFtZT0naW1wb3J0b19jb3NhcCddIikudGV4dChkYXRhLnRv
+dGFsZS50b0ZpeGVkKDIpKTsKICAgICAgICAgIHZhciAkaHcgPSAkKCIjcGxvbWlub19mb3JtIiku
+ZmluZCgnLmhpZGV3aGVuLWh3X25vX3JhdGUnKQogICAgICAgICAgJGh3LmNzcygnZGlzcGxheScs
+IChkYXRhLnRvdGFsZTw9NDAwKT8nbm9uZSc6J2Jsb2NrJyk7CgogICAgICAgfQogICAgfSk7CiAg
+fQoKICBpZih0eXBlb2YoZWxlbWVudGlfaW5zZWduZV9kZ19kYXRhdGFibGUpIT0ndW5kZWZpbmVk
+Jyl7CiAgICAgZWxlbWVudGlfaW5zZWduZV9kZ19kYXRhdGFibGUuZm5TZXR0aW5ncygpLmFvRHJh
+d0NhbGxiYWNrLnB1c2goIHsKICAgICAgICJmbiI6IGZ1bmN0aW9uKCBvU2V0dGluZ3MgKXsKICAg
+ICAgICAgLy92ZWRlcmUgcGVyY2hlIGxvIGZhIDIgdm9sdGUhISEKICAgICAgICAgYWdnaW9ybmFD
+b3NhcCgpOwogICAgICAgfQogICAgIH0pOwogIH0KCn0pOwo=
+]]></resource>
+      <resource contenttype="application/javascript" id="controller_cavalletti.js" title="" type="File"><![CDATA[JCggZG9jdW1lbnQgKS5yZWFkeShmdW5jdGlvbigpIHsKICBmdW5jdGlvbiBhZ2dpb3JuYUNJTVAo
+c3VwPTApewoKICAgIC8vc2Ugbm9uIHBhc3NvIGxhIHN1cCBsYSBjYWxjb2xhIGRhIGRhdGFncmlk
+CiAgICAgICB2YXIgc3VwID0gMDsKICAgICAgIHZhciBzaXplOwogICAgICAgdmFyIHJvd3MgPSAk
+LmV2YWxKU09OKCQoIiNlbGVtZW50aV9jYXZhbGxldHRpX2RnX2dyaWR2YWx1ZSIpLnZhbCgpKTsK
+CgogICAgdmFyIGRvY3VtZW50SWQgPSAkKCIjc3VwZXJmaWNpZV9vY2N1cGF6aW9uZSIpLmRhdGEo
+ImRvY2lkIik7CgogICAgJC5hamF4KHsKICAgICAgICd1cmwnOiJyZXNvdXJjZXMvY29zYXAvZ2V0
+SW1wb3J0b0NJTVAiLAogICAgICAgJ3R5cGUnOidQT1NUJywKICAgICAgICdkYXRhJzp7ImRvYyI6
+ZG9jdW1lbnRJZCwiZWxlbWVudGkiOiQoIiNlbGVtZW50aV9jYXZhbGxldHRpX2RnX2dyaWR2YWx1
+ZSIpLnZhbCgpfSwKICAgICAgICdkYXRhVHlwZSc6J0pTT04nLAogICAgICAgJ3N1Y2Nlc3MnOmZ1
+bmN0aW9uKGRhdGEsIHRleHRTdGF0dXMsIGpxWEhSKXsKICAgICAgICAgICQoIltuYW1lPSdpbXBv
+cnRvX2NpbXAnXSIpLnRleHQoZGF0YS50b3RhbGUudG9GaXhlZCgyKSk7CiAgICAgICB9CiAgICB9
+KTsKICB9CgoKICBpZih0eXBlb2YoZWxlbWVudGlfY2F2YWxsZXR0aV9kZ19kYXRhdGFibGUpIT0n
+dW5kZWZpbmVkJyl7CiAgICAgZWxlbWVudGlfY2F2YWxsZXR0aV9kZ19kYXRhdGFibGUuZm5TZXR0
+aW5ncygpLmFvRHJhd0NhbGxiYWNrLnB1c2goIHsKICAgICAgICJmbiI6IGZ1bmN0aW9uKCBvU2V0
+dGluZ3MgKXsKICAgICAgICAgLy92ZWRlcmUgcGVyY2hlIGxvIGZhIDIgdm9sdGUhISEKICAgICAg
+ICAgYWdnaW9ybmFDSU1QKCk7CiAgICAgICB9CiAgICAgfSk7CiAgfQoKfSk7Cg==
+]]></resource>
+      <resource id="getImportoCIMP" title="" type="Script (Python)"><![CDATA[## Script (Python) "getImportoCIMP"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None,elementi='[]'
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import StringToDate, DateToString, json_dumps, json_loads
+import math
+
+##calcolo della singola superficie
+def calcolaCIMP(sup,temporaneo,illuminato):
+    
+    if sup=="":
+        sup=0
+
+    if sup < 1:
+        sup=1
+    else:
+        #arrotondamento al mezzo metro
+        dec = sup-math.floor(sup)
+        if dec!=0:
+            sup = math.floor(sup) + (0.5 if dec <=0.5 else 1)  
+
+    #Tariffe da settings
+    tariffa = context.getTariffaCIMP(sup,temporaneo)
+    importo = sup * tariffa
+    
+    #se illuminato aggiungo l'aggravio
+    if illuminato:
+        tariffa_base = context.getTariffaCIMP(1,temporaneo)
+        importo = importo +  sup * tariffa_base
+
+    return importo
+
+
+
+
+#calcolo complessivo
+if isinstance(doc, basestring):
+    doc = context.getDocument(doc)
+    
+ngg=0
+temporaneo=False
+
+if doc.getItem('tipo_occupazione')=='temporanea':
+    rows = doc.getItem('periodo_occupazione_dg',[])  
+    for row in rows:
+        data_inizio = StringToDate(row[0], format="%d/%m/%Y")
+        data_fine = StringToDate(row[1], format="%d/%m/%Y")
+        ngg = ngg + int(data_fine - data_inizio) + 1
+   
+    if ngg < 184:
+        temporaneo=True
+    
+totale = 0 
+
+#Calcolo importi per ogni cavalletto e per ogni superficie
+if elementi:
+    cavalletti = json_loads(elementi)
+else:
+    cavalletti = doc.getItem('elementi_cavalletti_dg',[])
+
+#se un solo mezzo pubblicitario con sup < 300 cm^2 non paga 
+if len(cavalletti)==1:
+    row=cavalletti[0]
+    if ((row[2] or 0) + (row[3] or 0) + (row[4] or 0) + (row[5] or 0)) < 0.03:
+        return json_dumps({"success":1, "totale":totale})
+
+for row in cavalletti:
+    illuminato = row[6]=='si'
+    totale=totale + calcolaCIMP(row[2],temporaneo,illuminato)
+    totale=totale + calcolaCIMP(row[3],temporaneo,illuminato)
+    totale=totale + calcolaCIMP(row[4],temporaneo,illuminato)
+    totale=totale + calcolaCIMP(row[5],temporaneo,illuminato)
+   
+   
+#arrotondamenti
+dec = totale-math.floor(totale)
+if dec!=0:
+    totale = math.floor(totale) + (0.5 if dec <=0.5 else 1)   
+    
+return json_dumps({"success":1, "totale":totale})
+]]></resource>
+      <resource id="getTariffaCIMP" title="" type="Script (Python)"><![CDATA[## Script (Python) "getTariffaCIMP"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=sup=0,temp=0
+##title=
+##
+docSettings=context.aq_parent.customscripts.getDocSettings()
+rows=docSettings.getItem('tariffe_cimp',[])
+sup = float(sup)
+
+row_index=0
+col_index=1 if temp==0 else 2
+   
+if 1 < sup <= 1.5:
+    row_index = 1
+elif 1.5 < sup <= 5.0:
+    row_index = 2
+elif 5.0 < sup <= 8.0:
+    row_index = 3    
+elif 8.0 < sup <= 18.0:
+    row_index = 4
+elif 18.0 < sup:
+    row_index = 5
+    
+return float(rows[row_index][col_index])
+]]></resource>
+      <resource contenttype="application/javascript" id="controller_commercio.js" title="" type="File"><![CDATA[JCggZG9jdW1lbnQgKS5yZWFkeShmdW5jdGlvbigpIHsKCiAgdmFyIGRvY3VtZW50SWQgPSAkKCIj
+c3VwZXJmaWNpZV9vY2N1cGF6aW9uZSIpLmRhdGEoImRvY2lkIik7CgogIC8vY29zYXAgcGVyIGVs
+ZW1lbnRpIGUgY2F2YWxsZXR0aQogIGZ1bmN0aW9uIGFnZ2lvcm5hQ29zYXAoc3VwPTApeyAgCiAg
+ICAvL3NlIG5vbiBwYXNzbyBsYSBzdXAgbGEgY2FsY29sYSBkYSBkYXRhZ3JpZAogICAgaWYgKHN1
+cD09MCl7CiAgICAgICAvL2VsZW1lbnRpIGRpIG9jY3VwYXppb25lCiAgICAgICB2YXIgcm93cyA9
+ICQuZXZhbEpTT04oJCgiI2VsZW1lbnRpX29jY3VwYXppb25lX2RnX2dyaWR2YWx1ZSIpLnZhbCgp
+KTsKICAgICAgIGZvcih2YXIgaT0wO2k8cm93cy5sZW5ndGg7aSsrKXsKICAgICAgICAgIHN1cCA9
+IHN1cCArIHJvd3NbaV1bMF0qcm93c1tpXVsxXTsKICAgICAgIH0KICAgICAgIC8vY2F2YWxsZXR0
+aQogICAgICAgdmFyIHN1cGMgPSAwCiAgICAgICByb3dzID0gJC5ldmFsSlNPTigkKCIjZWxlbWVu
+dGlfY2F2YWxsZXR0aV9kZ19ncmlkdmFsdWUiKS52YWwoKSk7CiAgICAgICBmb3IodmFyIGk9MDtp
+PHJvd3MubGVuZ3RoO2krKyl7CiAgICAgICAgICBzdXBjID0gc3VwYyArIHJvd3NbaV1bMF0qcm93
+c1tpXVsxXTsKICAgICAgIH0KY29uc29sZS5sb2cocm93cykKICAgICAgIC8vYWdnaXVuZ28gbGEg
+c3VwIG9jY3VwYXppb25lIGRlaSBjYXZhbGxldHRpIHNvbG8gc2UgPiAwLjUKICAgICAgIGlmIChz
+dXBjID4gMC41KXsKICAgICAgICAgIHN1cCA9IHN1cCArIHN1cGM7CiAgICAgICB9CiAgICAgICAK
+ICAgICAgICQoIiNzdXBlcmZpY2llX29jY3VwYXppb25lIikudmFsKHN1cC50b0ZpeGVkKDIpKTsK
+CiAgICB9CgogICAgJC5hamF4KHsKICAgICAgICd1cmwnOiJyZXNvdXJjZXMvY29zYXAvZ2V0SW1w
+b3J0b0Nvc2FwIiwKICAgICAgICd0eXBlJzonR0VUJywKICAgICAgICdkYXRhJzp7ImRvYyI6ZG9j
+dW1lbnRJZCwic3VwX29jY3VwYXppb25lIjpzdXB9LAogICAgICAgJ2RhdGFUeXBlJzonSlNPTics
+CiAgICAgICAnc3VjY2Vzcyc6ZnVuY3Rpb24oZGF0YSwgdGV4dFN0YXR1cywganFYSFIpewogICAg
+ICAgICAgJCgiW25hbWU9J2ltcG9ydG9fY29zYXAnXSIpLnRleHQoZGF0YS50b3RhbGUudG9GaXhl
+ZCgyKSk7CiAgICAgICAgICB2YXIgJGh3ID0gJCgiI3Bsb21pbm9fZm9ybSIpLmZpbmQoJy5oaWRl
+d2hlbi1od19ub19yYXRlJykKICAgICAgICAgICRody5jc3MoJ2Rpc3BsYXknLCAoZGF0YS50b3Rh
+bGU8PTQwMCk/J25vbmUnOidibG9jaycpOwoKICAgICAgIH0KICAgIH0pOwogIH0KCiAgZnVuY3Rp
+b24gYWdnaW9ybmFDSU1QKHN1cD0wKXsKCiAgICB2YXIgc3VwID0gMDsKICAgIHZhciByb3dzID0g
+JC5ldmFsSlNPTigkKCIjZWxlbWVudGlfY2F2YWxsZXR0aV9kZ19ncmlkdmFsdWUiKS52YWwoKSk7
+CiAgICAkLmFqYXgoewogICAgICAgJ3VybCc6InJlc291cmNlcy9jb3NhcC9nZXRJbXBvcnRvQ0lN
+UCIsCiAgICAgICAndHlwZSc6J1BPU1QnLAogICAgICAgJ2RhdGEnOnsiZG9jIjpkb2N1bWVudElk
+LCJlbGVtZW50aSI6JCgiI2VsZW1lbnRpX2NhdmFsbGV0dGlfZGdfZ3JpZHZhbHVlIikudmFsKCl9
+LAogICAgICAgJ2RhdGFUeXBlJzonSlNPTicsCiAgICAgICAnc3VjY2Vzcyc6ZnVuY3Rpb24oZGF0
+YSwgdGV4dFN0YXR1cywganFYSFIpewogICAgICAgICAgJCgiW25hbWU9J2ltcG9ydG9fY2ltcCdd
+IikudGV4dChkYXRhLnRvdGFsZS50b0ZpeGVkKDIpKTsKICAgICAgIH0KICAgIH0pOwogIH0KCiAg
+aWYodHlwZW9mKGVsZW1lbnRpX29jY3VwYXppb25lX2RnX2RhdGF0YWJsZSkhPSd1bmRlZmluZWQn
+KXsKICAgICBlbGVtZW50aV9vY2N1cGF6aW9uZV9kZ19kYXRhdGFibGUuZm5TZXR0aW5ncygpLmFv
+RHJhd0NhbGxiYWNrLnB1c2goIHsKICAgICAgICJmbiI6IGZ1bmN0aW9uKCBvU2V0dGluZ3MgKXsK
+ICAgICAgICAgLy92ZWRlcmUgcGVyY2hlIGxvIGZhIDIgdm9sdGUhISEKICAgICAgICAgYWdnaW9y
+bmFDb3NhcCgpOwogICAgICAgfQogICAgIH0pOwogIH0KCiAgaWYodHlwZW9mKGVsZW1lbnRpX2Nh
+dmFsbGV0dGlfZGdfZGF0YXRhYmxlKSE9J3VuZGVmaW5lZCcpewogICAgIGVsZW1lbnRpX2NhdmFs
+bGV0dGlfZGdfZGF0YXRhYmxlLmZuU2V0dGluZ3MoKS5hb0RyYXdDYWxsYmFjay5wdXNoKCB7CiAg
+ICAgICAiZm4iOiBmdW5jdGlvbiggb1NldHRpbmdzICl7CiAgICAgICAgIC8vdmVkZXJlIHBlcmNo
+ZSBsbyBmYSAyIHZvbHRlISEhCiAgICAgICAgIGFnZ2lvcm5hQ29zYXAoKTsKICAgICAgICAgYWdn
+aW9ybmFDSU1QKCk7CiAgICAgICB9CiAgICAgfSk7CiAgfQoKfSk7Cg==
+]]></resource>
+      <resource contenttype="application/javascript" id="controller_dehor.js" title="" type="File"><![CDATA[JCggZG9jdW1lbnQgKS5yZWFkeShmdW5jdGlvbigpIHsKCiAgZnVuY3Rpb24gYWdnaW9ybmFDb3Nh
+cChzdXA9MCl7CiAgICAvL3NlIG5vbiBwYXNzbyBsYSBzdXAgbGEgY2FsY29sYSBkYSBkYXRhZ3Jp
+ZAogICAgdmFyIHN1cF9zb3N0YSA9IDA7CiAgICBpZiAoc3VwPT0wKXsKICAgICAgIHZhciByb3dz
+ID0gJC5ldmFsSlNPTigkKCIjZWxlbWVudGlfb2NjdXBhemlvbmVfZGdfZ3JpZHZhbHVlIikudmFs
+KCkpOwogICAgICAgZm9yKHZhciBpPTA7aTxyb3dzLmxlbmd0aDtpKyspewogICAgICAgICAgc3Vw
+ID0gc3VwICsgcm93c1tpXVswXSpyb3dzW2ldWzFdOwogICAgICAgICAgaWYgKHJvd3NbaV1bMl09
+PSdzaScpewogICAgICAgICAgICAgc3VwX3Nvc3RhID0gc3VwX3Nvc3RhICsgcm93c1tpXVswXSpy
+b3dzW2ldWzFdOwogICAgICAgICAgfQogICAgICAgfQogICAgICAgJCgiI3N1cGVyZmljaWVfb2Nj
+dXBhemlvbmUiKS52YWwoc3VwLnRvRml4ZWQoMikpOwogICAgICAgJCgiI3N1cGVyZmljaWVfc29z
+dGEiKS52YWwoc3VwX3Nvc3RhLnRvRml4ZWQoMikpOwogICAgfQoKICAgIHZhciBkb2N1bWVudElk
+ID0gJCgiI3N1cGVyZmljaWVfb2NjdXBhemlvbmUiKS5kYXRhKCJkb2NpZCIpOwoKICAgICQuYWph
+eCh7CiAgICAgICAndXJsJzoicmVzb3VyY2VzL2Nvc2FwL2dldEltcG9ydG9Db3NhcCIsCiAgICAg
+ICAndHlwZSc6J0dFVCcsCiAgICAgICAnZGF0YSc6eyJkb2MiOmRvY3VtZW50SWQsInN1cF9vY2N1
+cGF6aW9uZSI6c3VwLCJzdXBfc29zdGEiOnN1cF9zb3N0YX0sCiAgICAgICAnZGF0YVR5cGUnOidK
+U09OJywKICAgICAgICdzdWNjZXNzJzpmdW5jdGlvbihkYXRhLCB0ZXh0U3RhdHVzLCBqcVhIUil7
+CiAgICAgICAgICAkKCJbbmFtZT0naW1wb3J0b19jb3NhcCddIikudGV4dChkYXRhLnRvdGFsZS50
+b0ZpeGVkKDIpKTsKICAgICAgICAgIHZhciAkaHcgPSAkKCIjcGxvbWlub19mb3JtIikuZmluZCgn
+LmhpZGV3aGVuLWh3X25vX3JhdGUnKQogICAgICAgICAgJGh3LmNzcygnZGlzcGxheScsIChkYXRh
+LnRvdGFsZTw9NDAwKT8nbm9uZSc6J2Jsb2NrJyk7CgogICAgICAgfQogICAgfSk7CiAgfQoKCiAg
+aWYodHlwZW9mKGVsZW1lbnRpX29jY3VwYXppb25lX2RnX2RhdGF0YWJsZSkhPSd1bmRlZmluZWQn
+KXsKICAgICBlbGVtZW50aV9vY2N1cGF6aW9uZV9kZ19kYXRhdGFibGUuZm5TZXR0aW5ncygpLmFv
+RHJhd0NhbGxiYWNrLnB1c2goIHsKICAgICAgICJmbiI6IGZ1bmN0aW9uKCBvU2V0dGluZ3MgKXsK
+ICAgICAgICAgLy92ZWRlcmUgcGVyY2hlIGxvIGZhIDIgdm9sdGUhISEKICAgICAgICAgYWdnaW9y
+bmFDb3NhcCgpOwogICAgICAgfQogICAgIH0pOwogIH0KCn0pOwo=
+]]></resource>
+    </resource>
+  </design>
+</plominodatabase>

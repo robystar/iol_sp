@@ -1,0 +1,39 @@
+<plominodatabase id="iol_sp">
+  <design>
+    <element id="vista-tutti" title="Elenco" type="PlominoView">
+      <id type="Products.Archetypes.Field.StringField">vista-tutti</id>
+      <SelectionFormula type="Products.Archetypes.Field.TextField"><![CDATA[True]]></SelectionFormula>
+      <SortColumn type="Products.Archetypes.Field.StringField"/>
+      <KeyColumn type="Products.Archetypes.Field.StringField"/>
+      <Categorized type="Products.Archetypes.Field.BooleanField">False</Categorized>
+      <FormFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></FormFormula>
+      <ReverseSorting type="Products.Archetypes.Field.BooleanField">False</ReverseSorting>
+      <PositionIndex type="Products.Archetypes.Field.BooleanField">False</PositionIndex>
+      <ActionBarPosition type="Products.Archetypes.Field.StringField">TOP</ActionBarPosition>
+      <HideDefaultActions type="Products.Archetypes.Field.BooleanField">True</HideDefaultActions>
+      <HideCheckboxes type="Products.Archetypes.Field.BooleanField">True</HideCheckboxes>
+      <HideInMenu type="Products.Archetypes.Field.BooleanField">False</HideInMenu>
+      <Widget type="Products.Archetypes.Field.StringField">BASIC</Widget>
+      <DynamicTableParameters type="Products.Archetypes.Field.TextField"><![CDATA['bPaginate': false,
+'bLengthChange': false,
+'bFilter': true,
+'bSort': true,
+'bInfo': true,
+'bAutoWidth': false]]></DynamicTableParameters>
+      <ViewTemplate type="Products.Archetypes.Field.StringField"/>
+      <onOpenView type="Products.Archetypes.Field.TextField"><![CDATA[]]></onOpenView>
+      <Position type="Products.Archetypes.Field.IntegerField"/>
+      <excludeFromNav type="Products.Archetypes.Field.BooleanField">False</excludeFromNav>
+      <elements>
+        <element id="identificativo" title="Identificativo" type="PlominoColumn">
+          <id type="Products.Archetypes.Field.StringField">identificativo</id>
+          <SelectedField type="Products.Archetypes.Field.StringField">base_sub_pratica/identificativo</SelectedField>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[]]></Formula>
+          <HiddenColumn type="Products.Archetypes.Field.BooleanField">False</HiddenColumn>
+          <RenderField type="Products.Archetypes.Field.BooleanField">False</RenderField>
+          <DisplaySum type="Products.Archetypes.Field.BooleanField">False</DisplaySum>
+        </element>
+      </elements>
+    </element>
+  </design>
+</plominodatabase>

@@ -1,0 +1,24 @@
+<plominodatabase id="iol_sp">
+  <design>
+    <resource id="ImpostaMorosi" title="" type="Script (Python)"><![CDATA[## Script (Python) "ImpostaMorosi"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=
+##title=
+##
+# IMPOSTA TUTTI I DEHOR A MOROSI PER VERIFICA MANUALE DA PARTE DI SPEZIA RISORSE
+from Products.CMFPlomino.PlominoUtils import json_dumps,json_loads,StringToDate,DateToString,decimal
+
+for doc in context.getAllDocuments():
+    #doc.setItem('morosi_opt','no')
+    if doc.getItem('data_titolo') and doc.getItem('tipo_occupazione')=='permanente' and doc.getItem('autorizzata_dal')>=StringToDate('2019-01-01'):
+        doc.setItem('morosi_opt','si')
+        print doc.getId(),doc.getItem('morosi_opt')
+        
+return printed
+]]></resource>
+  </design>
+</plominodatabase>

@@ -1,0 +1,187 @@
+<plominodatabase id="iol_sp">
+  <design>
+    <element id="base_sub_pagopa_importi" title="Importi da pagare" type="PlominoForm">
+      <id type="Products.Archetypes.Field.StringField">base_sub_pagopa_importi</id>
+      <onCreateDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></onCreateDocument>
+      <onOpenDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></onOpenDocument>
+      <beforeSaveDocument type="Products.Archetypes.Field.TextField"><![CDATA[context.setItem('fromform',context.getItem('Form'))]]></beforeSaveDocument>
+      <onSaveDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></onSaveDocument>
+      <onDeleteDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></onDeleteDocument>
+      <onSearch type="Products.Archetypes.Field.TextField"><![CDATA[]]></onSearch>
+      <beforeCreateDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></beforeCreateDocument>
+      <FormLayout type="Products.Archetypes.Field.TextField"><![CDATA[
+<p><span class="plominoHidewhenClass">start:hw_no_pagopa</span></p>
+<div class="v-content well">
+<fieldset class="scheduler-border">
+<legend class="scheduler-border"> IMPORTI DOVUTI ALLA PRESENTAZIONE </legend> <span class="plominoFieldClass">immobile_volumetria_msg</span><p><span class="plominoLabelClass">elenco_importi_dg</span><span class="plominoFieldClass">elenco_importi_dg</span></p>
+<div class="alert alert-info"><strong>Attenzione:il servizio PagoPa non accetta importi distinti con lo stesso "Tipo pagamento". Inserire la somma degli importi con lo stesso "Tipo pagamento".</strong></div>
+<p><span class="plominoLabelClass">elenco_importi_aggiuntivi_dg</span><span class="plominoFieldClass">elenco_importi_aggiuntivi_dg</span></p>
+</fieldset>
+<div class="alert alert-error">
+<h4>ATTENZIONE:</h4>
+<h4>Qualora la pratica preveda il pagamento di oneri, sanzioni o diritti è necessario perfezionare il pagamento prima dell'invio, VERIFICARE LA CORRETTEZZA DELLE INFORMAZIONI INSERITE, ALLEGARE I DOCUMENTI RICHIESTI FIRMATI DIGITALMENTE E PROCEDERE CON IL PAGAMENTO. <span style="text-decoration: underline; ">DOPO AVER CLICCATO SU "Procedi con il pagamento" NON SARÀ PIÙ POSSIBILE RIPORTARE LA PRATICA IN COMPILAZIONE.</span>
+</h4>
+<p>Inserire le singole voci con gli importi relativi, specificando la causale; è possibile scegliere la modalità di pagamento differita, mediante produzione di apposita distinta di pagamento, oppure progedere in modalità diretta utilizzato una delle possibilità offerte dal sistema PagoPA. Solo una volta che il pagamento verrà correttamente eseguito la pratica sarà disponibile per le attività istruttorie. Nel caso vega scelto il pagamento mediante distinta (modalità differità), il sistema completerà l'invio solamento dopo che il pagamento verrà materialmente eseguito presso uno dei prestatori di servizio (agenzie della tua banca, sportelli bancomati abilitati, punti vendita SISAL, Lottomatica e Banca 5, Uffici Postali)</p>
+</div>
+</div>
+<p><span class="plominoHidewhenClass">end:hw_no_pagopa</span></p>
+]]></FormLayout>
+      <FormMethod type="Products.Archetypes.Field.TextField"><![CDATA[Auto]]></FormMethod>
+      <DocumentTitle type="Products.Archetypes.Field.TextField"><![CDATA[]]></DocumentTitle>
+      <DynamicDocumentTitle type="Products.Archetypes.Field.BooleanField">False</DynamicDocumentTitle>
+      <StoreDynamicDocumentTitle type="Products.Archetypes.Field.BooleanField">False</StoreDynamicDocumentTitle>
+      <DocumentId type="Products.Archetypes.Field.TextField"><![CDATA[]]></DocumentId>
+      <ActionBarPosition type="Products.Archetypes.Field.StringField">TOP</ActionBarPosition>
+      <HideDefaultActions type="Products.Archetypes.Field.BooleanField">False</HideDefaultActions>
+      <HideInMenu type="Products.Archetypes.Field.BooleanField">True</HideInMenu>
+      <isSearchForm type="Products.Archetypes.Field.BooleanField">False</isSearchForm>
+      <isPage type="Products.Archetypes.Field.BooleanField">False</isPage>
+      <SearchView type="Products.Archetypes.Field.StringField"/>
+      <SearchFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></SearchFormula>
+      <Position type="Products.Archetypes.Field.IntegerField"/>
+      <ResourcesJS type="Products.Archetypes.Field.TextField"><![CDATA[]]></ResourcesJS>
+      <ResourcesCSS type="Products.Archetypes.Field.TextField"><![CDATA[++resource++iol.document/css/bootstrap.min.css
+++resource++iol.document/css/bootstrap-accessibile.min.css
+++resource++iol.document/css/bootstrap-responsive.min.css
+++resource++iol.document/css/iol.css]]></ResourcesCSS>
+      <excludeFromNav type="Products.Archetypes.Field.BooleanField">False</excludeFromNav>
+      <elements>
+        <element id="elenco_importi_dg" title="Importi dovuti calcolati in base ai dati inseriti" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">elenco_importi_dg</id>
+          <FieldType type="Products.Archetypes.Field.StringField">DATAGRID</FieldType>
+          <FieldMode type="Products.Archetypes.Field.StringField">DISPLAY</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[try:
+    #setta gli importi da pagare e l'azione da passare all'Agent
+    context.getParentDatabase().resources.config_pagopa(doc=context,azione='presentazione') 
+    return context.getItem('elenco_importi_dg')
+except:
+    pass]]></Formula>
+          <FieldReadTemplate type="Products.Archetypes.Field.StringField"/>
+          <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
+          <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>
+          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
+          <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>
+          <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
+          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></HTMLAttributesFormula>
+          <params>
+<param>
+<value><array><data>
+<value><struct>
+<member>
+<name>associated_form</name>
+<value><string>dlg_pagopa_importi</string></value>
+</member>
+</struct></value>
+<value><struct>
+<member>
+<name>field_mapping</name>
+<value><string>codimp,tipo,causale,importo,scadenza,azione</string></value>
+</member>
+</struct></value>
+<value><struct>
+<member>
+<name>jssettings</name>
+<value><string>"aoColumns": [
+    { "sTitle": "ID" }, 
+    { "sTitle": "Tipo", "bVisible": false },             
+    { "sTitle": "Causale" },              
+    { "sTitle": "Importo" },
+    { "sTitle": "Scadenza" }
+],
+"bPaginate": false,
+"bLengthChange": false,
+"bFilter": false,
+"bSort": false,
+"bInfo": false,
+"bAutoWidth": false,
+"plominoDialogOptions": {
+        "width": 800,
+        "height": 400
+    }
+</string></value>
+</member>
+</struct></value>
+</data></array></value>
+</param>
+</params>
+        </element>
+        <element id="elenco_importi_aggiuntivi_dg" title="Altri importi dovuti" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">elenco_importi_aggiuntivi_dg</id>
+          <FieldType type="Products.Archetypes.Field.StringField">DATAGRID</FieldType>
+          <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[]]></Formula>
+          <FieldReadTemplate type="Products.Archetypes.Field.StringField"/>
+          <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
+          <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>
+          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[conf = context.getParentDatabase().resources.config_pagopa().get('importi_tipo')
+if conf.get(context.getItem('iol_tipo_app')) and conf.get(context.getItem('iol_tipo_app')).get('PRESENTAZIONE'):
+    if context.REQUEST.get('elenco_importi_aggiuntivi_dg')=='[]':
+        return '''E' necessario inserire almeno un importo per le pratiche di tipo %s''' %context.getItem('iol_tipo_app')]]></ValidationFormula>
+          <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>
+          <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
+          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></HTMLAttributesFormula>
+          <params>
+<param>
+<value><array><data>
+<value><struct>
+<member>
+<name>associated_form</name>
+<value><string>dlg_pagopa_importi</string></value>
+</member>
+</struct></value>
+<value><struct>
+<member>
+<name>field_mapping</name>
+<value><string>codimp,tipo,causale,importo,scadenza,azione</string></value>
+</member>
+</struct></value>
+<value><struct>
+<member>
+<name>jssettings</name>
+<value><string>"aoColumns": [
+    { "sTitle": "ID" }, 
+    { "sTitle": "Tipo", "bVisible": false },             
+    { "sTitle": "Causale" },              
+    { "sTitle": "Importo" },
+    { "sTitle": "Scadenza" }
+],
+"bPaginate": false,
+"bLengthChange": false,
+"bFilter": false,
+"bSort": false,
+"bInfo": false,
+"bAutoWidth": false,
+"plominoDialogOptions": {
+        "width": 900,
+        "height": 400
+    }
+</string></value>
+</member>
+</struct></value>
+</data></array></value>
+</param>
+</params>
+        </element>
+        <element id="hw_no_pagopa" title="hw_no_pagopa" type="PlominoHidewhen">
+          <id type="Products.Archetypes.Field.StringField">hw_no_pagopa</id>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[return not context.getParentDatabase().resources.customscripts.getPagoPaEnabled(context)]]></Formula>
+          <isDynamicHidewhen type="Products.Archetypes.Field.BooleanField">False</isDynamicHidewhen>
+        </element>
+        <element id="immobile_volumetria_msg" title="immobile_volumetria_msg" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">immobile_volumetria_msg</id>
+          <FieldType type="Products.Archetypes.Field.StringField">TEXT</FieldType>
+          <FieldMode type="Products.Archetypes.Field.StringField">DISPLAY</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[if context.getParentDatabase().resources.config().get('volumetria_pagamenti') and context.getItem('immobile_volumetria_intervento'):
+    return '''<div class="alert alert-info">%s</div>''' %context.getParentDatabase().resources.config().get('volumetria_pagamenti')]]></Formula>
+          <FieldReadTemplate type="Products.Archetypes.Field.StringField">TEXTFieldCell</FieldReadTemplate>
+          <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
+          <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>
+          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
+          <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>
+          <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
+          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></HTMLAttributesFormula>
+        </element>
+      </elements>
+    </element>
+  </design>
+</plominodatabase>

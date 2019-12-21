@@ -1,0 +1,24 @@
+<plominodatabase id="iol_sp">
+  <design>
+    <element id="onFirmaOk" title="onFirmaOk" type="PlominoAgent">
+      <id type="Products.Archetypes.Field.StringField">onFirmaOk</id>
+      <Content type="Products.Archetypes.Field.TextField"><![CDATA[docId = args[0]
+data = args[1]
+db=context.getParentDatabase()
+
+try:
+    db.resources.pagopa.setPagamento(docId,data)
+    if 'esito' in data and data['esito']=='OK' and 'azioni' in data:
+        doc=db.getDocument(docId)   
+        azioni=data['azioni'].split(',')
+        for azione in azioni:
+            if doc.isActionSupported(azione):
+                doc.doAction(azione)
+                
+except Exception as err:
+    context.getParentDatabase().resources.customscripts.sendMailPlone(doc=doc,azione='pagopa-ko')
+    context.plone_utils.addPortalMessage('Errore nel pagamento %s' %err, 'error')]]></Content>
+      <RunAs type="Products.Archetypes.Field.StringField">OWNER</RunAs>
+    </element>
+  </design>
+</plominodatabase>

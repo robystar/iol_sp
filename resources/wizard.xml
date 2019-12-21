@@ -1,0 +1,305 @@
+<plominodatabase id="iol_sp">
+  <design>
+    <resource id="wizard" title="" type="Folder">
+      <resource id="wizard_menu" title="" type="Script (Python)"><![CDATA[## Script (Python) "wizard_menu"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import json_dumps
+
+doc = context.REQUEST.PARENTS[2]
+visitati = []
+menus = []
+tipo_app = ''
+testdoc = False
+presentata = False
+wfInfo = None
+
+
+if doc.isDocument():
+    tipo_app=doc.getItem('iol_tipo_app')
+    visitati=doc.getItem('iol_menu_list',[])
+    testdoc = 'testdoc' in doc.getId()
+    currentForm = context.REQUEST.get('openwithform',context.getItem('IOL_PREVIOUS_FORM'))
+else:
+    currentForm = doc.getId()
+    if currentForm.startswith('frm_'):
+        v = currentForm.split('_')
+        if len(v) > 1:
+            tipo_app = v[1]
+
+if not tipo_app in context:
+    #errore manca i menu per tipo_app todo
+    return dict()
+ 
+data = context[tipo_app]() 
+
+if doc.isDocument() and doc.getwfVariables(varId='wf_presentata'):
+    ##tolgo i menu gli utenti non editor
+    if not context.hasCurrentUserRight('PlominoEditor'):
+        return
+    if doc.REQUEST.get('openwithform'):
+        return
+    presentata=True
+    menus=data['back']    
+else:  
+    if doc.isDocument() and doc.getItem('iol_workflow_status')=='attesa_pagamento_presentazione':
+        return
+    menus=data['front']
+
+for menu in menus:
+    menu["enabled"] = presentata or menu["frm"] in visitati or testdoc
+    menu["edit"] = not presentata
+    if currentForm == menu["frm"]:
+        menu["active"]=True
+   ### intervento e oneri custom
+    if menu["frm"] in [""]:
+        menu["frm"] = menu["frm"]+"-"+tipo_app
+        
+
+return json_dumps(menus)
+]]></resource>
+      <resource id="delega" title="" type="Script (Python)"><![CDATA[## Script (Python) "delega"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=
+##title=
+##
+menus=dict()
+
+menus['front'] = [
+    {"label": "Dati del richiedente", "frm": "frm_delega", "title": "Dati anagrafici dei richiedenti"}, 
+    {"label": "Resoconto Finale", "frm": "frm_completata", "title": "Istanza completata - resoconto finale"}
+]
+menus['back'] = [
+    {"label": "Richiesta di accesso in delega a documenti esistenti", "frm": "bo_procedimento", "title": "Dati anagrafici dei richiedenti"}
+]
+return menus
+]]></resource>
+      <resource id="dehor" title="" type="Script (Python)"><![CDATA[## Script (Python) "dehor"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=
+##title=
+##
+menus=dict()
+
+menus['front'] = [
+    {"label": "Dati del richiedente", "frm": "frm_dehor", "title": "Dati anagrafici dei richiedenti"},
+    {"label": "Ubicazione", "frm": "frm_ubicazione", "title": "Tipo di intervento"}, 
+    {"label": "Richiesta", "frm": "frm_dehor_richiesta", "title": "Tipo di intervento"}, 
+    {"label": "Occupazione", "frm": "frm_dehor_dati", "title": "Tipo di intervento"}, 
+    {"label": "Allegati", "frm": "frm_dehor_allegati", "title": "Documentazione allegata"},
+    {"label": "Resoconto Finale", "frm": "frm_completata", "title": "Istanza completata - resoconto finale"}
+]
+menus['back'] = [
+    {"label": "Procedimento", "frm": "bo_procedimento", "title": "Dati del procedimento"}, 
+    {"label": "Richiedente", "frm": "bo_anagrafiche", "title": "Anagrafiche"}, 
+    {"label": "Ubicazione", "frm": "bo_ubicazione", "title": "Localizzazione Intervento e vincoli"}, 
+    {"label": "Dati richiesta", "frm": "bo_richiesta", "title": "Qualificazione e tipo di intervento"}, 
+    {"label": "Documentazione allegata", "frm": "bo_allegati", "title": "Documentazione allegata"},
+    
+    
+]
+return menus
+]]></resource>
+      <resource id="integrazione" title="" type="Script (Python)"><![CDATA[## Script (Python) "integrazione"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=
+##title=
+##
+menus=dict()
+
+menus['front'] = [
+    {"label": "Integrazione", "frm": "frm_integrazione", "title": "Dati anagrafici dei richiedenti"},
+    {"label": "Dati di integrazione", "frm": "frm_integrazione_dati", "title": "Dati anagrafici dei richiedenti"},
+    {"label": "Resoconto Finale", "frm": "frm_completata", "title": "Istanza completata - resoconto finale"}
+]
+menus['back'] = [
+    {"label": "Invio documentazione integrativa", "frm": "bo_procedimento", "title": "Dati anagrafici dei richiedenti"}
+]
+return menus
+]]></resource>
+      <resource id="commercio" title="" type="Script (Python)"><![CDATA[## Script (Python) "commercio"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=
+##title=
+##
+menus=dict()
+
+menus['front'] = [
+    {"label": "Dati del richiedente", "frm": "frm_commercio", "title": "Dati anagrafici dei richiedenti"},
+    {"label": "Ubicazione", "frm": "frm_ubicazione", "title": "Tipo di intervento"}, 
+    {"label": "Richiesta", "frm": "frm_commercio_richiesta", "title": "Tipo di intervento"}, 
+    {"label": "Occupazione", "frm": "frm_commercio_dati", "title": "Tipo di intervento"}, 
+    {"label": "Allegati", "frm": "frm_commercio_allegati", "title": "Documentazione allegata"},
+    {"label": "Resoconto Finale", "frm": "frm_completata", "title": "Istanza completata - resoconto finale"}
+]
+menus['back'] = [
+    {"label": "Procedimento", "frm": "bo_procedimento", "title": "Dati del procedimento"}, 
+    {"label": "Richiedente", "frm": "bo_anagrafiche", "title": "Anagrafiche"}, 
+    {"label": "Ubicazione", "frm": "bo_ubicazione", "title": "Localizzazione Intervento e vincoli"}, 
+    {"label": "Dati richiesta", "frm": "bo_richiesta", "title": "Qualificazione e tipo di intervento"}, 
+    {"label": "Documentazione allegata", "frm": "bo_allegati", "title": "Documentazione allegata"},
+    
+    
+]
+return menus
+]]></resource>
+      <resource id="rinnovo-commercio" title="" type="Script (Python)"><![CDATA[## Script (Python) "rinnovo-commercio"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=
+##title=
+##
+menus=dict()
+
+menus['front'] = [
+    {"label": "Richiesta di rinnovo", "frm": "frm_rinnovo-commercio", "title": "Dati anagrafici dei richiedenti"},
+    {"label": "Dati della pratica", "frm": "frm_rinnovo_dati", "title": "Dati anagrafici dei richiedenti"},
+    {"label": "Allegati", "frm": "frm_rinnovo_allegati", "title": "Dati anagrafici dei richiedenti"},
+    {"label": "Resoconto Finale", "frm": "frm_completata", "title": "Istanza completata - resoconto finale"}
+]
+menus['back'] = [
+    {"label": "Rinnovo", "frm": "bo_procedimento", "title": "Dati del procedimento"}, 
+    {"label": "Autorizzazione base", "frm": "bo_autorizzazione_base", "title": "Autorizzazione base"}, 
+    
+    
+]
+return menus
+]]></resource>
+      <resource id="rinnovo-dehor" title="" type="Script (Python)"><![CDATA[## Script (Python) "rinnovo-dehor"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=
+##title=
+##
+menus=dict()
+
+menus['front'] = [
+    {"label": "Richiesta di rinnovo", "frm": "frm_rinnovo-dehor", "title": "Dati anagrafici dei richiedenti"},
+    {"label": "Dati della pratica", "frm": "frm_rinnovo_dati", "title": "Dati anagrafici dei richiedenti"},
+    {"label": "Allegati", "frm": "frm_rinnovo_allegati", "title": "Dati anagrafici dei richiedenti"},
+    {"label": "Resoconto Finale", "frm": "frm_completata", "title": "Istanza completata - resoconto finale"}
+]
+menus['back'] = [
+    {"label": "Rinnovo", "frm": "bo_procedimento", "title": "Dati del procedimento"}, 
+    {"label": "Autorizzazione base", "frm": "bo_autorizzazione_base", "title": "Autorizzazione base"}, 
+    
+    
+]
+return menus
+]]></resource>
+      <resource id="rinnovo" title="" type="Script (Python)"><![CDATA[## Script (Python) "rinnovo"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=
+##title=
+##
+menus=dict()
+
+menus['front'] = [
+    {"label": "Richiesta di rinnovo", "frm": "frm_rinnovo-commercio", "title": "Dati anagrafici dei richiedenti"},
+    {"label": "Dati della pratica", "frm": "frm_rinnovo_dati", "title": "Dati anagrafici dei richiedenti"},
+    {"label": "Allegati", "frm": "frm_rinnovo_allegati", "title": "Dati anagrafici dei richiedenti"},
+    {"label": "Resoconto Finale", "frm": "frm_completata", "title": "Istanza completata - resoconto finale"}
+]
+menus['back'] = [
+    {"label": "Rinnovo", "frm": "bo_procedimento", "title": "Dati del procedimento"}, 
+    {"label": "Autorizzazione base", "frm": "bo_autorizzazione_base", "title": "Autorizzazione base"}, 
+    
+    
+]
+return menus
+]]></resource>
+      <resource id="passocarraio" title="" type="Script (Python)"><![CDATA[## Script (Python) "passocarraio"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=
+##title=
+##
+menus=dict()
+
+menus['front'] = [
+    {"label": "Dati del richiedente", "frm": "frm_passocarraio", "title": "Dati anagrafici dei richiedenti"},
+    {"label": "Ubicazione", "frm": "frm_ubicazione_passocarraio", "title": "Tipo di intervento"}, 
+    {"label": "Richiesta", "frm": "frm_passocarraio_richiesta", "title": "Tipo di intervento"}, 
+    {"label": "Dati", "frm": "frm_passocarraio_dati", "title": "Tipo di intervento"}, 
+    {"label": "Allegati", "frm": "frm_passocarraio_allegati", "title": "Documentazione allegata"},
+    {"label": "Resoconto Finale", "frm": "frm_completata", "title": "Istanza completata - resoconto finale"}
+]
+menus['back'] = [
+    {"label": "Procedimento", "frm": "bo_procedimento", "title": "Dati del procedimento"}, 
+    {"label": "Richiedente", "frm": "bo_anagrafiche", "title": "Anagrafiche"}, 
+    {"label": "Ubicazione", "frm": "bo_ubicazione", "title": "Localizzazione Intervento e vincoli"}, 
+    {"label": "Dati richiesta", "frm": "bo_richiesta", "title": "Qualificazione e tipo di intervento"}, 
+    {"label": "Documentazione allegata", "frm": "bo_allegati", "title": "Documentazione allegata"},
+    
+    
+]
+return menus
+]]></resource>
+      <resource id="lift" title="" type="Script (Python)"><![CDATA[## Script (Python) "lift"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=
+##title=
+##
+menus=dict()
+
+menus['front'] = [
+    {"label": "Dati del richiedente", "frm": "frm_lift", "title": "Dati anagrafici dei richiedenti"},
+    {"label": "Ubicazione", "frm": "frm_ubicazione", "title": "Tipo di intervento"}, 
+    {"label": "Richiesta", "frm": "frm_lift_richiesta", "title": "Tipo di intervento"}, 
+    {"label": "Occupazione", "frm": "frm_lift_dati", "title": "Tipo di intervento"}, 
+    {"label": "Allegati", "frm": "frm_lift_allegati", "title": "Documentazione allegata"},
+    {"label": "Resoconto Finale", "frm": "frm_completata", "title": "Istanza completata - resoconto finale"}
+]
+menus['back'] = [
+    {"label": "Procedimento", "frm": "bo_procedimento", "title": "Dati del procedimento"}, 
+    {"label": "Richiedente", "frm": "bo_anagrafiche", "title": "Anagrafiche"}, 
+    {"label": "Ubicazione", "frm": "bo_ubicazione", "title": "Localizzazione Intervento e vincoli"}, 
+    {"label": "Dati richiesta", "frm": "bo_richiesta", "title": "Qualificazione e tipo di intervento"}, 
+    {"label": "Documentazione allegata", "frm": "bo_allegati", "title": "Documentazione allegata"},
+    
+    
+]
+return menus
+]]></resource>
+    </resource>
+  </design>
+</plominodatabase>

@@ -1,0 +1,157 @@
+<plominodatabase id="iol_sp">
+  <design>
+    <element id="scrivania-istruttore" title="SCRIVANIA ISTRUTTORE" type="PlominoForm">
+      <id type="Products.Archetypes.Field.StringField">scrivania-istruttore</id>
+      <onCreateDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></onCreateDocument>
+      <onOpenDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></onOpenDocument>
+      <beforeSaveDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></beforeSaveDocument>
+      <onSaveDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></onSaveDocument>
+      <onDeleteDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></onDeleteDocument>
+      <onSearch type="Products.Archetypes.Field.TextField"><![CDATA[]]></onSearch>
+      <beforeCreateDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></beforeCreateDocument>
+      <FormLayout type="Products.Archetypes.Field.TextField"><![CDATA[
+<div class="iol-control-buttons"><span class="plominoActionClass">btn_chiudi</span></div>
+<p><a href="../frm_commercio/OpenForm">Richiesta di occupazione suolo per attività commerciali</a></p>
+<p><a href="../frm_rinnovo-commercio/OpenForm">Richiesta di rinnovo occupazione suolo per attività commerciali</a></p>
+<p><a href="../frm_dehor/OpenForm">Richiesta di occupazione suolo per dehor</a></p>
+<p><a href="../frm_rinnovo-dehor/OpenForm">Richiesta di rinnovo occupazione suolo per dehor</a></p>
+<p><a href="../frm_delega/OpenForm">Richiesta di accesso in delega a pratiche esistenti</a></p>
+<p><a href="../frm_integrazione/OpenForm">Invio documentazione integrativa</a></p>
+<p><a href="../scrivania-utente">Scrivania utenti</a></p>
+<fieldset class="scheduler-border">
+<legend class="scheduler-border">ISTANZE PRESENTATE</legend>
+<p><span class="plominoSubformClass">base_sub_ricerca</span></p>
+<p><span class="plominoFieldClass">istanze_presentate</span></p>
+</fieldset>
+]]></FormLayout>
+      <FormMethod type="Products.Archetypes.Field.TextField"><![CDATA[Auto]]></FormMethod>
+      <DocumentTitle type="Products.Archetypes.Field.TextField"><![CDATA[]]></DocumentTitle>
+      <DynamicDocumentTitle type="Products.Archetypes.Field.BooleanField">False</DynamicDocumentTitle>
+      <StoreDynamicDocumentTitle type="Products.Archetypes.Field.BooleanField">False</StoreDynamicDocumentTitle>
+      <DocumentId type="Products.Archetypes.Field.TextField"><![CDATA[]]></DocumentId>
+      <ActionBarPosition type="Products.Archetypes.Field.StringField">TOP</ActionBarPosition>
+      <HideDefaultActions type="Products.Archetypes.Field.BooleanField">True</HideDefaultActions>
+      <HideInMenu type="Products.Archetypes.Field.BooleanField">False</HideInMenu>
+      <isSearchForm type="Products.Archetypes.Field.BooleanField">True</isSearchForm>
+      <isPage type="Products.Archetypes.Field.BooleanField">False</isPage>
+      <SearchView type="Products.Archetypes.Field.StringField"/>
+      <SearchFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></SearchFormula>
+      <Position type="Products.Archetypes.Field.IntegerField"/>
+      <ResourcesJS type="Products.Archetypes.Field.TextField"><![CDATA[++resource++iol.document/js/plomino.search.dataTables.js]]></ResourcesJS>
+      <ResourcesCSS type="Products.Archetypes.Field.TextField"><![CDATA[++resource++iol.document/css/bootstrap.min.css
+++resource++iol.document/css/bootstrap-accessibile.min.css
+++resource++iol.document/css/bootstrap-responsive.min.css
+++resource++iol.document/css/iol.css
+resources/iol-custom.css]]></ResourcesCSS>
+      <excludeFromNav type="Products.Archetypes.Field.BooleanField">False</excludeFromNav>
+      <elements>
+        <element id="istanze_presentate" title="Istanze Presentate" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">istanze_presentate</id>
+          <FieldType type="Products.Archetypes.Field.StringField">DOCLINK</FieldType>
+          <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[]]></Formula>
+          <FieldReadTemplate type="Products.Archetypes.Field.StringField"/>
+          <FieldEditTemplate type="Products.Archetypes.Field.StringField">DOCLINKFieldSearch</FieldEditTemplate>
+          <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>
+          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
+          <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>
+          <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
+          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA['data-tool=view-details']]></HTMLAttributesFormula>
+          <params>
+<param>
+<value><array><data>
+<value><struct>
+<member>
+<name>dynamictableparam</name>
+<value><string>'bPaginate': true,
+'alengthMenu': [[10, 25, 50, -1], [10, 25, 50, "All"]],
+'aaSorting': [[ 6, "asc" ]],
+'sPaginationType': 'full_numbers',
+'bLengthChange': true,
+'bProcessing': true,
+'bServerSide': true,
+'bFilter': false,
+'bSort': true,
+'bInfo': true,
+'bAutoWidth': false,
+'IOL-SEARCH-TABLE':true, //Serve solo ad indicare la tabella target delle ricerche
+    
+'aoColumnDefs': [
+{
+    "mRender": function ( data, type, row ) {
+                             
+        return '&lt;a href="../'+data+'"&gt;&lt;i class="icon-search linkable" title="Apri la pratica"&gt;&lt;/i&gt;&lt;/a&gt;';                                                              
+    },
+   "bVisible":true,
+   "bSortable":false,
+   "aTargets": [0]
+ 
+},
+{
+    "mRender": function ( data, type, row ) {
+        console.log(data)
+        if (data=='attesa_integrazione')
+            return '&lt;div class="alert alert-warning"&gt;Sosp. integrazione&lt;/div&gt;'; 
+        else if (data=='attesa_pagamento_titolo')
+            return '&lt;div class="alert alert-warning"&gt;Attesa pagamento&lt;/div&gt;';
+        else if (data=='autorizzata')
+            return '&lt;div class="alert alert-success"&gt;Autorizzata&lt;/div&gt;';
+        else if (data=='istruttoria')
+            return '&lt;div class="alert alert-info"&gt;Istruttoria&lt;/div&gt;';        
+        else if (data=='istruttoria_ok')
+            return '&lt;div class="alert alert-success"&gt;Istruttoria completata&lt;/div&gt;';        
+        else if (data=='istruttoria_ko')
+            return '&lt;div class="alert alert-error"&gt;Preavviso di rigetto&lt;/div&gt;';    
+        else if (data=='attesa_firma_titolo')
+            return '&lt;div class="alert alert-warning"&gt;Attesa firma autorizzazione&lt;/div&gt;';    
+        else if (data=='rigettata')
+            return '&lt;div class="alert alert-error"&gt;Rigettata&lt;/div&gt;';         
+        else
+            return data
+                                                             
+               attesa_firma_titolo	                                              
+    },
+   "bVisible":true,
+   "bSortable":true,
+   "aTargets": [10]
+ 
+},
+{ "aTargets": [ 3,4 ], "bSortable": false }         
+                 
+]</string></value>
+</member>
+</struct></value>
+<value><struct>
+<member>
+<name>labelcolumn</name>
+<value><string>identificativo</string></value>
+</member>
+</struct></value>
+<value><struct>
+<member>
+<name>sourceview</name>
+<value><string>vista-istanze-protocollate</string></value>
+</member>
+</struct></value>
+<value><struct>
+<member>
+<name>widget</name>
+<value><string>DYNAMICTABLE</string></value>
+</member>
+</struct></value>
+</data></array></value>
+</param>
+</params>
+        </element>
+        <element id="btn_chiudi" title="Chiudi" type="PlominoAction">
+          <id type="Products.Archetypes.Field.StringField">btn_chiudi</id>
+          <ActionType type="Products.Archetypes.Field.StringField">REDIRECT</ActionType>
+          <ActionDisplay type="Products.Archetypes.Field.StringField">BUTTON</ActionDisplay>
+          <Content type="Products.Archetypes.Field.TextField"><![CDATA[return 'https://www.istanze.spezianet.it/lp-occupazione']]></Content>
+          <Hidewhen type="Products.Archetypes.Field.TextField"><![CDATA[]]></Hidewhen>
+          <InActionBar type="Products.Archetypes.Field.BooleanField">False</InActionBar>
+        </element>
+      </elements>
+    </element>
+  </design>
+</plominodatabase>

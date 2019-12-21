@@ -1,0 +1,240 @@
+<plominodatabase id="iol_sp">
+  <design>
+    <element id="frm_completata" title="Pratica  Completata" type="PlominoForm">
+      <id type="Products.Archetypes.Field.StringField">frm_completata</id>
+      <onCreateDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></onCreateDocument>
+      <onOpenDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></onOpenDocument>
+      <beforeSaveDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></beforeSaveDocument>
+      <onSaveDocument type="Products.Archetypes.Field.TextField"><![CDATA[db=context.getParentDatabase()
+
+if context.getItem('iol_workflow'):
+    
+    if context.REQUEST.get('btn_send'):    
+        context.doAction('presentazione')
+        
+    if context.REQUEST.get('btn_pay'):
+        context.doAction('pagamento_presentazione')
+            
+else:
+    #non ce workflow
+    db.resources.customscripts.inviaRichiesta(context)
+    db.resources.customscripts.protocollaDocumento(context)]]></onSaveDocument>
+      <onDeleteDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></onDeleteDocument>
+      <onSearch type="Products.Archetypes.Field.TextField"><![CDATA[]]></onSearch>
+      <beforeCreateDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></beforeCreateDocument>
+      <FormLayout type="Products.Archetypes.Field.TextField"><![CDATA[
+<div class="iol-toolbar"></div>
+<p><span class="plominoHidewhenClass">start:hw_no_edit</span></p>
+<div class="v-content well">
+<p><span class="plominoHidewhenClass">start:hw_istruttore</span></p>
+<fieldset class="scheduler-border" title="Documentazione">
+<legend class="scheduler-border">DOCUMENTI DA SCARICARE E FIRMARE</legend>
+<div><span class="plominoFieldClass">documenti_da_scaricare</span></div>
+</fieldset>
+<fieldset class="scheduler-border" title="Documentazione">
+<legend class="scheduler-border">ALLEGA I DOCUMENTI FIRMATI</legend>
+<p><span class="plominoSubformClass">base_sub_comunicazione_digitale</span></p>
+<span class="plominoActionClass">btn_print_modello</span>
+</fieldset>
+<p><span class="plominoHidewhenClass">end:hw_istruttore</span></p>
+<p><span class="plominoSubformClass">base_sub_invio</span></p>
+</div>
+<p><span class="plominoHidewhenClass">end:hw_no_edit</span></p>
+<p><span class="plominoHidewhenClass">start:hw_no_pagamenti</span></p>
+<p><span class="plominoFieldClass">ws_response_message</span></p>
+<p><span class="plominoSubformClass">base_sub_pagopa</span></p>
+<p><span class="plominoHidewhenClass">end:hw_no_pagamenti</span></p>
+<h3>Dati di riepilogo della comunicazione</h3>
+<p><span class="plominoFieldClass">display_document</span></p>
+]]></FormLayout>
+      <FormMethod type="Products.Archetypes.Field.TextField"><![CDATA[Auto]]></FormMethod>
+      <DocumentTitle type="Products.Archetypes.Field.TextField"><![CDATA[]]></DocumentTitle>
+      <DynamicDocumentTitle type="Products.Archetypes.Field.BooleanField">False</DynamicDocumentTitle>
+      <StoreDynamicDocumentTitle type="Products.Archetypes.Field.BooleanField">False</StoreDynamicDocumentTitle>
+      <DocumentId type="Products.Archetypes.Field.TextField"><![CDATA[]]></DocumentId>
+      <ActionBarPosition type="Products.Archetypes.Field.StringField">TOP</ActionBarPosition>
+      <HideDefaultActions type="Products.Archetypes.Field.BooleanField">True</HideDefaultActions>
+      <HideInMenu type="Products.Archetypes.Field.BooleanField">True</HideInMenu>
+      <isSearchForm type="Products.Archetypes.Field.BooleanField">False</isSearchForm>
+      <isPage type="Products.Archetypes.Field.BooleanField">False</isPage>
+      <SearchView type="Products.Archetypes.Field.StringField"/>
+      <SearchFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></SearchFormula>
+      <Position type="Products.Archetypes.Field.IntegerField"/>
+      <ResourcesJS type="Products.Archetypes.Field.TextField"><![CDATA[https://maps.googleapis.com/maps/api/js?key=AIzaSyC_7g88CD2z5odzcSq_fLndb3-0g7slLTU&libraries=drawing
+++resource++iol.document/js/proj4js.js
+++resource++iol.document/js/proj4js-defs.js
+++resource++iol.document/js/iolGoogleMap.js
+++resource++iol.document/js/controller_combo_civici.js
+++resource++iol.document/js/controller_posizione.js
+++resource++iol.document/js/iolSending.js]]></ResourcesJS>
+      <ResourcesCSS type="Products.Archetypes.Field.TextField"><![CDATA[++resource++iol.document/css/bootstrap.min.css
+++resource++iol.document/css/bootstrap-accessibile.min.css
+++resource++iol.document/css/bootstrap-responsive.min.css
+++resource++iol.document/css/iol.css
+++resource++iol.document/css/iolmap.css
+resources/iol-custom.css]]></ResourcesCSS>
+      <excludeFromNav type="Products.Archetypes.Field.BooleanField">False</excludeFromNav>
+      <elements>
+        <element id="documenti_da_scaricare" title="Documenti da scaricare e firmare digitalmente" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">documenti_da_scaricare</id>
+          <FieldType type="Products.Archetypes.Field.StringField">SELECTION</FieldType>
+          <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[]]></Formula>
+          <FieldReadTemplate type="Products.Archetypes.Field.StringField"/>
+          <FieldEditTemplate type="Products.Archetypes.Field.StringField">iol_print_document</FieldEditTemplate>
+          <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>
+          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
+          <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>
+          <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
+          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></HTMLAttributesFormula>
+          <params>
+<param>
+<value><array><data>
+<value><struct>
+<member>
+<name>dynamictableparam</name>
+<value><string>'bPaginate': true,
+'bLengthChange': true,
+'bFilter': true,
+'bSort': true,
+'bInfo': true,
+'bAutoWidth': false</string></value>
+</member>
+</struct></value>
+<value><struct>
+<member>
+<name>selectionlist</name>
+<value><array><data>
+</data></array></value>
+</member>
+</struct></value>
+<value><struct>
+<member>
+<name>selectionlistformula</name>
+<value><string>return context.getParentDatabase().resources.config_documenti_stampe(context)</string></value>
+</member>
+</struct></value>
+<value><struct>
+<member>
+<name>widget</name>
+<value><string>CHECKBOX</string></value>
+</member>
+</struct></value>
+</data></array></value>
+</param>
+</params>
+        </element>
+        <element id="display_document" title="display_document" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">display_document</id>
+          <FieldType type="Products.Archetypes.Field.StringField">TEXT</FieldType>
+          <FieldMode type="Products.Archetypes.Field.StringField">DISPLAY</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[db=context.getParentDatabase()
+tipo_app = context.getItem('iol_tipo_app')
+renderForm=db.getForm('sub_completa_' + tipo_app)
+if renderForm:
+   return asUnicode(renderForm.displayDocument(context))
+else:
+    return '']]></Formula>
+          <FieldReadTemplate type="Products.Archetypes.Field.StringField">TEXTFieldCell</FieldReadTemplate>
+          <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
+          <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>
+          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
+          <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>
+          <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
+          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></HTMLAttributesFormula>
+        </element>
+        <element id="hw_no_pagamenti" title="hw_no_pagamenti" type="PlominoHidewhen">
+          <id type="Products.Archetypes.Field.StringField">hw_no_pagamenti</id>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[return context.getItem('iol_workflow_status')!='attesa_pagamento_presentazione']]></Formula>
+          <isDynamicHidewhen type="Products.Archetypes.Field.BooleanField">False</isDynamicHidewhen>
+        </element>
+        <element id="hw_no_edit" title="hw_no_edit" type="PlominoHidewhen">
+          <id type="Products.Archetypes.Field.StringField">hw_no_edit</id>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[not context.isEditMode()]]></Formula>
+          <isDynamicHidewhen type="Products.Archetypes.Field.BooleanField">False</isDynamicHidewhen>
+        </element>
+        <element id="hw_istruttore" title="hw_istruttore" type="PlominoHidewhen">
+          <id type="Products.Archetypes.Field.StringField">hw_istruttore</id>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[if context.getItem('iol_tipo_app') in ['rinnovo-dehor','rinnovo-commercio']:
+    return True
+else:
+    return False
+
+return context.getParentDatabase().hasCurrentUserRight('PlominoEditor')]]></Formula>
+          <isDynamicHidewhen type="Products.Archetypes.Field.BooleanField">False</isDynamicHidewhen>
+        </element>
+        <element id="comunicazione" title="Comunicazione" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">comunicazione</id>
+          <FieldType type="Products.Archetypes.Field.StringField">TEXT</FieldType>
+          <FieldMode type="Products.Archetypes.Field.StringField">DISPLAY</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[db=context.getParentDatabase()
+renderForm=db.getForm('base_sub_comunicazione_digitale')
+return renderForm.displayDocument(context)]]></Formula>
+          <FieldReadTemplate type="Products.Archetypes.Field.StringField">TEXTFieldCell</FieldReadTemplate>
+          <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
+          <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>
+          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
+          <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>
+          <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
+          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></HTMLAttributesFormula>
+        </element>
+        <element id="btn_close" title="Chiudi" type="PlominoAction">
+          <id type="Products.Archetypes.Field.StringField">btn_close</id>
+          <ActionType type="Products.Archetypes.Field.StringField">CLOSE</ActionType>
+          <ActionDisplay type="Products.Archetypes.Field.StringField">BUTTON</ActionDisplay>
+          <Content type="Products.Archetypes.Field.TextField"><![CDATA[]]></Content>
+          <Hidewhen type="Products.Archetypes.Field.TextField"><![CDATA[try:
+    return context.getItem('iol_workflow_status')!='attesa_pagamento_presentazione'
+except:
+    return True]]></Hidewhen>
+          <InActionBar type="Products.Archetypes.Field.BooleanField">True</InActionBar>
+        </element>
+        <element id="btn_torna_edit" title="Annulla e torna in compilazione" type="PlominoAction">
+          <id type="Products.Archetypes.Field.StringField">btn_torna_edit</id>
+          <ActionType type="Products.Archetypes.Field.StringField">PYTHON</ActionType>
+          <ActionDisplay type="Products.Archetypes.Field.StringField">BUTTON</ActionDisplay>
+          <Content type="Products.Archetypes.Field.TextField"><![CDATA[context.removeItem('comunicazione_digitale')
+context.doAction('torna_compilazione_utente')
+return "%s/EditDocument?openwithform=frm_completata" %context.absolute_url()]]></Content>
+          <Hidewhen type="Products.Archetypes.Field.TextField"><![CDATA[###se ho attivato dei pagamenti lo nascondo
+return context.isEditMode() or context.getItem('elenco_pagamenti_dg',[])!=[] or context.getItem('iol_workflow_status')!='attesa_pagamento_presentazione']]></Hidewhen>
+          <InActionBar type="Products.Archetypes.Field.BooleanField">True</InActionBar>
+        </element>
+        <element id="btn_print_modello" title="Crea la comunicazione &gt;&gt;" type="PlominoAction">
+          <id type="Products.Archetypes.Field.StringField">btn_print_modello</id>
+          <ActionType type="Products.Archetypes.Field.StringField">PYTHON</ActionType>
+          <ActionDisplay type="Products.Archetypes.Field.StringField">BUTTON</ActionDisplay>
+          <Content type="Products.Archetypes.Field.TextField"><![CDATA[tipo_app=context.getItem('iol_tipo_app')
+context.getParentDatabase().resources.customscripts.stampaModulo(context,
+            model='comunicazione-' + tipo_app,
+            app=context.getParentDatabase().getId().replace('iol_',''),
+            grp='',
+            pdf=1,
+            field='comunicazione_digitale_firmata')
+
+context.setItem('firma_digitale_opt','SI')
+return "%s/EditDocument?openwithform=frm_completata" %context.absolute_url()]]></Content>
+          <Hidewhen type="Products.Archetypes.Field.TextField"><![CDATA[return not context.getParentDatabase().hasCurrentUserRight('PlominoEditor')]]></Hidewhen>
+          <InActionBar type="Products.Archetypes.Field.BooleanField">False</InActionBar>
+        </element>
+        <element id="ws_response_message" title="ws_response_message" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">ws_response_message</id>
+          <FieldType type="Products.Archetypes.Field.StringField">TEXT</FieldType>
+          <FieldMode type="Products.Archetypes.Field.StringField">DISPLAY</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[if context.getItem('iol_workflow_status')=='attesa_pagamento_presentazione':
+    return '''<div class='alert alert-warning'><h5>In attesa di pagamento o conferma</h5></div>'''
+else:
+    return 
+'''<div class='alert alert-success'><h5>%s</h5></div>''' %context.getItem('ws_response_message',"COMUNICAZIONE INVIATA ....")]]></Formula>
+          <FieldReadTemplate type="Products.Archetypes.Field.StringField">TEXTFieldCell</FieldReadTemplate>
+          <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
+          <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>
+          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
+          <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>
+          <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
+          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></HTMLAttributesFormula>
+        </element>
+      </elements>
+    </element>
+  </design>
+</plominodatabase>
