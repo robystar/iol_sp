@@ -128,7 +128,10 @@
           <FieldReadTemplate type="Products.Archetypes.Field.StringField">IOL-DATETIMEFieldRead</FieldReadTemplate>
           <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
           <Mandatory type="Products.Archetypes.Field.BooleanField">True</Mandatory>
-          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
+          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[anno_dal = DateToString(context.getItem('autorizzata_dal'),'%Y')
+anno_al = '2020'#DateToString(context.getItem('autorizzata_al'),'%Y')
+if anno_dal!=anno_al:
+    return 'ATTENZIONE LE DATE DI INIZIO E FINE DEVONO AVERE LO STESSO ANNO']]></ValidationFormula>
           <ToBeIndexed type="Products.Archetypes.Field.BooleanField">True</ToBeIndexed>
           <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
           <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA['data-datepicker-options="{changeMonth:true,changeYear: true,dateFormat:\'dd/mm/yy\'}"']]></HTMLAttributesFormula>

@@ -1,31 +1,6 @@
 <plominodatabase id="iol_sp">
   <design>
     <resource id="cosap" title="" type="Folder">
-      <resource contenttype="application/javascript" id="controller_cosap.js" title="" type="File"><![CDATA[JCggZG9jdW1lbnQgKS5yZWFkeShmdW5jdGlvbigpIHsKCiAgZnVuY3Rpb24gYWdnaW9ybmFDb3Nh
-cChzdXA9MCl7CiAgICAvL3NlIG5vbiBwYXNzbyBsYSBzdXAgbGEgY2FsY29sYSBkYSBkYXRhZ3Jp
-ZAogICAgdmFyIHN1cF9zb3N0YSA9IDA7CiAgICBpZiAoc3VwPT0wKXsKICAgICAgIHZhciByb3dz
-ID0gJC5ldmFsSlNPTigkKCIjZWxlbWVudGlfb2NjdXBhemlvbmVfZGdfZ3JpZHZhbHVlIikudmFs
-KCkpOwogICAgICAgZm9yKHZhciBpPTA7aTxyb3dzLmxlbmd0aDtpKyspewogICAgICAgICAgc3Vw
-ID0gc3VwICsgcm93c1tpXVswXSpyb3dzW2ldWzFdOwogICAgICAgICAgaWYgKHJvd3NbaV1bMl09
-PSdzaScpewogICAgICAgICAgICAgc3VwX3Nvc3RhID0gc3VwX3Nvc3RhICsgcm93c1tpXVswXSpy
-b3dzW2ldWzFdOwogICAgICAgICAgfQogICAgICAgfQogICAgICAgJCgiI3N1cGVyZmljaWVfb2Nj
-dXBhemlvbmUiKS52YWwoc3VwLnRvRml4ZWQoMikpOwogICAgICAgJCgiI3N1cGVyZmljaWVfc29z
-dGEiKS52YWwoc3VwX3Nvc3RhLnRvRml4ZWQoMikpOwogICAgfQoKICAgIHZhciBkb2N1bWVudElk
-ID0gJCgiI3N1cGVyZmljaWVfb2NjdXBhemlvbmUiKS5kYXRhKCJkb2NpZCIpOwoKICAgICQuYWph
-eCh7CiAgICAgICAndXJsJzoicmVzb3VyY2VzL2Nvc2FwL2dldEltcG9ydG9Db3NhcCIsCiAgICAg
-ICAndHlwZSc6J0dFVCcsCiAgICAgICAnZGF0YSc6eyJkb2MiOmRvY3VtZW50SWQsInN1cF9vY2N1
-cGF6aW9uZSI6c3VwLCJzdXBfc29zdGEiOnN1cF9zb3N0YX0sCiAgICAgICAnZGF0YVR5cGUnOidK
-U09OJywKICAgICAgICdzdWNjZXNzJzpmdW5jdGlvbihkYXRhLCB0ZXh0U3RhdHVzLCBqcVhIUil7
-CiAgICAgICAgICAkKCJbbmFtZT0naW1wb3J0b19jb3NhcCddIikudGV4dChkYXRhLnRvdGFsZS50
-b0ZpeGVkKDIpKTsKICAgICAgICAgIHZhciAkaHcgPSAkKCIjcGxvbWlub19mb3JtIikuZmluZCgn
-LmhpZGV3aGVuLWh3X25vX3JhdGUnKQogICAgICAgICAgJGh3LmNzcygnZGlzcGxheScsIChkYXRh
-LnRvdGFsZTw9NDAwKT8nbm9uZSc6J2Jsb2NrJyk7CgogICAgICAgfQogICAgfSk7CiAgfQoKCiAg
-aWYodHlwZW9mKGVsZW1lbnRpX29jY3VwYXppb25lX2RnX2RhdGF0YWJsZSkhPSd1bmRlZmluZWQn
-KXsKICAgICBlbGVtZW50aV9vY2N1cGF6aW9uZV9kZ19kYXRhdGFibGUuZm5TZXR0aW5ncygpLmFv
-RHJhd0NhbGxiYWNrLnB1c2goIHsKICAgICAgICJmbiI6IGZ1bmN0aW9uKCBvU2V0dGluZ3MgKXsK
-ICAgICAgICAgLy92ZWRlcmUgcGVyY2hlIGxvIGZhIDIgdm9sdGUhISEKICAgICAgICAgYWdnaW9y
-bmFDb3NhcCgpOwogICAgICAgfQogICAgIH0pOwogIH0KCn0pOwo=
-]]></resource>
       <resource id="calcoloRate" title="" type="Script (Python)"><![CDATA[## Script (Python) "calcoloRate"
 ##bind container=container
 ##bind context=context
@@ -298,7 +273,6 @@ else:
 ##
 from Products.CMFPlomino.PlominoUtils import StringToDate, DateToString, json_dumps
 import math
-###VERIFICATO CON FABIO IL 15/4/19
 
 sup_occupazione = float(sup_occupazione)
 ridotta_opt = int(ridotta_opt)
@@ -326,17 +300,13 @@ if sup_occupazione < 0.5:
     sup_occupazione = 0
 sup_occupazione=math.ceil(sup_occupazione)
 
+
 text=text + "Sup occupazione: %s mq.\n" %sup_occupazione
 
 totale = coefficiente * tariffa * sup_occupazione
 
 text=text + "COSAP: %s\n" %totale
 
-
-#se < 4 non paga
-if totale < 4:
-    totale = 0
-    text=text + "Totale < 4 euro: %s\n" %totale
 
 if ridotta_opt:
     totale = totale/2 
@@ -1011,16 +981,21 @@ bmFDb3NhcCgpOwogICAgICAgfQogICAgIH0pOwogIH0KCn0pOwo=
 ##bind namespace=
 ##bind script=script
 ##bind subpath=traverse_subpath
-##parameters=sup=0,temp=0
+##parameters=sup=0,temp=0,anno=''
 ##title=
 ##
+from Products.CMFPlomino.PlominoUtils import DateToString,Now
+
 docSettings=context.aq_parent.customscripts.getDocSettings()
 rows=docSettings.getItem('tariffe_cimp',[])
 sup = float(sup)
+anno_corrente = DateToString(Now(),format='%Y')
 
 row_index=0
-##per ora setto fisse le tariffe 2020 poi ci pensiamo....
-col_index=3 if temp==0 else 4
+if anno == anno_corrente:
+    col_index=1 if temp==0 else 2
+else:
+    col_index=3 if temp==0 else 4
    
 if 1 < sup <= 1.5:
     row_index = 1
@@ -1041,7 +1016,7 @@ return float(rows[row_index][col_index])
 ##bind namespace=
 ##bind script=script
 ##bind subpath=traverse_subpath
-##parameters=doc=None,elementi='[]'
+##parameters=doc=None,elementi=None
 ##title=
 ##
 from Products.CMFPlomino.PlominoUtils import StringToDate, DateToString, json_dumps, json_loads
@@ -1053,26 +1028,27 @@ def calcolaCIMP(sup,temporaneo,illuminato):
     if sup=="":
         sup=0
 
-    if sup < 1:
+    elif 0 < sup < 1:
         sup=1
+        
     else:
+        sup=float(sup)
         #arrotondamento al mezzo metro
         dec = sup-math.floor(sup)
         if dec!=0:
             sup = math.floor(sup) + (0.5 if dec <=0.5 else 1)  
 
+            
     #Tariffe da settings
     tariffa = context.getTariffaCIMP(sup,temporaneo)
     importo = sup * tariffa
-    
-    #se illuminato aggiungo l'aggravio
+        
+    # se illuminato aggiungo l'aggravio
     if illuminato:
         tariffa_base = context.getTariffaCIMP(1,temporaneo)
         importo = importo +  sup * tariffa_base
 
     return importo
-
-
 
 
 #calcolo complessivo
@@ -1093,6 +1069,9 @@ if doc.getItem('tipo_occupazione')=='temporanea':
         temporaneo=True
     
 totale = 0 
+if not temporaneo:
+    ngg=1
+
 
 #Calcolo importi per ogni cavalletto e per ogni superficie
 if elementi:
@@ -1100,26 +1079,31 @@ if elementi:
 else:
     cavalletti = doc.getItem('elementi_cavalletti_dg',[])
 
+totale=0    
+    
 #se un solo mezzo pubblicitario con sup < 300 cm^2 non paga 
 if len(cavalletti)==1:
     row=cavalletti[0]
     if ((row[2] or 0) + (row[3] or 0) + (row[4] or 0) + (row[5] or 0)) < 0.03:
         return json_dumps({"success":1, "totale":totale})
-
+context.plone_log(ngg)
 for row in cavalletti:
     illuminato = row[6]=='si'
-    totale=totale + calcolaCIMP(row[2],temporaneo,illuminato)
-    totale=totale + calcolaCIMP(row[3],temporaneo,illuminato)
-    totale=totale + calcolaCIMP(row[4],temporaneo,illuminato)
-    totale=totale + calcolaCIMP(row[5],temporaneo,illuminato)
+    totale=totale + calcolaCIMP(row[2],temporaneo,illuminato)*ngg
+    totale=totale + calcolaCIMP(row[3],temporaneo,illuminato)*ngg
+    totale=totale + calcolaCIMP(row[4],temporaneo,illuminato)*ngg
+    totale=totale + calcolaCIMP(row[5],temporaneo,illuminato)*ngg
    
    
 #arrotondamenti
 dec = totale-math.floor(totale)
 if dec!=0:
     totale = math.floor(totale) + (0.5 if dec <=0.5 else 1)   
-    
-return json_dumps({"success":1, "totale":totale})
+          
+if elementi:
+    return json_dumps({"success":1, "totale":totale})
+else:
+    return totale
 ]]></resource>
       <resource contenttype="application/javascript" id="controller_commercio.js" title="" type="File"><![CDATA[JCggZG9jdW1lbnQgKS5yZWFkeShmdW5jdGlvbigpIHsKCiAgdmFyIGRvY3VtZW50SWQgPSAkKCIj
 c3VwZXJmaWNpZV9vY2N1cGF6aW9uZSIpLmRhdGEoImRvY2lkIik7CgogIC8vY29zYXAgcGVyIGVs

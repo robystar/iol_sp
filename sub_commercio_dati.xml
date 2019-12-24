@@ -194,7 +194,7 @@ if len(elenco_occupazione+elenco_cavalletti)==0:
 "bAutoWidth": false,
 "plominoDialogOptions": {
         "width": 900,
-        "height": 400
+        "height": 500
     }
 </string></value>
 </member>
