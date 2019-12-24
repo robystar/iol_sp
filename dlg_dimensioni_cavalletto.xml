@@ -29,6 +29,7 @@
 </fieldset>
 <fieldset class="scheduler-border">
 <legend class="scheduler-border"> Dimensioni occupazione suolo (impronta a terra): </legend>
+<div class="alert alert-info">Nel caso il cavalletto pubblicitario venga esposto nelle vetrine, nelle porte d’ingresso o nelle immediate adiacenze dell’esercizio commerciale è esente CIMP, ma vanno comunque indicate le dimensioni relative all'occupazione suolo.</div>
 <div class="row-fluid">
 <div class="span3">
 <span class="plominoLabelClass">occupazione_lunghezza</span><span class="plominoFieldClass">occupazione_lunghezza</span>
@@ -36,7 +37,10 @@
 <div class="span3">
 <span class="plominoLabelClass">occupazione_larghezza</span><span class="plominoFieldClass">occupazione_larghezza</span>
 </div>
-<div class="span4">
+<div class="span3">
+<span class="plominoLabelClass">adiacente_opt</span><span class="plominoFieldClass">adiacente_opt</span>
+</div>
+<div class="span3">
 <span class="plominoLabelClass">illuminato_opt</span><span class="plominoFieldClass">illuminato_opt</span>
 </div>
 </div>
@@ -243,6 +247,48 @@ resources/iol-custom.css]]></ResourcesCSS>
 <member>
 <name>type</name>
 <value><string>FLOAT</string></value>
+</member>
+</struct></value>
+</data></array></value>
+</param>
+</params>
+        </element>
+        <element id="adiacente_opt" title="Cavalletto adiacente" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">adiacente_opt</id>
+          <FieldType type="Products.Archetypes.Field.StringField">SELECTION</FieldType>
+          <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA['no']]></Formula>
+          <FieldReadTemplate type="Products.Archetypes.Field.StringField"/>
+          <FieldEditTemplate type="Products.Archetypes.Field.StringField">IOL-SELECTIONFieldInLineEdit</FieldEditTemplate>
+          <Mandatory type="Products.Archetypes.Field.BooleanField">True</Mandatory>
+          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
+          <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>
+          <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
+          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></HTMLAttributesFormula>
+          <params>
+<param>
+<value><array><data>
+<value><struct>
+<member>
+<name>dynamictableparam</name>
+<value><string>'bPaginate': true,
+'bLengthChange': true,
+'bFilter': true,
+'bSort': true,
+'bInfo': true,
+'bAutoWidth': false</string></value>
+</member>
+</struct></value>
+<value><struct>
+<member>
+<name>selectionlistformula</name>
+<value><string>return ['SI|si','NO|no']</string></value>
+</member>
+</struct></value>
+<value><struct>
+<member>
+<name>widget</name>
+<value><string>RADIO</string></value>
 </member>
 </struct></value>
 </data></array></value>

@@ -702,7 +702,7 @@ return elencoGruppi(context)</string></value>
 <value><struct>
 <member>
 <name>field_mapping</name>
-<value><string>superficie,m_perm,m_temp</string></value>
+<value><string>superficie,m_perm,m_temp,n_perm,n_temp</string></value>
 </member>
 </struct></value>
 <value><struct>
@@ -710,8 +710,10 @@ return elencoGruppi(context)</string></value>
 <name>jssettings</name>
 <value><string>"aoColumns": [
     { "sTitle": "Superficie" },
-    { "sTitle": "Permanente" },
-    { "sTitle": "Temporanea"}
+    { "sTitle": "Perm. anno corr." },
+    { "sTitle": "Temp. anno corr."},
+    { "sTitle": "Perm. anno succ." },
+    { "sTitle": "Temp. anno succ."}    
 ],
 "bPaginate": false,
 "bLengthChange": false,

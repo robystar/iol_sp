@@ -7,17 +7,17 @@ data = args[1]
 db=context.getParentDatabase()
 
 try:
-    db.resources.pagopa.setPagamento(docId,data)
-    if 'esito' in data and data['esito']=='OK' and 'azioni' in data:
-        doc=db.getDocument(docId)   
-        azioni=data['azioni'].split(',')
-        for azione in azioni:
-            if doc.isActionSupported(azione):
-                doc.doAction(azione)
+    doc = db.getDocument('00001-2019-firmadigitale')
+    req = doc.getItem('REQUEST_DATA',[])
+    req.append(doc.REQUEST)
+    doc.setItem('REQUEST_DATA',req)
+    doc.setIte,('LAST_REQUEST',doc.REQUEST)
                 
 except Exception as err:
+    doc = db.getDocument('00001-2019-firmadigitale')
+    doc.setItem('ERRORE_GENERICO',1)
     context.getParentDatabase().resources.customscripts.sendMailPlone(doc=doc,azione='pagopa-ko')
-    context.plone_utils.addPortalMessage('Errore nel pagamento %s' %err, 'error')]]></Content>
+    context.plone_utils.addPortalMessage('Errore nel firma digitale %s' %err, 'error')]]></Content>
       <RunAs type="Products.Archetypes.Field.StringField">OWNER</RunAs>
     </element>
   </design>

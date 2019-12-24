@@ -170,7 +170,7 @@ if len(elenco_occupazione+elenco_cavalletti)==0:
 <value><struct>
 <member>
 <name>field_mapping</name>
-<value><string>occupazione_lunghezza,occupazione_larghezza,sup_1,sup_2,sup_3,sup_4,illuminato_opt</string></value>
+<value><string>occupazione_lunghezza,occupazione_larghezza,sup_1,sup_2,sup_3,sup_4,adiacente_opt,illuminato_opt</string></value>
 </member>
 </struct></value>
 <value><struct>
@@ -183,6 +183,7 @@ if len(elenco_occupazione+elenco_cavalletti)==0:
     { "sTitle": "Faccia 2 [mq]" },
     { "sTitle": "Faccia 3 [mq]" },
     { "sTitle": "Faccia 4 [mq]" },
+    { "sTitle": "Adiacente" }, 
     { "sTitle": "Illuminato" }   
 ],
 "bPaginate": false,

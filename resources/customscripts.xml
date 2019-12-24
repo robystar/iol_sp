@@ -2545,21 +2545,23 @@ parentDoc = db.getDocument(doc.getItem('documento_esistente_id'))
 
 ### id autorizzazione = id autorizzazione originale propagato nei rinnovi successivi
 if parentDoc:
+    if doc.getItem('iol_tipo_app') in ['rinnovo-dehor','rinnovo-commercio']:
+        idAutorizzazione = str(parentDoc.getItem('id_autorizzazione',parentDoc.getId()))
+        #anno=str(int(DateToString(parentDoc.getItem('autorizzata_dal'),format="%Y"))+1)
+        doc.setItem('id_autorizzazione', idAutorizzazione)
+        anno=str(parentDoc.getItem('anno_autorizzazione')+1)
+        doc.setItem('anno_autorizzazione',int(anno))
+        doc.setItem('autorizzata_dal',StringToDate("01/01/"+anno, format="%d/%m/%Y"))
+        doc.setItem('autorizzata_al',StringToDate("31/12/"+anno, format="%d/%m/%Y"))
+        ss = "%s %s" %(DateToString(doc.getItem('autorizzata_dal'),format="%d/%m/%Y"),DateToString(doc.getItem('autorizzata_al'),format="%d/%m/%Y"))       
+        doc.setItem('autorizzata_dal_al',ss)
+
+        
     
-    idAutorizzazione = str(parentDoc.getItem('id_autorizzazione',parentDoc.getId()))
-    #anno=str(int(DateToString(parentDoc.getItem('autorizzata_dal'),format="%Y"))+1)
-    doc.setItem('id_autorizzazione', idAutorizzazione)
-    autDoc = db.getDocument(idAutorizzazione)
-    if autDoc:
-        doc.setItem('parent_tipo_app', autDoc.getItem('iol_tipo_app'))    
-    
-    anno=str(parentDoc.getItem('anno_autorizzazione')+1)
-    doc.setItem('anno_autorizzazione',int(anno))
-    doc.setItem('autorizzata_dal',StringToDate("01/01/"+anno, format="%d/%m/%Y"))
-    doc.setItem('autorizzata_al',StringToDate("31/12/"+anno, format="%d/%m/%Y"))
-    ss = "%s %s" %(DateToString(doc.getItem('autorizzata_dal'),format="%d/%m/%Y"),DateToString(doc.getItem('autorizzata_al'),format="%d/%m/%Y"))       
-    doc.setItem('autorizzata_dal_al',ss)
-      
+        autDoc = db.getDocument(idAutorizzazione)
+        if autDoc:
+            doc.setItem('parent_tipo_app', autDoc.getItem('iol_tipo_app'))
+          
     ss =  "%s %s %s" %(doc.getItem('fisica_cognome'), doc.getItem('delegato_cognome'), doc.getItem('giuridica_denominazione'))            
     doc.setItem('anagrafica_search', ss)
     doc.setItem('fisica_search', parentDoc.getItem('fisica_search'))
@@ -2573,12 +2575,15 @@ if parentDoc:
     doc.setItem('superficie_old', parentDoc.getItem('superficie_old',0))
     doc.setItem('zona_cosap', parentDoc.getItem('zona_cosap'))
     
+    
     ### COPIO I DATI DA sub_dehor_dati
     frmDati = context.getForm('sub_dehor_dati')
     for field in frmDati.getFormFields():
         if parentDoc.getItem(field.id):
             doc.setItem(field.id,parentDoc.getItem(field.id))
     
+    doc.setItem('copertura_descrizione', parentDoc.getItem('tenda_opt_label'))
+
     doc.removeItem('importo_cosap')
     doc.setItem('tariffa', context.getParentDatabase().resources.cosap.getTariffa(data=doc.getItem('autorizzata_dal'),temp=0))
     doc.setItem('importo_cosap',db.resources.cosap.getImportoCosap(doc, dal="01/01/"+anno))  
