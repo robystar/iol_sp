@@ -200,7 +200,7 @@ return '''
           <FieldType type="Products.Archetypes.Field.StringField">TEXT</FieldType>
           <FieldMode type="Products.Archetypes.Field.StringField">DISPLAY</FieldMode>
           <Formula type="Products.Archetypes.Field.TextField"><![CDATA[#se non ce titolo non mostro
-if not context.getItem('data_titolo'):
+if context.getItem('allegato_comunicazione_titolo',{})=={}:
     return ''
 
 db=context.getParentDatabase()

@@ -159,7 +159,7 @@ resources/iol-custom.css]]></ResourcesCSS>
 <value><struct>
 <member>
 <name>field_mapping</name>
-<value><string>tenda_descrizione,tenda_larghezza,tenda_altezza,tenda_lunghezza,tenda_altezzaterra,tenda_sporgenza,tenda_messaggio,tenda_struttura</string></value>
+<value><string>tenda_descrizione,tenda_colore,tenda_lunghezza,tenda_altezzaterra,tenda_sporgenza,tenda_messaggio,tenda_bucatura_sx,tenda_bucatura_dx</string></value>
 </member>
 </struct></value>
 <value><struct>
@@ -167,13 +167,13 @@ resources/iol-custom.css]]></ResourcesCSS>
 <name>jssettings</name>
 <value><string>"aoColumns": [
     { "sTitle": "Descrizione" },
-    { "sTitle": "Larghezza[cm]" },  
-    { "sTitle": "Altezza[cm]" },    
-    { "sTitle": "Lunghezza / sbraccio[cm]" },
+    { "sTitle": "Colore" },  
+    { "sTitle": "Lunghezza[cm]" },
     { "sTitle": "Altezza da terra[cm]" },          
     { "sTitle": "Sporgenza filo muro[cm]" },
     { "sTitle": "Messaggio" },   
-    { "sTitle": "Parte di struttura" }    
+    { "sTitle": "Bucatura sx" },
+    { "sTitle": "Bucatura dx" }
 ],
 "bPaginate": false,
 "bLengthChange": false,

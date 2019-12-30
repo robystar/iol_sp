@@ -119,7 +119,7 @@
           <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
           <Mandatory type="Products.Archetypes.Field.BooleanField">True</Mandatory>
           <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[anno_dal = DateToString(context.getItem('autorizzata_dal'),'%Y')
-anno_al = '2020'#DateToString(context.getItem('autorizzata_al'),'%Y')
+anno_al = DateToString(context.getItem('autorizzata_al'),'%Y')
 if anno_dal!=anno_al:
     return 'ATTENZIONE LE DATE DI INIZIO E FINE DEVONO AVERE LO STESSO ANNO']]></ValidationFormula>
           <ToBeIndexed type="Products.Archetypes.Field.BooleanField">True</ToBeIndexed>
@@ -357,9 +357,7 @@ for row in rows:
           <id type="Products.Archetypes.Field.StringField">autorizzata_al</id>
           <FieldType type="Products.Archetypes.Field.StringField">DATETIME</FieldType>
           <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
-          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[anno=DateToString(context.getItem('autorizzata_dal',Now()), format="%Y")
-if anno=='2019':
-    anno='2020'
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[anno=DateToString(Now(), format="%Y")
 return StringToDate(anno +"-12-31")]]></Formula>
           <FieldReadTemplate type="Products.Archetypes.Field.StringField">IOL-DATETIMEFieldRead</FieldReadTemplate>
           <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
@@ -439,7 +437,12 @@ return StringToDate(anno +"-12-31")]]></Formula>
           <FieldType type="Products.Archetypes.Field.StringField">TEXT</FieldType>
           <FieldMode type="Products.Archetypes.Field.StringField">COMPUTEDONSAVE</FieldMode>
           <Formula type="Products.Archetypes.Field.TextField"><![CDATA[if context.getItem('autorizzata_dal') and context.getItem('autorizzata_al'):
-    return "%s %s" %(DateToString(context.getItem('autorizzata_dal'),format="%d/%m/%Y"),DateToString(context.getItem('autorizzata_al'),format="%d/%m/%Y"))]]></Formula>
+    return "%s %s" %(DateToString(context.getItem('autorizzata_dal'),format="%d/%m/%Y"),DateToString(context.getItem('autorizzata_al'),format="%d/%m/%Y"))
+elif context.getItem('periodo_occupazione_dg',[])!=[]:
+    vv=[]
+    for row in context.getItem('periodo_occupazione_dg',[]):
+        vv.append("%s %s" %(row[0],row[1]))
+    return ", ".join(vv)]]></Formula>
           <FieldReadTemplate type="Products.Archetypes.Field.StringField"/>
           <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
           <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>

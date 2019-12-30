@@ -276,7 +276,7 @@ return asUnicode(renderForm.displayDocument(context))]]></Formula>
           <id type="Products.Archetypes.Field.StringField">autorizzazione</id>
           <FieldType type="Products.Archetypes.Field.StringField">TEXT</FieldType>
           <FieldMode type="Products.Archetypes.Field.StringField">DISPLAY</FieldMode>
-          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[if not context.getItem('data_autorizzazione'):
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[if context.getItem('allegato_comunicazione_titolo',{})=={}:
     return ''
 db=context.getParentDatabase()
 renderForm=db.getForm('bo_autorizzazione')

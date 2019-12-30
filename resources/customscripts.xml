@@ -2581,9 +2581,10 @@ if parentDoc:
     for field in frmDati.getFormFields():
         if parentDoc.getItem(field.id):
             doc.setItem(field.id,parentDoc.getItem(field.id))
+            
+    if parentDoc.getItem('copertura_descrizione'):
+        doc.setItem('copertura_descrizione', parentDoc.getItem('copertura_descrizione'))
     
-    doc.setItem('copertura_descrizione', parentDoc.getItem('tenda_opt_label'))
-
     doc.removeItem('importo_cosap')
     doc.setItem('tariffa', context.getParentDatabase().resources.cosap.getTariffa(data=doc.getItem('autorizzata_dal'),temp=0))
     doc.setItem('importo_cosap',db.resources.cosap.getImportoCosap(doc, dal="01/01/"+anno))  

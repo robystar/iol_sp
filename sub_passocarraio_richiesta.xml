@@ -222,8 +222,9 @@ for row in rows:
         <element id="autorizzata_al" title="Data fine" type="PlominoField">
           <id type="Products.Archetypes.Field.StringField">autorizzata_al</id>
           <FieldType type="Products.Archetypes.Field.StringField">DATETIME</FieldType>
-          <FieldMode type="Products.Archetypes.Field.StringField">COMPUTED</FieldMode>
-          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[anno=int(DateToString(context.getItem('autorizzata_dal',Now()), format="%Y"))
+          <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[return
+anno=int(DateToString(context.getItem('autorizzata_dal',Now()), format="%Y"))
 anno=anno+7
 return StringToDate(str(anno) +"-12-31")]]></Formula>
           <FieldReadTemplate type="Products.Archetypes.Field.StringField">IOL-DATETIMEFieldRead</FieldReadTemplate>
@@ -359,7 +360,12 @@ except:
           <FieldType type="Products.Archetypes.Field.StringField">TEXT</FieldType>
           <FieldMode type="Products.Archetypes.Field.StringField">COMPUTEDONSAVE</FieldMode>
           <Formula type="Products.Archetypes.Field.TextField"><![CDATA[if context.getItem('autorizzata_dal') and context.getItem('autorizzata_al'):
-    return "%s %s" %(DateToString(context.getItem('autorizzata_dal'),format="%d/%m/%Y"),DateToString(context.getItem('autorizzata_al'),format="%d/%m/%Y"))]]></Formula>
+    return "%s %s" %(DateToString(context.getItem('autorizzata_dal'),format="%d/%m/%Y"),DateToString(context.getItem('autorizzata_al'),format="%d/%m/%Y"))
+elif context.getItem('periodo_occupazione_dg',[])!=[]:
+    vv=[]
+    for row in context.getItem('periodo_occupazione_dg',[]):
+        vv.append("%s %s" %(row[0],row[1]))
+    return ", ".join(vv)]]></Formula>
           <FieldReadTemplate type="Products.Archetypes.Field.StringField"/>
           <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
           <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>
