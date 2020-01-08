@@ -15,6 +15,9 @@
 <p><span class="plominoHidewhenClass">end:hw_no_protocollo</span></p>
 <p><span class="plominoSubformClass">sub_info_rinnovo</span></p>
 <p><span class="plominoSubformClass">base_sub_anagrafica</span></p>
+<p><span class="plominoSubformClass">sub_ubicazione</span></p>
+<p><span class="plominoSubformClass">sub_dehor_richiesta</span></p>
+<p><span class="plominoSubformClass">sub_dehor_dati</span></p>
 <p><span class="plominoSubformClass">sub_allegati_rinnovo</span></p>
 <p><span class="plominoSubformClass">base_sub_stampa</span></p>
 ]]></FormLayout>

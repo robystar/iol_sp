@@ -72,6 +72,8 @@ resources/iol-custom.css]]></ResourcesCSS>
           <Formula type="Products.Archetypes.Field.TextField"><![CDATA[#NB il documento viene renderizzato usando la form specificata in settings/labelcolumn
 db=context.getParentDatabase()
 tipo_app = context.getItem('iol_tipo_app')
+if 'rinnovo' in tipo_app:
+    tipo_app=tipo_app.replace('rinnovo-','')
 renderForm=db.getForm('frm_%s_richiesta'%tipo_app)
 content=renderForm.displayDocument(context)
 html=''
@@ -95,6 +97,8 @@ return html]]></Formula>
           <Formula type="Products.Archetypes.Field.TextField"><![CDATA[#NB il documento viene renderizzato usando la form specificata in settings/labelcolumn
 db=context.getParentDatabase()
 tipo_app = context.getItem('iol_tipo_app')
+if 'rinnovo' in tipo_app:
+    tipo_app=tipo_app.replace('rinnovo-','')
 renderForm=db.getForm('frm_%s_dati'%tipo_app)
 content=renderForm.displayDocument(context)
 html=''

@@ -607,6 +607,9 @@ if textinfo:
     totale=''
 else:
     totale=0
+    
+    
+return ridotta_opt    
        
 tipo_app = doc.getItem('parent_tipo_app', doc.getItem('iol_tipo_app'))
 

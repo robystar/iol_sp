@@ -11,7 +11,7 @@
       <beforeCreateDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></beforeCreateDocument>
       <FormLayout type="Products.Archetypes.Field.TextField"><![CDATA[
 <fieldset class="scheduler-border">
-<legend class="scheduler-border"> Superfici in cm quadrati delle facce del cavalletto con contenuti pubblicitari: </legend>
+<legend class="scheduler-border"> Superfici in metri quadrati delle facce del cavalletto con contenuti pubblicitari: </legend>
 <div class="row-fluid">
 <div class="span3">
 <span class="plominoLabelClass">sup_1</span><span class="plominoFieldClass">sup_1</span>
@@ -29,7 +29,6 @@
 </fieldset>
 <fieldset class="scheduler-border">
 <legend class="scheduler-border"> Dimensioni occupazione suolo (impronta a terra): </legend>
-<div class="alert alert-info">Nel caso il cavalletto pubblicitario venga esposto nelle vetrine, nelle porte d’ingresso o nelle immediate adiacenze dell’esercizio commerciale è esente CIMP, ma vanno comunque indicate le dimensioni relative all'occupazione suolo.</div>
 <div class="row-fluid">
 <div class="span3">
 <span class="plominoLabelClass">occupazione_lunghezza</span><span class="plominoFieldClass">occupazione_lunghezza</span>
@@ -37,6 +36,13 @@
 <div class="span3">
 <span class="plominoLabelClass">occupazione_larghezza</span><span class="plominoFieldClass">occupazione_larghezza</span>
 </div>
+<div class="span3">
+<span class="plominoLabelClass">occupazione_altezza</span><span class="plominoFieldClass">occupazione_altezza</span>
+</div>
+</div>
+<div class="alert alert-info">Nel caso il cavalletto pubblicitario venga esposto nelle vetrine, nelle porte d’ingresso o nelle immediate adiacenze dell’esercizio commerciale è esente CIMP, ma vanno comunque indicate le dimensioni relative all'occupazione suolo.<span style="text-decoration: underline; ">Altezza massima consentita per i cavalletti: 1 metro </span>
+</div>
+<div class="row-fluid">
 <div class="span3">
 <span class="plominoLabelClass">adiacente_opt</span><span class="plominoFieldClass">adiacente_opt</span>
 </div>
@@ -191,7 +197,7 @@ resources/iol-custom.css]]></ResourcesCSS>
 </param>
 </params>
         </element>
-        <element id="occupazione_lunghezza" title="Lunghezza (m)" type="PlominoField">
+        <element id="occupazione_lunghezza" title="Lunghezza a terra (m)" type="PlominoField">
           <id type="Products.Archetypes.Field.StringField">occupazione_lunghezza</id>
           <FieldType type="Products.Archetypes.Field.StringField">NUMBER</FieldType>
           <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
@@ -222,8 +228,39 @@ resources/iol-custom.css]]></ResourcesCSS>
 </param>
 </params>
         </element>
-        <element id="occupazione_larghezza" title="Larghezza (m)" type="PlominoField">
+        <element id="occupazione_larghezza" title="Larghezza a terra (m)" type="PlominoField">
           <id type="Products.Archetypes.Field.StringField">occupazione_larghezza</id>
+          <FieldType type="Products.Archetypes.Field.StringField">NUMBER</FieldType>
+          <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[]]></Formula>
+          <FieldReadTemplate type="Products.Archetypes.Field.StringField"/>
+          <FieldEditTemplate type="Products.Archetypes.Field.StringField">IOL-NUMBERFieldEdit</FieldEditTemplate>
+          <Mandatory type="Products.Archetypes.Field.BooleanField">True</Mandatory>
+          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
+          <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>
+          <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
+          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></HTMLAttributesFormula>
+          <params>
+<param>
+<value><array><data>
+<value><struct>
+<member>
+<name>format</name>
+<value><string>%1.2f</string></value>
+</member>
+</struct></value>
+<value><struct>
+<member>
+<name>type</name>
+<value><string>FLOAT</string></value>
+</member>
+</struct></value>
+</data></array></value>
+</param>
+</params>
+        </element>
+        <element id="occupazione_altezza" title="Altezza da terra (max 1 m)" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">occupazione_altezza</id>
           <FieldType type="Products.Archetypes.Field.StringField">NUMBER</FieldType>
           <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
           <Formula type="Products.Archetypes.Field.TextField"><![CDATA[]]></Formula>

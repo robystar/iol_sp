@@ -99,7 +99,7 @@ resources/iol-custom.css]]></ResourcesCSS>
 <value><struct>
 <member>
 <name>selectionlistformula</name>
-<value><string>["Richiesta Dehor|dehor","Richiesta Commercio|commercio","Rinnovo Dehor|rinnovo-dehor","Rinnovo Commercio|rinnovo-commercio","Cambio delega|delega","Integrazione|integrazione"]</string></value>
+<value><string>["Richiesta Dehor|dehor","Richiesta Commercio|commercio","Rinnovo Dehor|rinnovo-dehor","Rinnovo Commercio|rinnovo-commercio","Cambio delega|delega","Integrazione|integrazione","Insegne,tende,lampade,fioriere|lift"]</string></value>
 </member>
 </struct></value>
 <value><struct>

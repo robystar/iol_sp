@@ -589,6 +589,11 @@ except:
     temp = 1 if context.getItem('tipo_occupazione')=='temporanea' else 0
     zona = context.getItem('zona_cosap',0)
     tipo_app = context.getItem('parent_tipo_app', context.getItem('iol_tipo_app'))
+
+    #solo per i dehor considero la lettera
+    if tipo_app not in ['dehor','rinnovo-dehor','commercio','rinnovo-commercio']:
+        zona=zona[:1]   
+    
     return context.getParentDatabase().resources.cosap.getCoefficiente(zona,temp,tipo_app)]]></Formula>
           <FieldReadTemplate type="Products.Archetypes.Field.StringField">IOL-NUMBERFieldRead</FieldReadTemplate>
           <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>

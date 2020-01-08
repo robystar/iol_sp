@@ -8,6 +8,9 @@
       <onSaveDocument type="Products.Archetypes.Field.TextField"><![CDATA[if context.getItem('fisica_email') not in context.getItem('Plomino_Readers',[]):
     context.setItem('Plomino_Readers',context.getItem('Plomino_Readers',[])+[str(context.getItem('fisica_email'))])
 
+ss =  "%s %s %s" %(context.getItem('fisica_cognome'), context.getItem('delegato_cognome'), context.getItem('giuridica_denominazione'))    
+context.setItem('anagrafica_search',ss)
+    
 #Solo se ho fatto il salvataggio dal button 
 if 'btn_next' in context.REQUEST.keys():
     context.doAction('init')

@@ -183,10 +183,11 @@ menus['front'] = [
     {"label": "Resoconto Finale", "frm": "frm_completata", "title": "Istanza completata - resoconto finale"}
 ]
 menus['back'] = [
-    {"label": "Rinnovo", "frm": "bo_procedimento", "title": "Dati del procedimento"}, 
-    {"label": "Autorizzazione base", "frm": "bo_autorizzazione_base", "title": "Autorizzazione base"}, 
-    
-    
+    {"label": "Procedimento", "frm": "bo_procedimento", "title": "Dati del procedimento"}, 
+    {"label": "Richiedente", "frm": "bo_anagrafiche", "title": "Anagrafiche"}, 
+    {"label": "Ubicazione", "frm": "bo_ubicazione", "title": "Localizzazione Intervento e vincoli"}, 
+    {"label": "Dati richiesta", "frm": "bo_richiesta", "title": "Qualificazione e tipo di intervento"}, 
+    {"label": "Documentazione allegata", "frm": "bo_allegati", "title": "Documentazione allegata"},      
 ]
 return menus
 ]]></resource>
@@ -208,10 +209,11 @@ menus['front'] = [
     {"label": "Resoconto Finale", "frm": "frm_completata", "title": "Istanza completata - resoconto finale"}
 ]
 menus['back'] = [
-    {"label": "Rinnovo", "frm": "bo_procedimento", "title": "Dati del procedimento"}, 
-    {"label": "Autorizzazione base", "frm": "bo_autorizzazione_base", "title": "Autorizzazione base"}, 
-    
-    
+    {"label": "Procedimento", "frm": "bo_procedimento", "title": "Dati del procedimento"}, 
+    {"label": "Richiedente", "frm": "bo_anagrafiche", "title": "Anagrafiche"}, 
+    {"label": "Ubicazione", "frm": "bo_ubicazione", "title": "Localizzazione Intervento e vincoli"}, 
+    {"label": "Dati richiesta", "frm": "bo_richiesta", "title": "Qualificazione e tipo di intervento"}, 
+    {"label": "Documentazione allegata", "frm": "bo_allegati", "title": "Documentazione allegata"},      
 ]
 return menus
 ]]></resource>

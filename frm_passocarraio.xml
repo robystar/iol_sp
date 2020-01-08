@@ -5,9 +5,12 @@
       <onCreateDocument type="Products.Archetypes.Field.TextField"><![CDATA[context.setDocumentReaders(['suap_readers'])]]></onCreateDocument>
       <onOpenDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></onOpenDocument>
       <beforeSaveDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></beforeSaveDocument>
-      <onSaveDocument type="Products.Archetypes.Field.TextField"><![CDATA[if context.getItem('fisica_email') not in context.getItem('Plomino_Readers',[]):
+      <onSaveDocument type="Products.Archetypes.Field.TextField"><![CDATA[docif context.getItem('fisica_email') not in context.getItem('Plomino_Readers',[]):
     context.setItem('Plomino_Readers',context.getItem('Plomino_Readers',[])+[str(context.getItem('fisica_email'))])
 
+ss =  "%s %s %s" %(context.getItem('fisica_cognome'), context.getItem('delegato_cognome'), context.getItem('giuridica_denominazione'))    
+context.setItem('anagrafica_search',ss)
+    
 #Solo se ho fatto il salvataggio dal button 
 if 'btn_next' in context.REQUEST.keys():
     context.doAction('init')
@@ -137,7 +140,7 @@ else:
           <id type="Products.Archetypes.Field.StringField">iol_tipo_proc</id>
           <FieldType type="Products.Archetypes.Field.StringField">TEXT</FieldType>
           <FieldMode type="Products.Archetypes.Field.StringField">CREATION</FieldMode>
-          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[return 'dehor']]></Formula>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[return 'passocarraio']]></Formula>
           <FieldReadTemplate type="Products.Archetypes.Field.StringField"/>
           <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
           <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>

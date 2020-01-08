@@ -703,7 +703,7 @@ return json_dumps({"success":1, "filter": sFilter, "results":ret})
 ##bind namespace=
 ##bind script=script
 ##bind subpath=traverse_subpath
-##parameters=doc=None,parent='',child='',model='',app='',grp='',pdf=0,field='',fromfield='',form='',addform='',parentform=''
+##parameters=doc=None,parent='',child='',model='',app='',grp='',pdf=0,field='',fromfield='',form='',addform='',parentform='',filename=''
 ##title=
 ##
 from Products.CMFPlomino.PlominoUtils import json_loads, StringToDate
@@ -726,6 +726,7 @@ doc.REQUEST.set('addform',addform)
 doc.REQUEST.set('pdf',pdf)
 doc.REQUEST.set('field',field)
 doc.REQUEST.set('fromfield',fromfield)
+doc.REQUEST.set('filename',filename)
 
 view = doc.restrictedTraverse('@@iol-printdocument')
 
@@ -2507,16 +2508,19 @@ if isinstance(doc, basestring):
 db=context.getParentDatabase()
 parentDoc = db.getDocument(doc.getItem('documento_esistente_id'))
 tipo_app=parentDoc.getItem('iol_tipo_app')
+filename="autorizzazione-%s-%s-%s" %(doc.getItem("numero_titolo"),doc.getItem("anno_autorizzazione"),doc.getItem("iol_tipo_app"))
 
-doc.setItem('numero_titolo',doc.getDocNumber('numero_titolo'))
-doc.setItem('data_titolo',StringToDate(DateToString(Now())))
-doc.setItem('anno_titolo',int(DateToString(Now(),format='%Y')))  
+if not doc.getItem('numero_titolo'):
+    doc.setItem('numero_titolo',doc.getDocNumber('numero_titolo'))
+    doc.setItem('data_titolo',StringToDate(DateToString(Now())))
+    doc.setItem('anno_titolo',int(DateToString(Now(),format='%Y')))  
 
 context.stampaModulo(doc,
             model='autorizzazione-dehor',
             app=context.getParentDatabase().getId().replace('iol_',''),
             grp='back-office',
             pdf=1,
+            filename=filename,
             field='allegato_allafirma_titolo',
             addform='bo_istruttoria')
 
@@ -2574,6 +2578,17 @@ if parentDoc:
     doc.setItem('superficie_interna', parentDoc.getItem('superficie_interna'))
     doc.setItem('superficie_old', parentDoc.getItem('superficie_old',0))
     doc.setItem('zona_cosap', parentDoc.getItem('zona_cosap'))
+    doc.setItem('ridotta_opt', parentDoc.getItem('ridotta_opt'))
+    doc.setItem('tipologia_attivita', parentDoc.getItem('tipologia_attivita'))
+    doc.setItem('numero_autorizzazione_scia', parentDoc.getItem('numero_autorizzazione_scia'))
+    doc.setItem('data_autorizzazione_scia', parentDoc.getItem('data_autorizzazione_scia'))
+   
+
+    ### COPIO I DATI DA sub_ubicazione
+    frmDati = context.getForm('sub_ubicazione')
+    for field in frmDati.getFormFields():
+        if parentDoc.getItem(field.id):
+            doc.setItem(field.id,parentDoc.getItem(field.id))    
     
     
     ### COPIO I DATI DA sub_dehor_dati

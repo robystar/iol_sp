@@ -170,7 +170,7 @@ if len(elenco_occupazione+elenco_cavalletti)==0:
 <value><struct>
 <member>
 <name>field_mapping</name>
-<value><string>occupazione_lunghezza,occupazione_larghezza,sup_1,sup_2,sup_3,sup_4,adiacente_opt,illuminato_opt</string></value>
+<value><string>occupazione_lunghezza,occupazione_larghezza,occupazione_altezza,sup_1,sup_2,sup_3,sup_4,adiacente_opt,illuminato_opt</string></value>
 </member>
 </struct></value>
 <value><struct>
@@ -179,6 +179,7 @@ if len(elenco_occupazione+elenco_cavalletti)==0:
 <value><string>"aoColumns": [
     { "sTitle": "Lunghezza [m]" },
     { "sTitle": "Larghezza [m]" },
+    { "sTitle": "Altezza [m]" },
     { "sTitle": "Faccia 1 [mq]" },
     { "sTitle": "Faccia 2 [mq]" },
     { "sTitle": "Faccia 3 [mq]" },
