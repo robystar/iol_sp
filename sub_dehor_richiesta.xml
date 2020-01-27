@@ -185,7 +185,7 @@ if anno_dal!=anno_al:
 </param>
 </params>
         </element>
-        <element id="numero_autorizzazione_scia" title="Numero Autorizzazione /  SCIA attività produttive" type="PlominoField">
+        <element id="numero_autorizzazione_scia" title="Num. Autorizzazione / Num. prot SCIA attività produttive" type="PlominoField">
           <id type="Products.Archetypes.Field.StringField">numero_autorizzazione_scia</id>
           <FieldType type="Products.Archetypes.Field.StringField">TEXT</FieldType>
           <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>

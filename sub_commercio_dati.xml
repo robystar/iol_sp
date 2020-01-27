@@ -618,17 +618,17 @@ except:
 <value><struct>
 <member>
 <name>field_mapping</name>
-<value><string>fioriera_descrizione,fioriera_lunghezza,fioriera_altezza,fioriera_larghezza</string></value>
+<value><string>fioriera_lunghezza,fioriera_larghezza,fioriera_altezza,fioriera_descrizione</string></value>
 </member>
 </struct></value>
 <value><struct>
 <member>
 <name>jssettings</name>
 <value><string>"aoColumns": [
-    { "sTitle": "Descrizione" },
     { "sTitle": "Lunghezza[cm]" },
+    { "sTitle": "Larghezza[cm]" },
     { "sTitle": "Altezza[cm]" },              
-    { "sTitle": "Larghezza[cm]" }  
+    { "sTitle": "Descrizione" }   
 ],
 "bPaginate": false,
 "bLengthChange": false,

@@ -91,7 +91,8 @@ if fid in elencofirma.keys():
         elencofirma[fid]["protocollo"] = protocollo
     if data:
         elencofirma[fid]["data_protocollo"] = DateToString(data,"%d/%m/%Y %H:%M:%S")
-    doc.setItem('elenco_firmadigitale', elencofirma)]]></Content>
+    doc.setItem('elenco_firmadigitale', elencofirma)
+]]></Content>
       <RunAs type="Products.Archetypes.Field.StringField">OWNER</RunAs>
     </element>
   </design>

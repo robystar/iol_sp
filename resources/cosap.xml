@@ -1,6 +1,6 @@
 <plominodatabase id="iol_sp">
   <design>
-    <resource id="cosap" title="" type="ATFolder">
+    <resource id="cosap" title="" type="Folder">
       <resource id="calcoloRate" title="" type="Script (Python)"><![CDATA[## Script (Python) "calcoloRate"
 ##bind container=container
 ##bind context=context
@@ -978,53 +978,6 @@ RHJhd0NhbGxiYWNrLnB1c2goIHsKICAgICAgICJmbiI6IGZ1bmN0aW9uKCBvU2V0dGluZ3MgKXsK
 ICAgICAgICAgLy92ZWRlcmUgcGVyY2hlIGxvIGZhIDIgdm9sdGUhISEKICAgICAgICAgYWdnaW9y
 bmFDb3NhcCgpOwogICAgICAgfQogICAgIH0pOwogIH0KCn0pOwo=
 ]]></resource>
-      <resource id="getTariffaCIMP" title="" type="Script (Python)"><![CDATA[## Script (Python) "getTariffaCIMP"
-##bind container=container
-##bind context=context
-##bind namespace=
-##bind script=script
-##bind subpath=traverse_subpath
-##parameters=data=None,sup=0,temp=0
-##title=
-##
-from Products.CMFPlomino.PlominoUtils import DateToString,StringToDate,Now
-
-docSettings=context.aq_parent.customscripts.getDocSettings()
-rows=docSettings.getItem('tariffe_cimp',[])
-
-fascia = '1'
-sup = float(sup)
-
-if 1 < sup <= 1.5:
-    fascia = '2'
-elif 1.5 < sup <= 5.0:
-    fascia = '3'
-elif 5.0 < sup <= 8.0:
-    fascia = '4'    
-elif 8.0 < sup <= 18.0:
-    fascia = '5'
-elif 18.0 < sup:
-    fascia = '6'
-
-
-if not data:
-    data=Now()
-    
-if isinstance(data, basestring):
-    data=StringToDate(data,format="%d/%m/%Y")
-    
-for row in rows:
-    if (data - StringToDate(row[0],format="%d/%m/%Y")) < 365 and fascia==row[1]:
-        break
-        
-if not row:
-    return 0
-
-if temp:
-    return float(row[3]) 
-else:
-    return float(row[2])
-]]></resource>
       <resource id="getImportoCIMP" title="" type="Script (Python)"><![CDATA[## Script (Python) "getImportoCIMP"
 ##bind container=container
 ##bind context=context
@@ -1108,7 +1061,6 @@ for row in cavalletti:
     totale=totale + calcolaCIMP(row[4],temporaneo,illuminato)*ngg
     totale=totale + calcolaCIMP(row[5],temporaneo,illuminato)*ngg
     totale=totale + calcolaCIMP(row[6],temporaneo,illuminato)*ngg
-
    
    
 #arrotondamenti
@@ -1121,80 +1073,54 @@ if elementi:
 else:
     return totale
 ]]></resource>
-      <resource contenttype="application/javascript" id="controller_commercio.js" title="" type="File"><![CDATA[JCggZG9jdW1lbnQgKS5yZWFkeShmdW5jdGlvbigpIHsKCiAgdmFyIGRvY3VtZW50SWQgPSAkKCIj
-aWRlbnRpZmljYXRpdm8iKS52YWwoKTsKCiAgLy9jb3NhcCBwZXIgZWxlbWVudGkgZSBjYXZhbGxl
-dHRpCiAgZnVuY3Rpb24gYWdnaW9ybmFDb3NhcCgpeyAgCgogICAgLy9DQUxDT0xJIFBJVSBDT01Q
-TElDQVRJOiBQQVNTTyBUVVRUTyBJTCBEQVRBR1JJRCBESSBPQ0NVUEFaSU9ORSBFIENBVkFMTEVU
-VEkKICAgICQuYWpheCh7CiAgICAgICAndXJsJzoicmVzb3VyY2VzL2Nvc2FwL2dldEltcG9ydGlD
-b21tZXJjaW8iLAogICAgICAgJ3R5cGUnOidQT1NUJywKICAgICAgICdkYXRhJzp7ImRvYyI6ZG9j
-dW1lbnRJZCwib2NjdXBhemlvbmUiOiQoIiNlbGVtZW50aV9vY2N1cGF6aW9uZV9kZ19ncmlkdmFs
-dWUiKS52YWwoKSwiY2F2YWxsZXR0aSI6JCgiI2VsZW1lbnRpX2NhdmFsbGV0dGlfZGdfZ3JpZHZh
-bHVlIikudmFsKCl9LAogICAgICAgJ2RhdGFUeXBlJzonSlNPTicsCiAgICAgICAnc3VjY2Vzcyc6
-ZnVuY3Rpb24oZGF0YSwgdGV4dFN0YXR1cywganFYSFIpewogICAgICAgICAgJCgiW25hbWU9J2lt
-cG9ydG9fY29zYXAnXSIpLnRleHQoZGF0YS5jb3NhcC50b0ZpeGVkKDIpKTsKICAgICAgICAgICQo
-IltuYW1lPSdpbXBvcnRvX2NpbXAnXSIpLnRleHQoZGF0YS5jaW1wLnRvRml4ZWQoMikpOwogICAg
-ICAgICAgJCgiW25hbWU9J3N1cGVyZmljaWVfb2NjdXBhemlvbmUnXSIpLnRleHQoZGF0YS5zdXAp
-OwogICAgICAgICAgdmFyICRodyA9ICQoIiNwbG9taW5vX2Zvcm0iKS5maW5kKCcuaGlkZXdoZW4t
-aHdfbm9fcmF0ZScpCiAgICAgICAgICAkaHcuY3NzKCdkaXNwbGF5JywgKGRhdGEudG90YWxlPD00
-MDApPydub25lJzonYmxvY2snKTsKCiAgICAgICB9CiAgICB9KTsKICB9CgogIGlmKHR5cGVvZihl
-bGVtZW50aV9vY2N1cGF6aW9uZV9kZ19kYXRhdGFibGUpIT0ndW5kZWZpbmVkJyl7CiAgICAgZWxl
-bWVudGlfb2NjdXBhemlvbmVfZGdfZGF0YXRhYmxlLmZuU2V0dGluZ3MoKS5hb0RyYXdDYWxsYmFj
-ay5wdXNoKCB7CiAgICAgICAiZm4iOiBmdW5jdGlvbiggb1NldHRpbmdzICl7CiAgICAgICAgIC8v
-dmVkZXJlIHBlcmNoZSBsbyBmYSAyIHZvbHRlISEhCiAgICAgICAgIGFnZ2lvcm5hQ29zYXAoKTsK
-ICAgICAgIH0KICAgICB9KTsKICB9CgogIGlmKHR5cGVvZihlbGVtZW50aV9jYXZhbGxldHRpX2Rn
-X2RhdGF0YWJsZSkhPSd1bmRlZmluZWQnKXsKICAgICBlbGVtZW50aV9jYXZhbGxldHRpX2RnX2Rh
-dGF0YWJsZS5mblNldHRpbmdzKCkuYW9EcmF3Q2FsbGJhY2sucHVzaCggewogICAgICAgImZuIjog
-ZnVuY3Rpb24oIG9TZXR0aW5ncyApewogICAgICAgICAvL3ZlZGVyZSBwZXJjaGUgbG8gZmEgMiB2
-b2x0ZSEhIQogICAgICAgICBhZ2dpb3JuYUNvc2FwKCk7CiAgICAgICB9CiAgICAgfSk7CiAgfQoK
-CiAgLy9SaXB1bGlzY28gaSBjYW1waSBxdWFuZG8gY2FtYmlvIG9wemlvbmUKICAkKGRvY3VtZW50
-KS5vbigiY2xpY2siLCJbbmFtZT0nYWRpYWNlbnRlX29wdCddIixudWxsLCBmdW5jdGlvbigpewog
-ICAgIGlmICgkKHRoaXMpLnZhbCgpIT0iNCIpewogICAgICAgICQoIiN2aWEiKS5zZWxlY3QyKCd2
-YWwnLCBudWxsKTsKICAgICAgICAkKCIjZGVzY3JpemlvbmUiKS52YWwoIiIpOwogICAgIH0KCiAg
-fSkKCgoKCgp9KTsK
-]]></resource>
-      <resource id="pippo" title="" type="Script (Python)"><![CDATA[## Script (Python) "pippo"
+      <resource id="zsqlElencoVieSpeciali" title="Vie Speciali" type="Z SQL Method"/>
+      <resource id="zsqlViaSpeciale" title="CHECK Via Speciale" type="Z SQL Method"/>
+      <resource id="getTariffaCIMP" title="" type="Script (Python)"><![CDATA[## Script (Python) "getTariffaCIMP"
 ##bind container=container
 ##bind context=context
 ##bind namespace=
 ##bind script=script
 ##bind subpath=traverse_subpath
-##parameters=
+##parameters=data=None,sup=0,temp=0
 ##title=
 ##
-doc=context.getDocument('00001-2020-commercio')
+from Products.CMFPlomino.PlominoUtils import DateToString,StringToDate,Now
 
-codvia = int(doc.getItem('via'))
-v = doc.getItem('civico').split('/')
-civico = int(v[0])
-res = context.zsqlViaSpeciale(codvia=codvia,civico=civico).dictionaries()
-if len(res)>0:
-    return res[0]["tipo"]=='2'
+docSettings=context.aq_parent.customscripts.getDocSettings()
+rows=docSettings.getItem('tariffe_cimp',[])
 
-return False
+fascia = '1'
+sup = float(sup)
+
+if 1 < sup <= 1.5:
+    fascia = '2'
+elif 1.5 < sup <= 5.0:
+    fascia = '3'
+elif 5.0 < sup <= 8.0:
+    fascia = '4'    
+elif 8.0 < sup <= 18.0:
+    fascia = '5'
+elif 18.0 < sup:
+    fascia = '6'
 
 
+if not data:
+    data=Now()
+    
+if isinstance(data, basestring):
+    data=StringToDate(data,format="%d/%m/%Y")
+    
+for row in rows:
+    if (data - StringToDate(row[0],format="%d/%m/%Y")) < 365 and fascia==row[1]:
+        break
+        
+if not row:
+    return 0
 
-from Products.CMFPlomino.PlominoUtils import decimal
-
-doc=context.getDocument('0-settings')
-
-rows=[
-['01/01/2019', '1', decimal('23.4673'), decimal('1.1734')], 
-['01/01/2019', '2', decimal('30.5076'), decimal('1.5255')], 
-['01/01/2019', '3', decimal('35.201'), decimal('1.7602')], 
-['01/01/2019', '4', decimal('46.9347'), decimal('2.3468')], 
-['01/01/2019', '5', decimal('61.0151'), decimal('3.0507')], 
-['01/01/2019', '6', decimal('70.4021'), decimal('3.52')],
-['01/01/2020','1', decimal('23.6315711'), decimal('1.1816138')], 
-['01/01/2020','2',  decimal('30.7211532'), decimal('1.5361785')], 
-['01/01/2020','3',  decimal('35.447407'), decimal('1.7725214')], 
-['01/01/2020','4',  decimal('47.2632429'), decimal('2.3632276')], 
-['01/01/2020','5',  decimal('61.4422057'), decimal('3.0720549')], 
-['01/01/2020','6',  decimal('70.8949147'), decimal('3.54464')]]
-
-doc.setItem('tariffe_cimp',rows)
-
-return 'ok'
+if temp:
+    return float(row[3]) 
+else:
+    return float(row[2])
 ]]></resource>
       <resource id="getElencoVieSpeciali" title="" type="Script (Python)"><![CDATA[## Script (Python) "getElencoVieSpeciali"
 ##bind container=container
@@ -1213,8 +1139,27 @@ for res in context.zsqlElencoVieSpeciali().dictionaries():
      
 return result
 ]]></resource>
-      <resource contenttype="" id="zsqlElencoVieSpeciali" title="Vie Speciali" type="Z SQL Method"><![CDATA[]]></resource>
-      <resource contenttype="" id="zsqlViaSpeciale" title="CHECK Via Speciale" type="Z SQL Method"><![CDATA[]]></resource>
+      <resource id="isZonaSpeciale" title="" type="Script (Python)"><![CDATA[## Script (Python) "isZonaSpeciale"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+if isinstance(doc, basestring):
+    doc = context.getDocument(doc)
+
+codvia = int(doc.getItem('via'))
+v = doc.getItem('civico').split('/')
+civico = int(v[0])
+res = context.zsqlViaSpeciale(codvia=codvia,civico=civico).dictionaries()
+if len(res)>0:
+    return res[0]["tipo"]=='2' 
+
+return False
+]]></resource>
       <resource id="getImportiCommercio" title="Calcolo COSAP e CIMP Commercio" type="Script (Python)"><![CDATA[## Script (Python) "getImportiCommercio"
 ##bind container=container
 ##bind context=context
@@ -1391,26 +1336,78 @@ else:
     doc.setItem('superficie_occupazione',supTot)
     return text #ritora il test da settare in info_cosap
 ]]></resource>
-      <resource id="isZonaSpeciale" title="" type="Script (Python)"><![CDATA[## Script (Python) "isZonaSpeciale"
-##bind container=container
-##bind context=context
-##bind namespace=
-##bind script=script
-##bind subpath=traverse_subpath
-##parameters=doc=None
-##title=
-##
-if isinstance(doc, basestring):
-    doc = context.getDocument(doc)
-
-codvia = int(doc.getItem('via'))
-v = doc.getItem('civico').split('/')
-civico = int(v[0])
-res = context.zsqlViaSpeciale(codvia=codvia,civico=civico).dictionaries()
-if len(res)>0:
-    return res[0]["tipo"]=='2' 
-
-return False
+      <resource contenttype="application/javascript" id="controller_commercioxxxxxxxxxxx.js" title="" type="File"><![CDATA[JCggZG9jdW1lbnQgKS5yZWFkeShmdW5jdGlvbigpIHsKCiAgdmFyIGRvY3VtZW50SWQgPSAkKCIj
+c3VwZXJmaWNpZV9vY2N1cGF6aW9uZSIpLmRhdGEoImRvY2lkIik7CgogIC8vY29zYXAgcGVyIGVs
+ZW1lbnRpIGUgY2F2YWxsZXR0aQogIGZ1bmN0aW9uIGFnZ2lvcm5hQ29zYXAoc3VwPTApeyAgCiAg
+ICAvL3NlIG5vbiBwYXNzbyBsYSBzdXAgbGEgY2FsY29sYSBkYSBkYXRhZ3JpZAogICAgaWYgKHN1
+cD09MCl7CiAgICAgICAvL2VsZW1lbnRpIGRpIG9jY3VwYXppb25lCiAgICAgICB2YXIgcm93cyA9
+ICQuZXZhbEpTT04oJCgiI2VsZW1lbnRpX29jY3VwYXppb25lX2RnX2dyaWR2YWx1ZSIpLnZhbCgp
+KTsKICAgICAgIGZvcih2YXIgaT0wO2k8cm93cy5sZW5ndGg7aSsrKXsKICAgICAgICAgIHN1cCA9
+IHN1cCArIHJvd3NbaV1bMF0qcm93c1tpXVsxXTsKICAgICAgIH0KICAgICAgIC8vY2F2YWxsZXR0
+aQogICAgICAgdmFyIHN1cGMgPSAwCiAgICAgICByb3dzID0gJC5ldmFsSlNPTigkKCIjZWxlbWVu
+dGlfY2F2YWxsZXR0aV9kZ19ncmlkdmFsdWUiKS52YWwoKSk7CiAgICAgICBmb3IodmFyIGk9MDtp
+PHJvd3MubGVuZ3RoO2krKyl7CiAgICAgICAgICBzdXBjID0gc3VwYyArIHJvd3NbaV1bMF0qcm93
+c1tpXVsxXTsKICAgICAgIH0KY29uc29sZS5sb2cocm93cykKICAgICAgIC8vYWdnaXVuZ28gbGEg
+c3VwIG9jY3VwYXppb25lIGRlaSBjYXZhbGxldHRpIHNvbG8gc2UgPiAwLjUKICAgICAgIGlmIChz
+dXBjID4gMC41KXsKICAgICAgICAgIHN1cCA9IHN1cCArIHN1cGM7CiAgICAgICB9CiAgICAgICAK
+ICAgICAgICQoIiNzdXBlcmZpY2llX29jY3VwYXppb25lIikudmFsKHN1cC50b0ZpeGVkKDIpKTsK
+CiAgICB9CgogICAgJC5hamF4KHsKICAgICAgICd1cmwnOiJyZXNvdXJjZXMvY29zYXAvZ2V0SW1w
+b3J0b0Nvc2FwIiwKICAgICAgICd0eXBlJzonR0VUJywKICAgICAgICdkYXRhJzp7ImRvYyI6ZG9j
+dW1lbnRJZCwic3VwX29jY3VwYXppb25lIjpzdXB9LAogICAgICAgJ2RhdGFUeXBlJzonSlNPTics
+CiAgICAgICAnc3VjY2Vzcyc6ZnVuY3Rpb24oZGF0YSwgdGV4dFN0YXR1cywganFYSFIpewogICAg
+ICAgICAgJCgiW25hbWU9J2ltcG9ydG9fY29zYXAnXSIpLnRleHQoZGF0YS50b3RhbGUudG9GaXhl
+ZCgyKSk7CiAgICAgICAgICB2YXIgJGh3ID0gJCgiI3Bsb21pbm9fZm9ybSIpLmZpbmQoJy5oaWRl
+d2hlbi1od19ub19yYXRlJykKICAgICAgICAgICRody5jc3MoJ2Rpc3BsYXknLCAoZGF0YS50b3Rh
+bGU8PTQwMCk/J25vbmUnOidibG9jaycpOwoKICAgICAgIH0KICAgIH0pOwogIH0KCiAgZnVuY3Rp
+b24gYWdnaW9ybmFDSU1QKHN1cD0wKXsKCiAgICB2YXIgc3VwID0gMDsKICAgIHZhciByb3dzID0g
+JC5ldmFsSlNPTigkKCIjZWxlbWVudGlfY2F2YWxsZXR0aV9kZ19ncmlkdmFsdWUiKS52YWwoKSk7
+CiAgICAkLmFqYXgoewogICAgICAgJ3VybCc6InJlc291cmNlcy9jb3NhcC9nZXRJbXBvcnRvQ0lN
+UCIsCiAgICAgICAndHlwZSc6J1BPU1QnLAogICAgICAgJ2RhdGEnOnsiZG9jIjpkb2N1bWVudElk
+LCJlbGVtZW50aSI6JCgiI2VsZW1lbnRpX2NhdmFsbGV0dGlfZGdfZ3JpZHZhbHVlIikudmFsKCl9
+LAogICAgICAgJ2RhdGFUeXBlJzonSlNPTicsCiAgICAgICAnc3VjY2Vzcyc6ZnVuY3Rpb24oZGF0
+YSwgdGV4dFN0YXR1cywganFYSFIpewogICAgICAgICAgJCgiW25hbWU9J2ltcG9ydG9fY2ltcCdd
+IikudGV4dChkYXRhLnRvdGFsZS50b0ZpeGVkKDIpKTsKICAgICAgIH0KICAgIH0pOwogIH0KCiAg
+aWYodHlwZW9mKGVsZW1lbnRpX29jY3VwYXppb25lX2RnX2RhdGF0YWJsZSkhPSd1bmRlZmluZWQn
+KXsKICAgICBlbGVtZW50aV9vY2N1cGF6aW9uZV9kZ19kYXRhdGFibGUuZm5TZXR0aW5ncygpLmFv
+RHJhd0NhbGxiYWNrLnB1c2goIHsKICAgICAgICJmbiI6IGZ1bmN0aW9uKCBvU2V0dGluZ3MgKXsK
+ICAgICAgICAgLy92ZWRlcmUgcGVyY2hlIGxvIGZhIDIgdm9sdGUhISEKICAgICAgICAgYWdnaW9y
+bmFDb3NhcCgpOwogICAgICAgfQogICAgIH0pOwogIH0KCiAgaWYodHlwZW9mKGVsZW1lbnRpX2Nh
+dmFsbGV0dGlfZGdfZGF0YXRhYmxlKSE9J3VuZGVmaW5lZCcpewogICAgIGVsZW1lbnRpX2NhdmFs
+bGV0dGlfZGdfZGF0YXRhYmxlLmZuU2V0dGluZ3MoKS5hb0RyYXdDYWxsYmFjay5wdXNoKCB7CiAg
+ICAgICAiZm4iOiBmdW5jdGlvbiggb1NldHRpbmdzICl7CiAgICAgICAgIC8vdmVkZXJlIHBlcmNo
+ZSBsbyBmYSAyIHZvbHRlISEhCiAgICAgICAgIGFnZ2lvcm5hQ29zYXAoKTsKICAgICAgICAgYWdn
+aW9ybmFDSU1QKCk7CiAgICAgICB9CiAgICAgfSk7CiAgfQoKfSk7Cg==
+]]></resource>
+      <resource contenttype="application/javascript" id="controller_commercio.js" title="" type="File"><![CDATA[JCggZG9jdW1lbnQgKS5yZWFkeShmdW5jdGlvbigpIHsKCiAgdmFyIGRvY3VtZW50SWQgPSAkKCIj
+aWRlbnRpZmljYXRpdm8iKS52YWwoKTsKCiAgLy9jb3NhcCBwZXIgZWxlbWVudGkgZSBjYXZhbGxl
+dHRpCiAgZnVuY3Rpb24gYWdnaW9ybmFDb3NhcCgpeyAgCgogICAgLy9DQUxDT0xJIFBJVSBDT01Q
+TElDQVRJOiBQQVNTTyBUVVRUTyBJTCBEQVRBR1JJRCBESSBPQ0NVUEFaSU9ORSBFIENBVkFMTEVU
+VEkKICAgICQuYWpheCh7CiAgICAgICAndXJsJzoicmVzb3VyY2VzL2Nvc2FwL2dldEltcG9ydGlD
+b21tZXJjaW8iLAogICAgICAgJ3R5cGUnOidQT1NUJywKICAgICAgICdkYXRhJzp7ImRvYyI6ZG9j
+dW1lbnRJZCwib2NjdXBhemlvbmUiOiQoIiNlbGVtZW50aV9vY2N1cGF6aW9uZV9kZ19ncmlkdmFs
+dWUiKS52YWwoKSwiY2F2YWxsZXR0aSI6JCgiI2VsZW1lbnRpX2NhdmFsbGV0dGlfZGdfZ3JpZHZh
+bHVlIikudmFsKCl9LAogICAgICAgJ2RhdGFUeXBlJzonSlNPTicsCiAgICAgICAnc3VjY2Vzcyc6
+ZnVuY3Rpb24oZGF0YSwgdGV4dFN0YXR1cywganFYSFIpewogICAgICAgICAgJCgiW25hbWU9J2lt
+cG9ydG9fY29zYXAnXSIpLnRleHQoZGF0YS5jb3NhcC50b0ZpeGVkKDIpKTsKICAgICAgICAgICQo
+IltuYW1lPSdpbXBvcnRvX2NpbXAnXSIpLnRleHQoZGF0YS5jaW1wLnRvRml4ZWQoMikpOwogICAg
+ICAgICAgJCgiW25hbWU9J3N1cGVyZmljaWVfb2NjdXBhemlvbmUnXSIpLnRleHQoZGF0YS5zdXAp
+OwogICAgICAgICAgdmFyICRodyA9ICQoIiNwbG9taW5vX2Zvcm0iKS5maW5kKCcuaGlkZXdoZW4t
+aHdfbm9fcmF0ZScpCiAgICAgICAgICAkaHcuY3NzKCdkaXNwbGF5JywgKGRhdGEudG90YWxlPD00
+MDApPydub25lJzonYmxvY2snKTsKCiAgICAgICB9CiAgICB9KTsKICB9CgogIGlmKHR5cGVvZihl
+bGVtZW50aV9vY2N1cGF6aW9uZV9kZ19kYXRhdGFibGUpIT0ndW5kZWZpbmVkJyl7CiAgICAgZWxl
+bWVudGlfb2NjdXBhemlvbmVfZGdfZGF0YXRhYmxlLmZuU2V0dGluZ3MoKS5hb0RyYXdDYWxsYmFj
+ay5wdXNoKCB7CiAgICAgICAiZm4iOiBmdW5jdGlvbiggb1NldHRpbmdzICl7CiAgICAgICAgIC8v
+dmVkZXJlIHBlcmNoZSBsbyBmYSAyIHZvbHRlISEhCiAgICAgICAgIGFnZ2lvcm5hQ29zYXAoKTsK
+ICAgICAgIH0KICAgICB9KTsKICB9CgogIGlmKHR5cGVvZihlbGVtZW50aV9jYXZhbGxldHRpX2Rn
+X2RhdGF0YWJsZSkhPSd1bmRlZmluZWQnKXsKICAgICBlbGVtZW50aV9jYXZhbGxldHRpX2RnX2Rh
+dGF0YWJsZS5mblNldHRpbmdzKCkuYW9EcmF3Q2FsbGJhY2sucHVzaCggewogICAgICAgImZuIjog
+ZnVuY3Rpb24oIG9TZXR0aW5ncyApewogICAgICAgICAvL3ZlZGVyZSBwZXJjaGUgbG8gZmEgMiB2
+b2x0ZSEhIQogICAgICAgICBhZ2dpb3JuYUNvc2FwKCk7CiAgICAgICB9CiAgICAgfSk7CiAgfQoK
+CiAgLy9SaXB1bGlzY28gaSBjYW1waSBxdWFuZG8gY2FtYmlvIG9wemlvbmUKICAkKGRvY3VtZW50
+KS5vbigiY2xpY2siLCJbbmFtZT0nYWRpYWNlbnRlX29wdCddIixudWxsLCBmdW5jdGlvbigpewog
+ICAgIGlmICgkKHRoaXMpLnZhbCgpIT0iNCIpewogICAgICAgICQoIiN2aWEiKS5zZWxlY3QyKCd2
+YWwnLCBudWxsKTsKICAgICAgICAkKCIjZGVzY3JpemlvbmUiKS52YWwoIiIpOwogICAgIH0KCiAg
+fSkKCgoKCgp9KTsK
 ]]></resource>
     </resource>
   </design>

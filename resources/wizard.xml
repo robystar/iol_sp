@@ -1,6 +1,6 @@
 <plominodatabase id="iol_sp">
   <design>
-    <resource id="wizard" title="" type="ATFolder">
+    <resource id="wizard" title="" type="Folder">
       <resource id="wizard_menu" title="" type="Script (Python)"><![CDATA[## Script (Python) "wizard_menu"
 ##bind container=container
 ##bind context=context

@@ -1,6 +1,6 @@
 <plominodatabase id="iol_sp">
   <design>
-    <resource id="customscripts" title="" type="ATFolder">
+    <resource id="customscripts" title="" type="Folder">
       <resource id="getDataGridAttachmentsValue" title="" type="Script (Python)"><![CDATA[## Script (Python) "getDataGridAttachmentsValue"
 ##bind container=container
 ##bind context=context
@@ -1390,7 +1390,7 @@ for destinatario in destinatari:
 ##
 return context.aq_parent.config_map().get('mapKey')
 ]]></resource>
-      <resource id="xCLONE" title="" type="ATFolder">
+      <resource id="xCLONE" title="" type="Folder">
         <resource id="setCloneDsi" title="" type="Script (Python)"><![CDATA[## Script (Python) "setCloneDsi"
 ##bind container=container
 ##bind context=context
@@ -2591,6 +2591,47 @@ db=context.getParentDatabase()
 doc.setItem('data_comunicazione_annullo_procedimento',Now())
 context.sendMail(doc=doc,azione='annullo-procedimento')
 ]]></resource>
+      <resource id="alla_firma_rinnovo" title="" type="Script (Python)"><![CDATA[## Script (Python) "alla_firma_rinnovo"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import StringToDate, DateToString, Now, json_dumps, sendMail
+
+
+if isinstance(doc, basestring):
+    doc = context.getDocument(doc)
+
+db=context.getParentDatabase()
+parentDoc = db.getDocument(doc.getItem('documento_esistente_id'))
+tipo_app=parentDoc.getItem('iol_tipo_app')
+filename="autorizzazione-%s-%s-%s" %(doc.getItem("numero_titolo"),doc.getItem("anno_autorizzazione"),doc.getItem("iol_tipo_app"))
+
+if not doc.getItem('numero_titolo'):
+    doc.setItem('numero_titolo',doc.getDocNumber('numero_titolo'))
+    doc.setItem('data_titolo',StringToDate(DateToString(Now())))
+    doc.setItem('anno_titolo',int(DateToString(Now(),format='%Y')))
+
+context.stampaModulo(doc,
+            model='autorizzazione-dehor',
+            app=context.getParentDatabase().getId().replace('iol_',''),
+            grp='back-office',
+            pdf=1,
+            filename=filename,
+            field='allegato_allafirma_titolo',
+            addform='bo_istruttoria')
+
+
+#todo da mandare alla firma
+try:
+    context.invia_firma(doc,'rinnovo')
+except:
+    pass
+]]></resource>
       <resource id="alla_firma_rigetto" title="" type="Script (Python)"><![CDATA[## Script (Python) "alla_firma_rigetto"
 ##bind container=container
 ##bind context=context
@@ -2819,47 +2860,6 @@ try:
         if data:
             elencofirma[fid]["data_protocollo"] = DateToString(data,"%d/%m/%Y %H:%M:%S")
         doc.setItem('elenco_firmadigitale', elencofirma)
-except:
-    pass
-]]></resource>
-      <resource id="alla_firma_rinnovo" title="" type="Script (Python)"><![CDATA[## Script (Python) "alla_firma_rinnovo"
-##bind container=container
-##bind context=context
-##bind namespace=
-##bind script=script
-##bind subpath=traverse_subpath
-##parameters=doc=None
-##title=
-##
-from Products.CMFPlomino.PlominoUtils import StringToDate, DateToString, Now, json_dumps, sendMail
-
-
-if isinstance(doc, basestring):
-    doc = context.getDocument(doc)
-
-db=context.getParentDatabase()
-parentDoc = db.getDocument(doc.getItem('documento_esistente_id'))
-tipo_app=parentDoc.getItem('iol_tipo_app')
-filename="autorizzazione-%s-%s-%s" %(doc.getItem("numero_titolo"),doc.getItem("anno_autorizzazione"),doc.getItem("iol_tipo_app"))
-
-if not doc.getItem('numero_titolo'):
-    doc.setItem('numero_titolo',doc.getDocNumber('numero_titolo'))
-    doc.setItem('data_titolo',StringToDate(DateToString(Now())))
-    doc.setItem('anno_titolo',int(DateToString(Now(),format='%Y')))
-
-context.stampaModulo(doc,
-            model='autorizzazione-dehor',
-            app=context.getParentDatabase().getId().replace('iol_',''),
-            grp='back-office',
-            pdf=1,
-            filename=filename,
-            field='allegato_allafirma_titolo',
-            addform='bo_istruttoria')
-
-
-#todo da mandare alla firma
-try:
-    context.invia_firma(doc,'rinnovo')
 except:
     pass
 ]]></resource>

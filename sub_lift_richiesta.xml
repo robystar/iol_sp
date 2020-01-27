@@ -168,7 +168,7 @@
 </param>
 </params>
         </element>
-        <element id="numero_autorizzazione_scia" title="Numero Autorizzazione / Numero SCIA attività produttive" type="PlominoField">
+        <element id="numero_autorizzazione_scia" title="Num. Autorizzazione / Num. prot SCIA attività produttive" type="PlominoField">
           <id type="Products.Archetypes.Field.StringField">numero_autorizzazione_scia</id>
           <FieldType type="Products.Archetypes.Field.StringField">TEXT</FieldType>
           <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
@@ -292,14 +292,13 @@ for row in rows:
         <element id="autorizzata_al" title="Data fine" type="PlominoField">
           <id type="Products.Archetypes.Field.StringField">autorizzata_al</id>
           <FieldType type="Products.Archetypes.Field.StringField">DATETIME</FieldType>
-          <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
-          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[return
-datadal = DateToString(context.getItem('autorizzata_dal',Now()))
+          <FieldMode type="Products.Archetypes.Field.StringField">DISPLAY</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[datadal = DateToString(context.getItem('autorizzata_dal',Now()))
 anno=int(DateToString(datadal, format="%Y"))
-return StringToDate(str(int(anno) +2) + datadal[4:])]]></Formula>
+return StringToDate(str(int(anno) +3) + datadal[4:])]]></Formula>
           <FieldReadTemplate type="Products.Archetypes.Field.StringField">IOL-DATETIMEFieldRead</FieldReadTemplate>
           <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
-          <Mandatory type="Products.Archetypes.Field.BooleanField">True</Mandatory>
+          <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>
           <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
           <ToBeIndexed type="Products.Archetypes.Field.BooleanField">True</ToBeIndexed>
           <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>

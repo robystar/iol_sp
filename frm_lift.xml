@@ -1,6 +1,6 @@
 <plominodatabase id="iol_sp">
   <design>
-    <element id="frm_lift" title="Richiesta di occupazione suolo per lampade, insegne, fioriere, tende" type="PlominoForm">
+    <element id="frm_lift" title="Richiesta di autorizzazione per lampade, insegne, fioriere, tende" type="PlominoForm">
       <id type="Products.Archetypes.Field.StringField">frm_lift</id>
       <onCreateDocument type="Products.Archetypes.Field.TextField"><![CDATA[context.setDocumentReaders(['suap_readers'])]]></onCreateDocument>
       <onOpenDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></onOpenDocument>
