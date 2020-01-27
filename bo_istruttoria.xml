@@ -13,22 +13,30 @@ if 'btn_stampa_titolo' in context.REQUEST.keys():
         context.setItem('data_titolo',StringToDate(DateToString(Now())))
         context.setItem('anno_titolo',int(DateToString(Now(),format='%Y')))   
     
+        tipo_app=context.getItem('iol_tipo_app')
+
+
     if context.getItem('allegato_titolo',{})=={}:
+        filename="autorizzazione-%s-%s-%s" %(context.getItem("numero_titolo"),context.getItem("anno_autorizzazione"),context.getItem("iol_tipo_app"))
+        
         context.getParentDatabase().resources.customscripts.stampaModulo(context,
             model=context.getItem('modello_stampa_titolo'),
             app=context.getParentDatabase().getId().replace('iol_',''),
             grp='back-office',
             pdf=0,
             field='allegato_titolo',
+            filename=filename,
             addform='bo_istruttoria')
         
     if context.getItem('allegato_distinta_pagamento',{})=={}:
+        filename="distinta-pagamento-%s-%s-%s" %(context.getItem("numero_titolo"),context.getItem("anno_autorizzazione"),context.getItem("iol_tipo_app"))
         context.getParentDatabase().resources.customscripts.stampaModulo(context,
             model='distinta-pagamento',
             app=context.getParentDatabase().getId().replace('iol_',''),
             grp='back-office',
             pdf=0,
             field='allegato_distinta_pagamento',
+            filename=filename,
             addform='bo_istruttoria')
 
     return "%s/EditDocument?openwithform=bo_istruttoria" %context.absolute_url()]]></onSaveDocument>

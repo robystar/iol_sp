@@ -14,6 +14,7 @@ if not parentDoc:
 
 if 'btn_stampa_comunicazione' in context.REQUEST.keys():
     if context.getItem('allegato_documento_richiesta_integrazione',{})=={}:
+        filename="richiesta-integrazione-%s" %parentDoc.getId()
         context.getParentDatabase().resources.customscripts.stampaModulo(context,
             parent=parentDoc.getId(),
             parentform='sub_completa_'+parentDoc.getItem('iol_tipo_app'),
@@ -21,6 +22,7 @@ if 'btn_stampa_comunicazione' in context.REQUEST.keys():
             app=context.getParentDatabase().getId().replace('iol_',''),
             grp='back-office',
             pdf=0,
+            filename=filename,
             field='allegato_documento_richiesta_integrazione')
     return "%s/EditDocument" %context.absolute_url()
 
@@ -36,7 +38,8 @@ context.REQUEST.set('returnurl',parentDoc.absolute_url())]]></onDeleteDocument>
 <div>
 <span class="plominoLabelClass">oggetto_richiesta_integrazione</span><span class="plominoFieldClass">oggetto_richiesta_integrazione</span>
 </div>
-<span class="plominoHidewhenClass">start:hw_no_edit</span><div class="row-fluid">
+<span class="plominoHidewhenClass">start:hw_no_edit</span>
+<div class="row-fluid">
 <div class="span8">
 <span class="plominoLabelClass">modello_stampa_richiesta_integrazione</span><span class="plominoFieldClass">modello_stampa_richiesta_integrazione</span>
 </div>
@@ -44,13 +47,16 @@ context.REQUEST.set('returnurl',parentDoc.absolute_url())]]></onDeleteDocument>
 <br><span class="plominoActionClass">btn_stampa_comunicazione</span>
 </div>
 </div>
-<span class="plominoHidewhenClass">end:hw_no_edit</span><p><span class="plominoHidewhenClass">start:hw_new_comunicazione</span></p>
+<span class="plominoHidewhenClass">end:hw_no_edit</span>
+<p><span class="plominoHidewhenClass">start:hw_new_comunicazione</span></p>
 <p><span class="plominoFieldClass">istruzioni_richiesta_integrazione</span></p>
 <div class="row-fluid">
-<span class="plominoHidewhenClass">start:hw_no_istruttore_richiesta_integrazione</span><div class="span5">
+<span class="plominoHidewhenClass">start:hw_no_istruttore_richiesta_integrazione</span>
+<div class="span5">
 <span class="plominoLabelClass">allegato_documento_richiesta_integrazione</span><span class="plominoFieldClass">allegato_documento_richiesta_integrazione</span>
 </div>
-<span class="plominoHidewhenClass">end:hw_no_istruttore_richiesta_integrazione</span><div class="span5">
+<span class="plominoHidewhenClass">end:hw_no_istruttore_richiesta_integrazione</span>
+<div class="span5">
 <span class="plominoLabelClass">allegato_comunicazione_richiesta_integrazione</span><span class="plominoFieldClass">allegato_comunicazione_richiesta_integrazione</span>
 </div>
 <div class="span2">

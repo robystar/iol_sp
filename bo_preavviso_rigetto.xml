@@ -9,12 +9,14 @@
 
 if 'btn_stampa_comunicazione' in context.REQUEST.keys():
     if context.getItem('allegato_documento_preavviso_rigetto',{})=={}:
+        filename="preavviso-rigetto-%s" %context.getId()
         context.getParentDatabase().resources.customscripts.stampaModulo(context,
             model=context.getItem('modello_stampa_preavviso_rigetto'),
             app=context.getParentDatabase().getId().replace('iol_',''),
             grp='back-office',
             pdf=0,
-            addform='bo_preavviso_rigetto',            
+            addform='bo_preavviso_rigetto',   
+            filename=filename,
             field='allegato_documento_preavviso_rigetto')
     return "%s/EditDocument?openwithform=bo_preavviso_rigetto" %context.absolute_url()
 elif 'btn_save' in context.REQUEST.keys():
@@ -32,7 +34,8 @@ context.REQUEST.set('returnurl',parentDoc.absolute_url())]]></onDeleteDocument>
 <div>
 <span class="plominoLabelClass">oggetto_preavviso_rigetto</span><span class="plominoFieldClass">oggetto_preavviso_rigetto</span>
 </div>
-<span class="plominoHidewhenClass">start:hw_no_edit</span><div class="row-fluid">
+<span class="plominoHidewhenClass">start:hw_no_edit</span>
+<div class="row-fluid">
 <div class="span8">
 <span class="plominoLabelClass">modello_stampa_preavviso_rigetto</span><span class="plominoFieldClass">modello_stampa_preavviso_rigetto</span>
 </div>
@@ -40,16 +43,19 @@ context.REQUEST.set('returnurl',parentDoc.absolute_url())]]></onDeleteDocument>
 <br><span class="plominoActionClass">btn_stampa_comunicazione</span>
 </div>
 </div>
-<span class="plominoHidewhenClass">end:hw_no_edit</span><p><span class="plominoHidewhenClass">start:hw_new_comunicazione</span></p>
+<span class="plominoHidewhenClass">end:hw_no_edit</span>
+<p><span class="plominoHidewhenClass">start:hw_new_comunicazione</span></p>
 <p><span class="plominoFieldClass">istruzioni_preavviso_rigetto</span></p>
 <div class="row-fluid">
-<span class="plominoHidewhenClass">start:hw_no_istruttore_preavviso_rigetto</span><div class="span4">
+<span class="plominoHidewhenClass">start:hw_no_istruttore_preavviso_rigetto</span>
+<div class="span4">
 <span class="plominoLabelClass">allegato_documento_preavviso_rigetto</span><span class="plominoFieldClass">allegato_documento_preavviso_rigetto</span>
 </div>
 <div class="span4">
 <span class="plominoLabelClass">allegato_allafirma_preavviso_rigetto</span><span class="plominoFieldClass">allegato_allafirma_preavviso_rigetto</span>
 </div>
-<span class="plominoHidewhenClass">end:hw_no_istruttore_preavviso_rigetto</span><div class="span4">
+<span class="plominoHidewhenClass">end:hw_no_istruttore_preavviso_rigetto</span>
+<div class="span4">
 <span class="plominoLabelClass">allegato_comunicazione_preavviso_rigetto</span><span class="plominoFieldClass">allegato_comunicazione_preavviso_rigetto</span>
 </div>
 </div>

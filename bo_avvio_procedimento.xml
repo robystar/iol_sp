@@ -9,14 +9,19 @@
 
 if 'btn_stampa_comunicazione' in context.REQUEST.keys():
     if context.getItem('allegato_documento_avvio_procedimento',{})=={}:
+        filename="avvio-procedimento-%s" %context.getId()
         context.getParentDatabase().resources.customscripts.stampaModulo(context,
             model=context.getItem('modello_stampa_avvio_procedimento'),
             app=context.getParentDatabase().getId().replace('iol_',''),
             grp='back-office',            
             pdf=0,
             addform='bo_avvio_procedimento',            
+            filename=filename,
             field='allegato_documento_avvio_procedimento')
-    return "%s/EditDocument?openwithform=bo_avvio_procedimento" %context.absolute_url()]]></onSaveDocument>
+    return "%s/EditDocument?openwithform=bo_avvio_procedimento" %context.absolute_url()
+
+
+]]></onSaveDocument>
       <onDeleteDocument type="Products.Archetypes.Field.TextField"><![CDATA[parentDoc = context.getParentDatabase().getDocument(context.getItem('parent_document'))
 context.REQUEST.set('returnurl',parentDoc.absolute_url())]]></onDeleteDocument>
       <onSearch type="Products.Archetypes.Field.TextField"><![CDATA[]]></onSearch>
@@ -27,7 +32,8 @@ context.REQUEST.set('returnurl',parentDoc.absolute_url())]]></onDeleteDocument>
 <div>
 <span class="plominoLabelClass">oggetto_avvio_procedimento</span><span class="plominoFieldClass">oggetto_avvio_procedimento</span>
 </div>
-<span class="plominoHidewhenClass">start:hw_no_edit</span><div class="row-fluid">
+<span class="plominoHidewhenClass">start:hw_no_edit</span>
+<div class="row-fluid">
 <div class="span8">
 <span class="plominoLabelClass">modello_stampa_avvio_procedimento</span><span class="plominoFieldClass">modello_stampa_avvio_procedimento</span>
 </div>
@@ -35,12 +41,15 @@ context.REQUEST.set('returnurl',parentDoc.absolute_url())]]></onDeleteDocument>
 <br><span class="plominoActionClass">btn_stampa_comunicazione</span>
 </div>
 </div>
-<span class="plominoHidewhenClass">end:hw_no_edit</span><p><span class="plominoHidewhenClass">start:hw_new_comunicazione</span></p>
+<span class="plominoHidewhenClass">end:hw_no_edit</span>
+<p><span class="plominoHidewhenClass">start:hw_new_comunicazione</span></p>
 <div class="row-fluid">
-<span class="plominoHidewhenClass">start:hw_no_istruttore_avvio_procedimento</span><div class="span5">
+<span class="plominoHidewhenClass">start:hw_no_istruttore_avvio_procedimento</span>
+<div class="span5">
 <span class="plominoLabelClass">allegato_documento_avvio_procedimento</span><span class="plominoFieldClass">allegato_documento_avvio_procedimento</span>
 </div>
-<span class="plominoHidewhenClass">end:hw_no_istruttore_avvio_procedimento</span><div class="span5">
+<span class="plominoHidewhenClass">end:hw_no_istruttore_avvio_procedimento</span>
+<div class="span5">
 <span class="plominoLabelClass">allegato_comunicazione_avvio_procedimento</span><span class="plominoFieldClass">allegato_comunicazione_avvio_procedimento</span>
 </div>
 <div class="span2">

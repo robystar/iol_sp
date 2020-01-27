@@ -2,16 +2,45 @@
   <design>
     <element id="onFirmaOk" title="onFirmaOk" type="PlominoAgent">
       <id type="Products.Archetypes.Field.StringField">onFirmaOk</id>
-      <Content type="Products.Archetypes.Field.TextField"><![CDATA[docId = args[0]
+      <Content type="Products.Archetypes.Field.TextField"><![CDATA[from iol.firmadigitale.plomino_utils import  get_stato_firma, setfile_b64encode
+docId = args[0]
 data = args[1]
 db=context.getParentDatabase()
 
 try:
-    doc = db.getDocument('00001-2019-firmadigitale')
-    req = doc.getItem('REQUEST_DATA',[])
-    req.append(doc.REQUEST)
-    doc.setItem('REQUEST_DATA',req)
-    doc.setIte,('LAST_REQUEST',doc.REQUEST)
+#fix eventuali valori duplicati
+    field = data.get('field','')
+    ufficio = data.get('ufficio','')
+    fid = data.get('fid','')
+    doc = db.getDocument(docId)
+    params = dict(
+        foreign_id_object = fid,
+        idufficio = ufficio,
+        #auth = "",
+        scarica = True
+    )
+    
+    res = get_stato_firma(doc,params)
+    res = json_loads(res)
+    if res['esito'] =0 'OK':
+        documento_firmato = dict()
+        documento_firmato[res['nome_file_firmato']] = res['file64_firmato']
+        setfile_b64encode(doc,field,documento_firmato)
+        
+        
+        if azioni in data:
+            v=data['azioni'].split(',')
+            azioni=[]
+            for azione in v:
+                if not azione in azioni:
+                    azioni.append(azione)
+            
+            for azione in azioni:
+                if doc and doc.isActionSupported(azione):
+                    doc.doAction(azione)
+    
+
+    doc.setItem('LAST_REQUEST',doc.REQUEST)
                 
 except Exception as err:
     doc = db.getDocument('00001-2019-firmadigitale')
