@@ -47,6 +47,9 @@ if db.getDocument(docId):
 <span class="plominoLabelClass">tariffe_settings</span><span class="plominoFieldClass">tariffe_settings</span>
 </div>
 <div>
+<span class="plominoLabelClass">tariffe_cimp</span><span class="plominoFieldClass">tariffe_cimp</span>
+</div>
+<div>
 <span class="plominoLabelClass">zone_dehor</span><span class="plominoFieldClass">zone_dehor</span>
 </div>
 <div>
@@ -57,9 +60,6 @@ if db.getDocument(docId):
 </div>
 <div>
 <span class="plominoLabelClass">zone_insegna</span><span class="plominoFieldClass">zone_insegna</span>
-</div>
-<div>
-<span class="plominoLabelClass">tariffe_cimp</span><span class="plominoFieldClass">tariffe_cimp</span>
 </div>
 </fieldset>
 <fieldset class="scheduler-border">
@@ -702,18 +702,17 @@ return elencoGruppi(context)</string></value>
 <value><struct>
 <member>
 <name>field_mapping</name>
-<value><string>superficie,m_perm,m_temp,n_perm,n_temp</string></value>
+<value><string>data_dal,superficie,tariffa_perm,tariffa_temp</string></value>
 </member>
 </struct></value>
 <value><struct>
 <member>
 <name>jssettings</name>
 <value><string>"aoColumns": [
-    { "sTitle": "Superficie" },
-    { "sTitle": "Perm. anno corr." },
-    { "sTitle": "Temp. anno corr."},
-    { "sTitle": "Perm. anno succ." },
-    { "sTitle": "Temp. anno succ."}    
+    { "sTitle": "Valida dal" },
+    { "sTitle": "Fascia di superficie" },
+    { "sTitle": "Permanente" },
+    { "sTitle": "Temporanea"} 
 ],
 "bPaginate": false,
 "bLengthChange": false,

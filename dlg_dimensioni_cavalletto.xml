@@ -30,26 +30,23 @@
 <fieldset class="scheduler-border">
 <legend class="scheduler-border"> Dimensioni occupazione suolo (impronta a terra): </legend>
 <div class="row-fluid">
-<div class="span3">
+<div class="span4">
 <span class="plominoLabelClass">occupazione_lunghezza</span><span class="plominoFieldClass">occupazione_lunghezza</span>
 </div>
-<div class="span3">
+<div class="span4">
 <span class="plominoLabelClass">occupazione_larghezza</span><span class="plominoFieldClass">occupazione_larghezza</span>
 </div>
-<div class="span3">
+<div class="span4">
 <span class="plominoLabelClass">occupazione_altezza</span><span class="plominoFieldClass">occupazione_altezza</span>
 </div>
 </div>
-<div class="alert alert-info">Nel caso il cavalletto pubblicitario venga esposto nelle vetrine, nelle porte d’ingresso o nelle immediate adiacenze dell’esercizio commerciale è esente CIMP, ma vanno comunque indicate le dimensioni relative all'occupazione suolo.<span style="text-decoration: underline; ">Altezza massima consentita per i cavalletti: 1 metro </span>
-</div>
-<div class="row-fluid">
-<div class="span3">
-<span class="plominoLabelClass">adiacente_opt</span><span class="plominoFieldClass">adiacente_opt</span>
-</div>
-<div class="span3">
-<span class="plominoLabelClass">illuminato_opt</span><span class="plominoFieldClass">illuminato_opt</span>
-</div>
-</div>
+<p><span class="plominoLabelClass">illuminato_opt</span><span class="plominoFieldClass">illuminato_opt</span></p>
+<p><span class="plominoLabelClass">adiacente_opt</span><span class="plominoFieldClass">adiacente_opt</span></p>
+<p><span class="plominoHidewhenClass">start:hw_no_posizione</span></p>
+<p><span class="plominoLabelClass">via</span><span class="plominoFieldClass">via</span></p>
+<p><span class="plominoLabelClass">descrizione</span><span class="plominoFieldClass">descrizione</span></p>
+<div class="alert-info">(*) I cavalletti posizionati nelle vie indicate con asterisco sono soggetti a maggiorazione CIMP pari al 150% della tariffa base;</div>
+<p><span class="plominoHidewhenClass">end:hw_no_posizione</span></p>
 </fieldset>
 ]]></FormLayout>
       <FormMethod type="Products.Archetypes.Field.TextField"><![CDATA[Auto]]></FormMethod>
@@ -290,18 +287,18 @@ resources/iol-custom.css]]></ResourcesCSS>
 </param>
 </params>
         </element>
-        <element id="adiacente_opt" title="Cavalletto adiacente" type="PlominoField">
+        <element id="adiacente_opt" title="Posizione del cavalletto" type="PlominoField">
           <id type="Products.Archetypes.Field.StringField">adiacente_opt</id>
           <FieldType type="Products.Archetypes.Field.StringField">SELECTION</FieldType>
           <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
-          <Formula type="Products.Archetypes.Field.TextField"><![CDATA['no']]></Formula>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[]]></Formula>
           <FieldReadTemplate type="Products.Archetypes.Field.StringField"/>
-          <FieldEditTemplate type="Products.Archetypes.Field.StringField">IOL-SELECTIONFieldInLineEdit</FieldEditTemplate>
+          <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
           <Mandatory type="Products.Archetypes.Field.BooleanField">True</Mandatory>
           <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
           <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>
           <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
-          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></HTMLAttributesFormula>
+          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA['data-dhw=dlg_dimensioni_cavalletto']]></HTMLAttributesFormula>
           <params>
 <param>
 <value><array><data>
@@ -319,7 +316,7 @@ resources/iol-custom.css]]></ResourcesCSS>
 <value><struct>
 <member>
 <name>selectionlistformula</name>
-<value><string>return ['SI|si','NO|no']</string></value>
+<value><string>return ['''Nelle vetrine, nelle porte d'ingresso dell'esercizio e comunque all'interno del locale (esente COSAP e CIMP);|1''','''Nelle immediate adiacenze dell'esercizio (esente CIMP);|2''','''Non adiacente ma comunque all'interno dell'area di pertinenza dell'attività;|3''','''Fuori dell'area di pertinenza dell'attività;|4''']</string></value>
 </member>
 </struct></value>
 <value><struct>
@@ -361,13 +358,87 @@ resources/iol-custom.css]]></ResourcesCSS>
 <value><struct>
 <member>
 <name>selectionlistformula</name>
-<value><string>return ['SI|si','NO|no']</string></value>
+<value><string>return ['SI (maggiorazione CIMP)|si','NO|no']</string></value>
 </member>
 </struct></value>
 <value><struct>
 <member>
 <name>widget</name>
 <value><string>RADIO</string></value>
+</member>
+</struct></value>
+</data></array></value>
+</param>
+</params>
+        </element>
+        <element id="hw_no_posizione" title="hw_no_posizione" type="PlominoHidewhen">
+          <id type="Products.Archetypes.Field.StringField">hw_no_posizione</id>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[context.removeItem('descrizione')
+
+return context.getItem('adiacente_opt')!='4']]></Formula>
+          <isDynamicHidewhen type="Products.Archetypes.Field.BooleanField">True</isDynamicHidewhen>
+        </element>
+        <element id="via" title="Via" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">via</id>
+          <FieldType type="Products.Archetypes.Field.StringField">SELECTION</FieldType>
+          <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[]]></Formula>
+          <FieldReadTemplate type="Products.Archetypes.Field.StringField"/>
+          <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
+          <Mandatory type="Products.Archetypes.Field.BooleanField">True</Mandatory>
+          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
+          <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>
+          <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
+          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA['data-tool=autocomplete-via']]></HTMLAttributesFormula>
+          <params>
+<param>
+<value><array><data>
+<value><struct>
+<member>
+<name>dynamictableparam</name>
+<value><string>'bPaginate': true,
+'bLengthChange': true,
+'bFilter': true,
+'bSort': true,
+'bInfo': true,
+'bAutoWidth': false</string></value>
+</member>
+</struct></value>
+<value><struct>
+<member>
+<name>selectionlistformula</name>
+<value><string>context.getParentDatabase().resources.cosap.getElencoVieSpeciali()</string></value>
+</member>
+</struct></value>
+</data></array></value>
+</param>
+</params>
+        </element>
+        <element id="descrizione" title="Descrizione della posizione del cavalletto" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">descrizione</id>
+          <FieldType type="Products.Archetypes.Field.StringField">TEXT</FieldType>
+          <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[]]></Formula>
+          <FieldReadTemplate type="Products.Archetypes.Field.StringField"/>
+          <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
+          <Mandatory type="Products.Archetypes.Field.BooleanField">True</Mandatory>
+          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
+          <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>
+          <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
+          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></HTMLAttributesFormula>
+          <params>
+<param>
+<value><array><data>
+<value><struct>
+<member>
+<name>size</name>
+<value><string>2</string></value>
+</member>
+</struct></value>
+<value><struct>
+<member>
+<name>widget</name>
+<value><string>TEXTAREA</string></value>
 </member>
 </struct></value>
 </data></array></value>

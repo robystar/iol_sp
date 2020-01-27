@@ -55,10 +55,9 @@ orderDG(context,'elenco_importi_aggiuntivi_dg','elenco_importi_index')]]></onSav
           <FieldMode type="Products.Archetypes.Field.StringField">COMPUTEDONSAVE</FieldMode>
           <Formula type="Products.Archetypes.Field.TextField"><![CDATA[try:
     view = context.restrictedTraverse('iol-GetElencoImportiPagamenti')
-    ret = view.getElencoImportiPagamenti() 
-    return json_loads(ret)["results"]
+    return view.getElencoImportiPagamenti(dmp=False) 
 except:
-    return []]]></Formula>
+    return context.getItem('elenco_importi_pagamenti')]]></Formula>
           <FieldReadTemplate type="Products.Archetypes.Field.StringField">IOL-PagoPa</FieldReadTemplate>
           <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
           <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>

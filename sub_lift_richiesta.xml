@@ -42,6 +42,7 @@
 <span class="plominoLabelClass">data_autorizzazione_scia</span><span class="plominoFieldClass">data_autorizzazione_scia</span>
 </div>
 </div>
+<span class="plominoSubformClass">sub_rinnovo_pratica</span>
 </div>]]></FormLayout>
       <FormMethod type="Products.Archetypes.Field.TextField"><![CDATA[Auto]]></FormMethod>
       <DocumentTitle type="Products.Archetypes.Field.TextField"><![CDATA[]]></DocumentTitle>
@@ -130,63 +131,6 @@
 <member>
 <name>widget</name>
 <value><string>JQUERY</string></value>
-</member>
-</struct></value>
-</data></array></value>
-</param>
-</params>
-        </element>
-        <element id="scavi_orario" title="Orario" type="PlominoField">
-          <id type="Products.Archetypes.Field.StringField">scavi_orario</id>
-          <FieldType type="Products.Archetypes.Field.StringField">TEXT</FieldType>
-          <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
-          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[]]></Formula>
-          <FieldReadTemplate type="Products.Archetypes.Field.StringField"/>
-          <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
-          <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>
-          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
-          <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>
-          <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
-          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></HTMLAttributesFormula>
-        </element>
-        <element id="urgenza_opt" title="In caso di richiesta urgente attivare la sezione" type="PlominoField">
-          <id type="Products.Archetypes.Field.StringField">urgenza_opt</id>
-          <FieldType type="Products.Archetypes.Field.StringField">SELECTION</FieldType>
-          <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
-          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[]]></Formula>
-          <FieldReadTemplate type="Products.Archetypes.Field.StringField"/>
-          <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
-          <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>
-          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
-          <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>
-          <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
-          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA['data-dhw=hw_no_urgenza']]></HTMLAttributesFormula>
-          <params>
-<param>
-<value><array><data>
-<value><struct>
-<member>
-<name>dynamictableparam</name>
-<value><string>'bPaginate': true,
-'bLengthChange': true,
-'bFilter': true,
-'bSort': true,
-'bInfo': true,
-'bAutoWidth': false</string></value>
-</member>
-</struct></value>
-<value><struct>
-<member>
-<name>selectionlist</name>
-<value><array><data>
-<value><string>Motivazione urgenza|urgenza</string></value>
-</data></array></value>
-</member>
-</struct></value>
-<value><struct>
-<member>
-<name>widget</name>
-<value><string>CHECKBOX</string></value>
 </member>
 </struct></value>
 </data></array></value>

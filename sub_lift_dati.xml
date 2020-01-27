@@ -37,6 +37,7 @@
 <span class="plominoLabelClass">note_occupazione</span><span class="plominoFieldClass">note_occupazione</span>
 </div>
 <p><span class="plominoFieldClass">superficie_occupazione_js</span></p>
+<div class="alert alert-error"><h5>l'Imposta di pubblicità verrà quantificata e messa a ruolo successivamente al rilievo fatto da tecnici incaricati</h5></div>
 </div>]]></FormLayout>
       <FormMethod type="Products.Archetypes.Field.TextField"><![CDATA[Auto]]></FormMethod>
       <DocumentTitle type="Products.Archetypes.Field.TextField"><![CDATA[]]></DocumentTitle>
@@ -59,7 +60,7 @@
 resources/iol-custom.css]]></ResourcesCSS>
       <excludeFromNav type="Products.Archetypes.Field.BooleanField">False</excludeFromNav>
       <elements>
-        <element id="elementi_insegne_dg" title="Insegne" type="PlominoField">
+        <element id="elementi_insegne_dg" title="Insegne (un elemento per riga)" type="PlominoField">
           <id type="Products.Archetypes.Field.StringField">elementi_insegne_dg</id>
           <FieldType type="Products.Archetypes.Field.StringField">DATAGRID</FieldType>
           <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
@@ -129,7 +130,7 @@ resources/iol-custom.css]]></ResourcesCSS>
 </param>
 </params>
         </element>
-        <element id="elementi_tende_dg" title="Tende" type="PlominoField">
+        <element id="elementi_tende_dg" title="Tende (un elemento per riga)" type="PlominoField">
           <id type="Products.Archetypes.Field.StringField">elementi_tende_dg</id>
           <FieldType type="Products.Archetypes.Field.StringField">DATAGRID</FieldType>
           <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
@@ -198,7 +199,7 @@ resources/iol-custom.css]]></ResourcesCSS>
 </param>
 </params>
         </element>
-        <element id="elementi_lampade_dg" title="Lampade" type="PlominoField">
+        <element id="elementi_lampade_dg" title="Lampade (un elemento per riga)" type="PlominoField">
           <id type="Products.Archetypes.Field.StringField">elementi_lampade_dg</id>
           <FieldType type="Products.Archetypes.Field.StringField">DATAGRID</FieldType>
           <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
@@ -263,7 +264,7 @@ resources/iol-custom.css]]></ResourcesCSS>
 </param>
 </params>
         </element>
-        <element id="elementi_fioriere_dg" title="Fioriere" type="PlominoField">
+        <element id="elementi_fioriere_dg" title="Fioriere (un elemento per riga)" type="PlominoField">
           <id type="Products.Archetypes.Field.StringField">elementi_fioriere_dg</id>
           <FieldType type="Products.Archetypes.Field.StringField">DATAGRID</FieldType>
           <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>

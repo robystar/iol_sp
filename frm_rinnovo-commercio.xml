@@ -34,7 +34,7 @@ if 'btn_next' in context.REQUEST.keys():
 <p><span class="plominoSubformClass">base_sub_pratica</span></p>
 <p><span class="plominoSubformClass">base_sub_privacy</span></p>
 <div class="v-content well"><fieldset class="scheduler-border" title="Ricerca">
-<legend class="scheduler-border">TROVA PRATICA ESISTENTE DA PROTOCOLLO</legend> <span class="plominoSubformClass">sub_riferimenti_titolo</span>
+<legend class="scheduler-border">TROVA AUTORIZZAZIONE RILASCIATA</legend> <span class="plominoSubformClass">sub_riferimenti_titolo</span>
 </fieldset></div>
 <div class="v-content well"><fieldset class="scheduler-border">
 <legend class="scheduler-border">DATI ANAGRAFICI DEL RICHIEDENTE</legend>

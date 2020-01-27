@@ -42,7 +42,7 @@
 <span class="plominoLabelClass">data_autorizzazione_scia</span><span class="plominoFieldClass">data_autorizzazione_scia</span>
 </div>
 </div>
-<p><span class="plominoHidewhenClass">start:hw_no_editor</span></p>
+<span class="plominoSubformClass">sub_rinnovo_pratica</span><p><span class="plominoHidewhenClass">start:hw_no_editor</span></p>
 <div>
 <span class="plominoLabelClass">ridotta_opt</span><span class="plominoFieldClass">ridotta_opt</span>
 </div>
@@ -143,19 +143,6 @@ if anno_dal!=anno_al:
 </data></array></value>
 </param>
 </params>
-        </element>
-        <element id="scavi_orario" title="Orario" type="PlominoField">
-          <id type="Products.Archetypes.Field.StringField">scavi_orario</id>
-          <FieldType type="Products.Archetypes.Field.StringField">TEXT</FieldType>
-          <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
-          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[]]></Formula>
-          <FieldReadTemplate type="Products.Archetypes.Field.StringField"/>
-          <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
-          <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>
-          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
-          <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>
-          <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
-          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></HTMLAttributesFormula>
         </element>
         <element id="urgenza_opt" title="In caso di richiesta urgente attivare la sezione" type="PlominoField">
           <id type="Products.Archetypes.Field.StringField">urgenza_opt</id>

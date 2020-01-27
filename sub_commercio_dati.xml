@@ -9,11 +9,14 @@
       <onDeleteDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></onDeleteDocument>
       <onSearch type="Products.Archetypes.Field.TextField"><![CDATA[]]></onSearch>
       <beforeCreateDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></beforeCreateDocument>
-      <FormLayout type="Products.Archetypes.Field.TextField"><![CDATA[<div class="v-content well">
+      <FormLayout type="Products.Archetypes.Field.TextField"><![CDATA[
+<div class="v-content well">
 <p><span class="plominoLabelClass">elementi_occupazione_dg</span><span class="plominoFieldClass">elementi_occupazione_dg</span></p>
 <hr>
+<p><span class="plominoLabelClass">elementi_fioriere_dg</span><span class="plominoFieldClass">elementi_fioriere_dg</span></p>
+<hr>
 <p><span class="plominoLabelClass">elementi_cavalletti_dg</span><span class="plominoFieldClass">elementi_cavalletti_dg</span></p>
-<h5 class="alert-info">Nel caso il cavalletto pubblicitario venga esposto nelle vetrine, nelle porte d’ingresso o nelle immediate adiacenze dell’esercizio commerciale è esente CIMP e deve essere obbligatoriamente indicato nell'elenco "Elementi di occupazione suolo" e non in "Cavalletti pubblicitari";</h5>
+<h5 class="alert-info">(*) I cavalletti posizionati nelle vie indicate con asterisco sono soggetti a maggiorazione CIMP pari al 150% della tariffa base; </h5>
 <div class="row-fluid">
 <div class="span3">
 <span class="plominoLabelClass">importo_cimp</span> <span class="plominoFieldClass">importo_cimp</span>
@@ -46,7 +49,9 @@
 <span class="plominoLabelClass">note_occupazione</span><span class="plominoFieldClass">note_occupazione</span>
 </div>
 <p><span class="plominoFieldClass">superficie_occupazione_js</span></p>
-</div>]]></FormLayout>
+</div>
+<p><span class="plominoFieldClass">identificativo</span></p>
+]]></FormLayout>
       <FormMethod type="Products.Archetypes.Field.TextField"><![CDATA[Auto]]></FormMethod>
       <DocumentTitle type="Products.Archetypes.Field.TextField"><![CDATA[]]></DocumentTitle>
       <DynamicDocumentTitle type="Products.Archetypes.Field.BooleanField">False</DynamicDocumentTitle>
@@ -68,7 +73,7 @@
 resources/iol-custom.css]]></ResourcesCSS>
       <excludeFromNav type="Products.Archetypes.Field.BooleanField">False</excludeFromNav>
       <elements>
-        <element id="elementi_occupazione_dg" title="Elementi di occupazione suolo" type="PlominoField">
+        <element id="elementi_occupazione_dg" title="Elementi di occupazione suolo (un elemento per riga)" type="PlominoField">
           <id type="Products.Archetypes.Field.StringField">elementi_occupazione_dg</id>
           <FieldType type="Products.Archetypes.Field.StringField">DATAGRID</FieldType>
           <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
@@ -76,8 +81,8 @@ resources/iol-custom.css]]></ResourcesCSS>
           <FieldReadTemplate type="Products.Archetypes.Field.StringField"/>
           <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
           <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>
-          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[elenco_occupazione=context.REQUEST.get('elementi_occupazione_dg',[]) or context.getItem('elementi_occupazione_dg',[])
-elenco_cavalletti=context.REQUEST.get('elementi_cavalletti_dg',[]) or context.getItem('elementi_cavalletti_dg',[])
+          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[elenco_occupazione = context.getItem('elementi_occupazione_dg',[])
+elenco_cavalletti = context.getItem('elementi_cavalletti_dg',[])
 
 if len(elenco_occupazione+elenco_cavalletti)==0:
     return 'Attenzione non sono stati inseriti elementi di occupazione oppure cavalletti']]></ValidationFormula>
@@ -136,7 +141,7 @@ if len(elenco_occupazione+elenco_cavalletti)==0:
 </param>
 </params>
         </element>
-        <element id="elementi_cavalletti_dg" title="Cavalletti pubblicitari" type="PlominoField">
+        <element id="elementi_cavalletti_dg" title="Cavalletti pubblicitari (un elemento per riga)" type="PlominoField">
           <id type="Products.Archetypes.Field.StringField">elementi_cavalletti_dg</id>
           <FieldType type="Products.Archetypes.Field.StringField">DATAGRID</FieldType>
           <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
@@ -144,8 +149,8 @@ if len(elenco_occupazione+elenco_cavalletti)==0:
           <FieldReadTemplate type="Products.Archetypes.Field.StringField"/>
           <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
           <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>
-          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[elenco_occupazione=context.REQUEST.get('elementi_occupazione_dg',[]) or context.getItem('elementi_occupazione_dg',[])
-elenco_cavalletti=context.REQUEST.get('elementi_cavalletti_dg',[]) or context.getItem('elementi_cavalletti_dg',[])
+          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[elenco_occupazione = context.getItem('elementi_occupazione_dg',[])
+elenco_cavalletti = context.getItem('elementi_cavalletti_dg',[])
 
 if len(elenco_occupazione+elenco_cavalletti)==0:
     return 'Attenzione non sono stati inseriti elementi di occupazione oppure cavalletti']]></ValidationFormula>
@@ -170,7 +175,7 @@ if len(elenco_occupazione+elenco_cavalletti)==0:
 <value><struct>
 <member>
 <name>field_mapping</name>
-<value><string>occupazione_lunghezza,occupazione_larghezza,occupazione_altezza,sup_1,sup_2,sup_3,sup_4,adiacente_opt,illuminato_opt</string></value>
+<value><string>occupazione_lunghezza,occupazione_larghezza,occupazione_altezza,sup_1,sup_2,sup_3,sup_4,illuminato_opt,adiacente_opt,via,descrizione</string></value>
 </member>
 </struct></value>
 <value><struct>
@@ -184,8 +189,10 @@ if len(elenco_occupazione+elenco_cavalletti)==0:
     { "sTitle": "Faccia 2 [mq]" },
     { "sTitle": "Faccia 3 [mq]" },
     { "sTitle": "Faccia 4 [mq]" },
-    { "sTitle": "Adiacente" }, 
-    { "sTitle": "Illuminato" }   
+    { "sTitle": "Illuminato" },
+    { "sTitle": "Posizione" }, 
+    { "sTitle": "Via" }, 
+    { "sTitle": "Descrizione" } 
 ],
 "bPaginate": false,
 "bLengthChange": false,
@@ -195,7 +202,7 @@ if len(elenco_occupazione+elenco_cavalletti)==0:
 "bAutoWidth": false,
 "plominoDialogOptions": {
         "width": 900,
-        "height": 500
+        "height": 700
     }
 </string></value>
 </member>
@@ -210,14 +217,14 @@ if len(elenco_occupazione+elenco_cavalletti)==0:
 </param>
 </params>
         </element>
-        <element id="superficie_occupazione" title="Superficie tot. occupazione [mq]." type="PlominoField">
+        <element id="superficie_occupazione" title="Superficie ai fini COSAP [mq]." type="PlominoField">
           <id type="Products.Archetypes.Field.StringField">superficie_occupazione</id>
           <FieldType type="Products.Archetypes.Field.StringField">NUMBER</FieldType>
-          <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
-          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[]]></Formula>
+          <FieldMode type="Products.Archetypes.Field.StringField">DISPLAY</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[return context.getItem('superficie_occupazione')]]></Formula>
           <FieldReadTemplate type="Products.Archetypes.Field.StringField">IOL-NUMBERFieldRead</FieldReadTemplate>
           <FieldEditTemplate type="Products.Archetypes.Field.StringField">IOL-NUMBERFieldEdit</FieldEditTemplate>
-          <Mandatory type="Products.Archetypes.Field.BooleanField">True</Mandatory>
+          <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>
           <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
           <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>
           <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
@@ -297,8 +304,11 @@ data-tooltip="Indicare gli elementi mobili presenti all'interno dell'area occupa
         <element id="importo_cosap" title="Importo COSAP calcolato" type="PlominoField">
           <id type="Products.Archetypes.Field.StringField">importo_cosap</id>
           <FieldType type="Products.Archetypes.Field.StringField">NUMBER</FieldType>
-          <FieldMode type="Products.Archetypes.Field.StringField">COMPUTEDONSAVE</FieldMode>
-          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[try:
+          <FieldMode type="Products.Archetypes.Field.StringField">DISPLAY</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[return context.getItem('importo_cosap')
+
+
+try:
     return context.resources.cosap.getImportoCosap(doc=context)
 except:
     return 0.0]]></Formula>
@@ -473,10 +483,8 @@ return float(tariffa)]]></Formula>
           <id type="Products.Archetypes.Field.StringField">info_cosap</id>
           <FieldType type="Products.Archetypes.Field.StringField">TEXT</FieldType>
           <FieldMode type="Products.Archetypes.Field.StringField">COMPUTEDONSAVE</FieldMode>
-          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[try:
-    return context.resources.cosap.getImportoCosap(doc=context,textinfo=1)
-except:
-    pass]]></Formula>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[##setta i valori calcolati e il campo testuale con i calcoli
+return context.resources.cosap.getImportiCommercio(doc=context)]]></Formula>
           <FieldReadTemplate type="Products.Archetypes.Field.StringField"/>
           <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
           <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>
@@ -488,8 +496,10 @@ except:
         <element id="importo_cimp" title="Importo CIMP calcolato" type="PlominoField">
           <id type="Products.Archetypes.Field.StringField">importo_cimp</id>
           <FieldType type="Products.Archetypes.Field.StringField">NUMBER</FieldType>
-          <FieldMode type="Products.Archetypes.Field.StringField">COMPUTEDONSAVE</FieldMode>
-          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[try:
+          <FieldMode type="Products.Archetypes.Field.StringField">DISPLAY</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[return context.getItem('importo_cimp')
+
+try:
     return context.resources.cosap.getImportoCIMP(doc=context)
 except:
     return 0.0]]></Formula>
@@ -575,6 +585,112 @@ except:
           <id type="Products.Archetypes.Field.StringField">hw_no_permanente</id>
           <Formula type="Products.Archetypes.Field.TextField"><![CDATA[context.getItem('tipo_occupazione')!='permanente']]></Formula>
           <isDynamicHidewhen type="Products.Archetypes.Field.BooleanField">False</isDynamicHidewhen>
+        </element>
+        <element id="elementi_fioriere_dg" title="Fioriere o altri elementi ornamentali (un elemento per riga)" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">elementi_fioriere_dg</id>
+          <FieldType type="Products.Archetypes.Field.StringField">DATAGRID</FieldType>
+          <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[]]></Formula>
+          <FieldReadTemplate type="Products.Archetypes.Field.StringField"/>
+          <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
+          <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>
+          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[elenco=context.REQUEST.get('elementi_insegne_dg') or context.getItem('elementi_insegne_dg')
+#if len(elenco)==0:
+#    return 'Attenzione è obbligatorio compilare la tabella degli elementi di occupazione']]></ValidationFormula>
+          <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>
+          <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
+          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></HTMLAttributesFormula>
+          <params>
+<param>
+<value><array><data>
+<value><struct>
+<member>
+<name>associated_form</name>
+<value><string>dlg_dimensioni_fioriera</string></value>
+</member>
+</struct></value>
+<value><struct>
+<member>
+<name>associated_form_rendering</name>
+<value><string>MODAL</string></value>
+</member>
+</struct></value>
+<value><struct>
+<member>
+<name>field_mapping</name>
+<value><string>fioriera_descrizione,fioriera_lunghezza,fioriera_altezza,fioriera_larghezza</string></value>
+</member>
+</struct></value>
+<value><struct>
+<member>
+<name>jssettings</name>
+<value><string>"aoColumns": [
+    { "sTitle": "Descrizione" },
+    { "sTitle": "Lunghezza[cm]" },
+    { "sTitle": "Altezza[cm]" },              
+    { "sTitle": "Larghezza[cm]" }  
+],
+"bPaginate": false,
+"bLengthChange": false,
+"bFilter": false,
+"bSort": false,
+"bInfo": false,
+"bAutoWidth": false,
+"plominoDialogOptions": {
+        "width": 800,
+        "height": 400
+    }
+</string></value>
+</member>
+</struct></value>
+<value><struct>
+<member>
+<name>widget</name>
+<value><string>REGULAR</string></value>
+</member>
+</struct></value>
+</data></array></value>
+</param>
+</params>
+        </element>
+        <element id="fioriere_opt" title="fioriere_opt" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">fioriere_opt</id>
+          <FieldType type="Products.Archetypes.Field.StringField">TEXT</FieldType>
+          <FieldMode type="Products.Archetypes.Field.StringField">COMPUTEDONSAVE</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[if len(context.getItem('elementi_fioriere_dg',[])):
+    return 'si']]></Formula>
+          <FieldReadTemplate type="Products.Archetypes.Field.StringField"/>
+          <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
+          <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>
+          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
+          <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>
+          <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
+          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></HTMLAttributesFormula>
+          <params>
+<param>
+<value><array><data>
+<value><struct>
+<member>
+<name>widget</name>
+<value><string>TEXT</string></value>
+</member>
+</struct></value>
+</data></array></value>
+</param>
+</params>
+        </element>
+        <element id="identificativo" title="identificativo" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">identificativo</id>
+          <FieldType type="Products.Archetypes.Field.StringField">TEXT</FieldType>
+          <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[]]></Formula>
+          <FieldReadTemplate type="Products.Archetypes.Field.StringField"/>
+          <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
+          <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>
+          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
+          <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>
+          <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
+          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></HTMLAttributesFormula>
         </element>
       </elements>
     </element>

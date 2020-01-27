@@ -24,6 +24,7 @@
 <span class="plominoLabelClass">livelli</span><span class="plominoFieldClass">livelli</span>
 </div>
 <p> </p>
+<div class="alert alert-info">Nel caso il civico non fosse presente in elenco selezionare un civico in prossimità ed eventualmente spostare manualmente il marker</div>
 <p><span class="plominoFieldClass">mappa</span></p>
 <fieldset class="scheduler-border">
 <legend class="scheduler-border">Coordinate geografiche e informazioni legate alla posizione</legend>
@@ -141,7 +142,7 @@ resources/iol-custom.css]]></ResourcesCSS>
           <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
           <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>
           <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
-          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA['''data-tool=autocomplete-civico''']]></HTMLAttributesFormula>
+          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA['data-tool=autocomplete-civico data-locked=1']]></HTMLAttributesFormula>
         </element>
         <element id="mappa" title="La mappa Google" type="PlominoField">
           <id type="Products.Archetypes.Field.StringField">mappa</id>
