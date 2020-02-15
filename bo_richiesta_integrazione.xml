@@ -1,22 +1,31 @@
 <plominodatabase id="iol_sp">
   <design>
-    <element id="bo_preavviso_rigetto" title="Preavviso di rigetto procedimento" type="PlominoForm">
-      <id type="Products.Archetypes.Field.StringField">bo_preavviso_rigetto</id>
-      <onCreateDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></onCreateDocument>
+    <element id="bo_richiesta_integrazione" title="Richiesta di documentazione integrativa" type="PlominoForm">
+      <id type="Products.Archetypes.Field.StringField">bo_richiesta_integrazione</id>
+      <onCreateDocument type="Products.Archetypes.Field.TextField"><![CDATA[parentDoc = context.getParentDatabase().getDocument(context.getItem('parent_document'))
+if parentDoc:
+    context.setItem('Plomino_Readers',parentDoc.getItem('Plomino_Readers'))]]></onCreateDocument>
       <onOpenDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></onOpenDocument>
       <beforeSaveDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></beforeSaveDocument>
-      <onSaveDocument type="Products.Archetypes.Field.TextField"><![CDATA[context.setItem('Form','frm_presentata')
+      <onSaveDocument type="Products.Archetypes.Field.TextField"><![CDATA[parentDoc = context.getParentDatabase().getDocument(context.getItem('parent_document'))
+if not parentDoc:
+    context.plone_utils.addPortalMessage('Non esiste il documento padre','error')
+    return 
 
 if 'btn_stampa_comunicazione' in context.REQUEST.keys():
-    if context.getItem('allegato_documento_preavviso_rigetto',{})=={}:
+    if context.getItem('allegato_documento_richiesta_integrazione',{})=={}:
         context.getParentDatabase().resources.customscripts.stampaModulo(context,
-            model=context.getItem('modello_stampa_preavviso_rigetto'),
+            parent=parentDoc.getId(),
+            parentform='sub_completa_'+parentDoc.getItem('iol_tipo_app'),
+            model=context.getItem('modello_stampa_richiesta_integrazione'),
             app=context.getParentDatabase().getId().replace('iol_',''),
-            grp='back-office',            
+            grp='back-office',
             pdf=0,
-            addform='bo_preavviso_rigetto',            
-            field='allegato_documento_preavviso_rigetto')
-    return "%s/EditDocument?openwithform=bo_preavviso_rigetto" %context.absolute_url()]]></onSaveDocument>
+            field='allegato_documento_richiesta_integrazione')
+    return "%s/EditDocument" %context.absolute_url()
+
+else:
+    return parentDoc.absolute_url()]]></onSaveDocument>
       <onDeleteDocument type="Products.Archetypes.Field.TextField"><![CDATA[parentDoc = context.getParentDatabase().getDocument(context.getItem('parent_document'))
 context.REQUEST.set('returnurl',parentDoc.absolute_url())]]></onDeleteDocument>
       <onSearch type="Products.Archetypes.Field.TextField"><![CDATA[]]></onSearch>
@@ -25,32 +34,32 @@ context.REQUEST.set('returnurl',parentDoc.absolute_url())]]></onDeleteDocument>
 <div class="iol-toolbar"></div>
 <div class="v-content well">
 <div>
-<span class="plominoLabelClass">oggetto_preavviso_rigetto</span><span class="plominoFieldClass">oggetto_preavviso_rigetto</span>
+<span class="plominoLabelClass">oggetto_richiesta_integrazione</span><span class="plominoFieldClass">oggetto_richiesta_integrazione</span>
 </div>
 <span class="plominoHidewhenClass">start:hw_no_edit</span><div class="row-fluid">
 <div class="span8">
-<span class="plominoLabelClass">modello_stampa_preavviso_rigetto</span><span class="plominoFieldClass">modello_stampa_preavviso_rigetto</span>
+<span class="plominoLabelClass">modello_stampa_richiesta_integrazione</span><span class="plominoFieldClass">modello_stampa_richiesta_integrazione</span>
 </div>
 <div class="span4">
 <br><span class="plominoActionClass">btn_stampa_comunicazione</span>
 </div>
 </div>
 <span class="plominoHidewhenClass">end:hw_no_edit</span><p><span class="plominoHidewhenClass">start:hw_new_comunicazione</span></p>
-<p><span class="plominoFieldClass">istruzioni_preavviso_rigetto</span></p>
+<p><span class="plominoFieldClass">istruzioni_richiesta_integrazione</span></p>
 <div class="row-fluid">
-<span class="plominoHidewhenClass">start:hw_no_istruttore_preavviso_rigetto</span><div class="span4">
-<span class="plominoLabelClass">allegato_documento_preavviso_rigetto</span><span class="plominoFieldClass">allegato_documento_preavviso_rigetto</span>
+<span class="plominoHidewhenClass">start:hw_no_istruttore_richiesta_integrazione</span><div class="span4">
+<span class="plominoLabelClass">allegato_documento_richiesta_integrazione</span><span class="plominoFieldClass">allegato_documento_richiesta_integrazione</span>
 </div>
 <div class="span4">
-<span class="plominoLabelClass">allegato_allafirma_preavviso_rigetto</span><span class="plominoFieldClass">allegato_allafirma_preavviso_rigetto</span>
+<span class="plominoLabelClass">allegato_allafirma_richiesta_integrazione</span><span class="plominoFieldClass">allegato_allafirma_richiesta_integrazione</span>
 </div>
-<span class="plominoHidewhenClass">end:hw_no_istruttore_preavviso_rigetto</span><div class="span4">
-<span class="plominoLabelClass">allegato_comunicazione_preavviso_rigetto</span><span class="plominoFieldClass">allegato_comunicazione_preavviso_rigetto</span>
+<span class="plominoHidewhenClass">end:hw_no_istruttore_richiesta_integrazione</span><div class="span4">
+<span class="plominoLabelClass">allegato_comunicazione_richiesta_integrazione</span><span class="plominoFieldClass">allegato_comunicazione_richiesta_integrazione</span>
 </div>
 </div>
 <div>
 <span class="plominoHidewhenClass">start:hw_no_data_comunicazione</span><div class="row-fluid"><div class="span3">
-<span class="plominoLabelClass">data_comunicazione_preavviso_rigetto</span><span class="plominoFieldClass">data_comunicazione_preavviso_rigetto</span>
+<span class="plominoLabelClass">data_comunicazione_richiesta_integrazione</span><span class="plominoFieldClass">data_comunicazione_richiesta_integrazione</span>
 </div></div>
 <span class="plominoHidewhenClass">end:hw_no_data_comunicazione</span>
 </div>
@@ -58,12 +67,13 @@ context.REQUEST.set('returnurl',parentDoc.absolute_url())]]></onDeleteDocument>
 <p> </p>
 <p><span class="plominoHidewhenClass">end:hw_new_comunicazione</span></p>
 </div>
+<p><span class="plominoFieldClass">parent_document</span></p>
 ]]></FormLayout>
       <FormMethod type="Products.Archetypes.Field.TextField"><![CDATA[Auto]]></FormMethod>
-      <DocumentTitle type="Products.Archetypes.Field.TextField"><![CDATA[]]></DocumentTitle>
+      <DocumentTitle type="Products.Archetypes.Field.TextField"><![CDATA['Richiesta integrazione %s' %context.getItem('parent_document')]]></DocumentTitle>
       <DynamicDocumentTitle type="Products.Archetypes.Field.BooleanField">False</DynamicDocumentTitle>
       <StoreDynamicDocumentTitle type="Products.Archetypes.Field.BooleanField">False</StoreDynamicDocumentTitle>
-      <DocumentId type="Products.Archetypes.Field.TextField"><![CDATA[]]></DocumentId>
+      <DocumentId type="Products.Archetypes.Field.TextField"><![CDATA['%s-i' %context.getItem('parent_document')]]></DocumentId>
       <ActionBarPosition type="Products.Archetypes.Field.StringField">TOP</ActionBarPosition>
       <HideDefaultActions type="Products.Archetypes.Field.BooleanField">True</HideDefaultActions>
       <HideInMenu type="Products.Archetypes.Field.BooleanField">True</HideInMenu>
@@ -80,8 +90,8 @@ context.REQUEST.set('returnurl',parentDoc.absolute_url())]]></onDeleteDocument>
 resources/iol-custom.css]]></ResourcesCSS>
       <excludeFromNav type="Products.Archetypes.Field.BooleanField">False</excludeFromNav>
       <elements>
-        <element id="oggetto_preavviso_rigetto" title="Oggetto della comunicazione" type="PlominoField">
-          <id type="Products.Archetypes.Field.StringField">oggetto_preavviso_rigetto</id>
+        <element id="oggetto_richiesta_integrazione" title="Oggetto della comunicazione" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">oggetto_richiesta_integrazione</id>
           <FieldType type="Products.Archetypes.Field.StringField">TEXT</FieldType>
           <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
           <Formula type="Products.Archetypes.Field.TextField"><![CDATA[]]></Formula>
@@ -91,14 +101,15 @@ resources/iol-custom.css]]></ResourcesCSS>
           <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
           <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>
           <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
-          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></HTMLAttributesFormula>
+          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA[#if context.getItem('IOL_AVVISORIGETTO'):
+#    return 'readonly']]></HTMLAttributesFormula>
           <params>
 <param>
 <value><array><data>
 <value><struct>
 <member>
 <name>size</name>
-<value><string>6</string></value>
+<value><string>4</string></value>
 </member>
 </struct></value>
 <value><struct>
@@ -111,8 +122,26 @@ resources/iol-custom.css]]></ResourcesCSS>
 </param>
 </params>
         </element>
-        <element id="data_preavviso_rigetto" title="Data preavviso rigetto" type="PlominoField">
-          <id type="Products.Archetypes.Field.StringField">data_preavviso_rigetto</id>
+        <element id="comunicazione_richiesta_integrazione_opt" title="Allega la comunicazione firmata digitalmente" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">comunicazione_richiesta_integrazione_opt</id>
+          <FieldType type="Products.Archetypes.Field.StringField">BOOLEAN</FieldType>
+          <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[]]></Formula>
+          <FieldReadTemplate type="Products.Archetypes.Field.StringField"/>
+          <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
+          <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>
+          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
+          <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>
+          <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
+          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA['data-dhw=bo_integrazione_richiesta']]></HTMLAttributesFormula>
+        </element>
+        <element id="hw_no_allegato_comunicazione_richiesta_integrazione" title="hw_no_allegato_comunicazione_richiesta_integrazione" type="PlominoHidewhen">
+          <id type="Products.Archetypes.Field.StringField">hw_no_allegato_comunicazione_richiesta_integrazione</id>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[return not context.getItem('comunicazione_richiesta_integrazione_opt',False)]]></Formula>
+          <isDynamicHidewhen type="Products.Archetypes.Field.BooleanField">True</isDynamicHidewhen>
+        </element>
+        <element id="data_richiesta_integrazione" title="Data invio richiesta" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">data_richiesta_integrazione</id>
           <FieldType type="Products.Archetypes.Field.StringField">DATETIME</FieldType>
           <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
           <Formula type="Products.Archetypes.Field.TextField"><![CDATA[]]></Formula>
@@ -144,8 +173,8 @@ data-datepicker-options='{"changeMonth": true, "changeYear": true, "minDate":"-1
 </param>
 </params>
         </element>
-        <element id="modello_stampa_preavviso_rigetto" title="Seleziona un modello per la stampa" type="PlominoField">
-          <id type="Products.Archetypes.Field.StringField">modello_stampa_preavviso_rigetto</id>
+        <element id="modello_stampa_richiesta_integrazione" title="Seleziona un modello per la stampa" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">modello_stampa_richiesta_integrazione</id>
           <FieldType type="Products.Archetypes.Field.StringField">SELECTION</FieldType>
           <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
           <Formula type="Products.Archetypes.Field.TextField"><![CDATA[]]></Formula>
@@ -173,7 +202,7 @@ data-datepicker-options='{"changeMonth": true, "changeYear": true, "minDate":"-1
 <value><struct>
 <member>
 <name>selectionlistformula</name>
-<value><string>return context.getPrintFolderContents(grp='back-office',filter=dict(Subject='preavviso-rigetto'))
+<value><string>return context.getPrintFolderContents(grp='back-office',filter=dict(Subject='richiesta-integrazione'))
 </string></value>
 </member>
 </struct></value>
@@ -181,8 +210,8 @@ data-datepicker-options='{"changeMonth": true, "changeYear": true, "minDate":"-1
 </param>
 </params>
         </element>
-        <element id="allegato_documento_preavviso_rigetto" title="Documento preavviso rigetto" type="PlominoField">
-          <id type="Products.Archetypes.Field.StringField">allegato_documento_preavviso_rigetto</id>
+        <element id="allegato_documento_richiesta_integrazione" title="Documento creato" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">allegato_documento_richiesta_integrazione</id>
           <FieldType type="Products.Archetypes.Field.StringField">ATTACHMENT</FieldType>
           <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
           <Formula type="Products.Archetypes.Field.TextField"><![CDATA[]]></Formula>
@@ -208,23 +237,8 @@ data-plugin = "iolUploadFile" data-plugin-options='{"emptyMessage":"Nessun file"
 </param>
 </params>
         </element>
-        <element id="allegato_allafirma_preavviso_rigetto" title="Comunicazione da firmare" type="PlominoField">
-          <id type="Products.Archetypes.Field.StringField">allegato_allafirma_preavviso_rigetto</id>
-          <FieldType type="Products.Archetypes.Field.StringField">ATTACHMENT</FieldType>
-          <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
-          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[]]></Formula>
-          <FieldReadTemplate type="Products.Archetypes.Field.StringField">IOL-ATTACHMENTIconFieldRead</FieldReadTemplate>
-          <FieldEditTemplate type="Products.Archetypes.Field.StringField">IOL-ATTACHMENTFieldEdit</FieldEditTemplate>
-          <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>
-          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
-          <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>
-          <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
-          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA[return'''
-data-plugin = "iolUploadFile" data-plugin-options='{"emptyMessage":"Nessun file","maxsize":"3","filetype":["pdf"]}'
-''']]></HTMLAttributesFormula>
-        </element>
-        <element id="allegato_comunicazione_preavviso_rigetto" title="Comunicazione di preavviso rigetto" type="PlominoField">
-          <id type="Products.Archetypes.Field.StringField">allegato_comunicazione_preavviso_rigetto</id>
+        <element id="allegato_comunicazione_richiesta_integrazione" title="Comunicazione di richiesta integrazione" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">allegato_comunicazione_richiesta_integrazione</id>
           <FieldType type="Products.Archetypes.Field.StringField">ATTACHMENT</FieldType>
           <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
           <Formula type="Products.Archetypes.Field.TextField"><![CDATA[]]></Formula>
@@ -240,12 +254,17 @@ data-plugin = "iolUploadFile" data-plugin-options='{"emptyMessage":"Nessun file"
         </element>
         <element id="hw_no_edit" title="hw_no_edit" type="PlominoHidewhen">
           <id type="Products.Archetypes.Field.StringField">hw_no_edit</id>
-          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[not context.isEditMode() or context.getItem('allegato_documento_preavviso_rigetto',{})!={}]]></Formula>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[not context.isEditMode() or context.getItem('allegato_documento_richiesta_integrazione',{})!={}]]></Formula>
           <isDynamicHidewhen type="Products.Archetypes.Field.BooleanField">False</isDynamicHidewhen>
         </element>
         <element id="hw_new_comunicazione" title="hw_new_comunicazione" type="PlominoHidewhen">
           <id type="Products.Archetypes.Field.StringField">hw_new_comunicazione</id>
-          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[context.getItem('allegato_documento_preavviso_rigetto',{})=={}]]></Formula>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[context.getItem('oggetto_richiesta_integrazione')=='']]></Formula>
+          <isDynamicHidewhen type="Products.Archetypes.Field.BooleanField">False</isDynamicHidewhen>
+        </element>
+        <element id="hw_no_data_comunicazione" title="hw_no_data_comunicazione" type="PlominoHidewhen">
+          <id type="Products.Archetypes.Field.StringField">hw_no_data_comunicazione</id>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[context.getItem('data_comunicazione_richiesta_integrazione')=='' or not context.isEditMode()]]></Formula>
           <isDynamicHidewhen type="Products.Archetypes.Field.BooleanField">False</isDynamicHidewhen>
         </element>
         <element id="btn_save" title="Salva e continua &gt;&gt;" type="PlominoAction">
@@ -260,9 +279,48 @@ data-plugin = "iolUploadFile" data-plugin-options='{"emptyMessage":"Nessun file"
           <id type="Products.Archetypes.Field.StringField">btn_cancel</id>
           <ActionType type="Products.Archetypes.Field.StringField">REDIRECT</ActionType>
           <ActionDisplay type="Products.Archetypes.Field.StringField">BUTTON</ActionDisplay>
-          <Content type="Products.Archetypes.Field.TextField"><![CDATA[return context.absolute_url()]]></Content>
+          <Content type="Products.Archetypes.Field.TextField"><![CDATA[parentDoc = context.getParentDatabase().getDocument(context.REQUEST.URL.split('/')[-3])  
+if not parentDoc:
+    parentDoc = context.getParentDatabase().getDocument(context.getItem('parent_document'))
+
+return parentDoc.absolute_url()
+
+
+try:
+    if context.isNewDocument():
+        parentDoc = context.getDocument(context.REQUEST.URL.split('/')[-3])  
+    else:
+        parentDoc = context.getParentDatabase().getDocument(context.getItem('parent_document'))
+    return parentDoc.absolute_url()
+except:
+    pass]]></Content>
           <Hidewhen type="Products.Archetypes.Field.TextField"><![CDATA[return not context.isEditMode()]]></Hidewhen>
           <InActionBar type="Products.Archetypes.Field.BooleanField">True</InActionBar>
+        </element>
+        <element id="btn_elimina" title="Elimina" type="PlominoAction">
+          <id type="Products.Archetypes.Field.StringField">btn_elimina</id>
+          <ActionType type="Products.Archetypes.Field.StringField">CLOSE</ActionType>
+          <ActionDisplay type="Products.Archetypes.Field.StringField">BUTTON</ActionDisplay>
+          <Content type="Products.Archetypes.Field.TextField"><![CDATA[]]></Content>
+          <Hidewhen type="Products.Archetypes.Field.TextField"><![CDATA[context.isNewDocument() or not context.isEditMode()]]></Hidewhen>
+          <InActionBar type="Products.Archetypes.Field.BooleanField">True</InActionBar>
+        </element>
+        <element id="btn_invia_comunicazione" title="Invia la comunicazione &gt;&gt;" type="PlominoAction">
+          <id type="Products.Archetypes.Field.StringField">btn_invia_comunicazione</id>
+          <ActionType type="Products.Archetypes.Field.StringField">PYTHON</ActionType>
+          <ActionDisplay type="Products.Archetypes.Field.StringField">BUTTON</ActionDisplay>
+          <Content type="Products.Archetypes.Field.TextField"><![CDATA[parentDoc = context.getParentDatabase().getDocument(context.getItem('parent_document'))
+parentDoc.doAction('richiedi_integrazione')
+context.setItem('data_comunicazione_richiesta_integrazione',Now())
+#Allineo i readers
+context.setItem('Plomino_Readers',parentDoc.getItem('Plomino_Readers'))  
+context.getParentDatabase().getIndex().indexDocument(context)
+return parentDoc.absolute_url()]]></Content>
+          <Hidewhen type="Products.Archetypes.Field.TextField"><![CDATA[try:
+    return context.isEditMode() or plominoDocument.getItem('data_comunicazione_richiesta_integrazione')!='' or context.getItem('allegato_comunicazione_richiesta_integrazione',{})=={}
+except:
+    return True]]></Hidewhen>
+          <InActionBar type="Products.Archetypes.Field.BooleanField">False</InActionBar>
         </element>
         <element id="btn_stampa_comunicazione" title="&gt;&gt; Crea il documento" type="PlominoAction">
           <id type="Products.Archetypes.Field.StringField">btn_stampa_comunicazione</id>
@@ -270,45 +328,51 @@ data-plugin = "iolUploadFile" data-plugin-options='{"emptyMessage":"Nessun file"
           <ActionDisplay type="Products.Archetypes.Field.StringField">SUBMIT</ActionDisplay>
           <Content type="Products.Archetypes.Field.TextField"><![CDATA[]]></Content>
           <Hidewhen type="Products.Archetypes.Field.TextField"><![CDATA[try:
-    return not context.isEditMode() or context.getItem('allegato_documento_preavviso_rigetto',{})!={}
+    return not context.isEditMode() or context.getItem('allegato_documento_richiesta_integrazione',{})!={}
 except:
     return False]]></Hidewhen>
           <InActionBar type="Products.Archetypes.Field.BooleanField">False</InActionBar>
         </element>
-        <element id="btn_invia_comunicazione" title="Invia la comunicazione &gt;&gt;" type="PlominoAction">
-          <id type="Products.Archetypes.Field.StringField">btn_invia_comunicazione</id>
-          <ActionType type="Products.Archetypes.Field.StringField">PYTHON</ActionType>
-          <ActionDisplay type="Products.Archetypes.Field.StringField">BUTTON</ActionDisplay>
-          <Content type="Products.Archetypes.Field.TextField"><![CDATA[context.doAction('preavviso_rigetto')
-context.setItem('data_comunicazione_preavviso_rigetto',Now())
-context.setItem('data_preavviso_rigetto',Now())
-return context.absolute_url()]]></Content>
-          <Hidewhen type="Products.Archetypes.Field.TextField"><![CDATA[try:
-    return context.isEditMode() or context.getItem('data_comunicazione_preavviso_rigetto')!='' or context.getItem('allegato_comunicazione_preavviso_rigetto',{})=={}
-except:
-    return True]]></Hidewhen>
-          <InActionBar type="Products.Archetypes.Field.BooleanField">False</InActionBar>
+        <element id="parent_document" title="parent_document" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">parent_document</id>
+          <FieldType type="Products.Archetypes.Field.StringField">TEXT</FieldType>
+          <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[context.REQUEST.URL.split('/')[-3]]]></Formula>
+          <FieldReadTemplate type="Products.Archetypes.Field.StringField"/>
+          <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
+          <Mandatory type="Products.Archetypes.Field.BooleanField">True</Mandatory>
+          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
+          <ToBeIndexed type="Products.Archetypes.Field.BooleanField">True</ToBeIndexed>
+          <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
+          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></HTMLAttributesFormula>
+          <params>
+<param>
+<value><array><data>
+<value><struct>
+<member>
+<name>widget</name>
+<value><string>HIDDEN</string></value>
+</member>
+</struct></value>
+</data></array></value>
+</param>
+</params>
         </element>
-        <element id="hw_no_istruttore_preavviso_rigetto" title="hw_no_istruttore_preavviso_rigetto" type="PlominoHidewhen">
-          <id type="Products.Archetypes.Field.StringField">hw_no_istruttore_preavviso_rigetto</id>
-          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[try:
-    return not 'PlominoEditor' in context.getCurrentUserRights()
-except:
-    return True]]></Formula>
+        <element id="hw_no_istruttore_richiesta_integrazione" title="hw_no_istruttore_richiesta_integrazione" type="PlominoHidewhen">
+          <id type="Products.Archetypes.Field.StringField">hw_no_istruttore_richiesta_integrazione</id>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[return not 'PlominoEditor' in context.getCurrentUserRights()]]></Formula>
           <isDynamicHidewhen type="Products.Archetypes.Field.BooleanField">False</isDynamicHidewhen>
         </element>
-        <element id="istruzioni_preavviso_rigetto" title="istruzioni_preavviso_rigetto" type="PlominoField">
-          <id type="Products.Archetypes.Field.StringField">istruzioni_preavviso_rigetto</id>
+        <element id="istruzioni_richiesta_integrazione" title="istruzioni_richiesta_integrazione" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">istruzioni_richiesta_integrazione</id>
           <FieldType type="Products.Archetypes.Field.StringField">TEXT</FieldType>
           <FieldMode type="Products.Archetypes.Field.StringField">DISPLAY</FieldMode>
-          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[if context.getItem('allegato_allafirma_preavviso_rigetto',{})=={}:
-    return '<div class="alert alert-info">Dopo aver creato il documento desiderato, allegarlo in formato pdf nel campo “Comunicazione da firmare” per abilitare l’iter di invio alla firma del funzionario abilitato alla firma.</div>'
-elif context.getItem('allegato_comunicazione_preavviso_rigetto',{})=={}:
-    return '''<div class="alert alert-info">Dopo aver fatto firmare digitalmente il documento, allegare il p7m nel campo “Comunicazione firmata” e salvare.</div>'''
-elif context.getItem('data_comunicazione_preavviso_rigetto')!='':
-    msg = '''Comunicazione di preavviso di rigetto dell'istanza inviata in data ''' +  DateToString(context.getItem('data_comunicazione_preavviso_rigetto'),format="%d/%m/%Y %H:%M")
-    if context.getItem('protocollo_preavviso_rigetto'):
-        msg = msg + ' Protocollo ' + str(context.getItem('protocollo_preavviso_rigetto'))
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[if context.getItem('allegato_comunicazione_richiesta_integrazione',{})=={}:
+    return '''<div class="alert alert-info">Allegare la comunicazione per abilitare l'invio della richiesta</div>'''
+elif context.getItem('data_comunicazione_richiesta_integrazione')!='':
+    msg = 'Comunicazione di richiesta integrazione inviata in data ' +  DateToString(context.getItem('data_comunicazione_richiesta_integrazione'),format="%d/%m/%Y %H:%M")
+    if context.getItem('protocollo_richiesta_integrazione'):
+        msg = msg + ' Protocollo ' + str(context.getItem('protocollo_richiesta_integrazione'))
     return '''<div class="alert alert-success"><strong>%s</strong></div>''' %msg
 else:
     return '''<div class="alert alert-info">Per inviare nuovamente la comunicazione annullare il campo "Data comunicazione"</div>''']]></Formula>
@@ -320,13 +384,8 @@ else:
           <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
           <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></HTMLAttributesFormula>
         </element>
-        <element id="hw_no_data_comunicazione" title="hw_no_data_comunicazione" type="PlominoHidewhen">
-          <id type="Products.Archetypes.Field.StringField">hw_no_data_comunicazione</id>
-          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[context.getItem('data_comunicazione_preavviso_rigetto')=='' or not context.isEditMode()]]></Formula>
-          <isDynamicHidewhen type="Products.Archetypes.Field.BooleanField">False</isDynamicHidewhen>
-        </element>
-        <element id="data_comunicazione_preavviso_rigetto" title="Data comunicazione" type="PlominoField">
-          <id type="Products.Archetypes.Field.StringField">data_comunicazione_preavviso_rigetto</id>
+        <element id="data_comunicazione_richiesta_integrazione" title="Data comunicazione" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">data_comunicazione_richiesta_integrazione</id>
           <FieldType type="Products.Archetypes.Field.StringField">DATETIME</FieldType>
           <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
           <Formula type="Products.Archetypes.Field.TextField"><![CDATA[]]></Formula>
@@ -358,8 +417,35 @@ data-datepicker-options='{"changeMonth": true, "changeYear": true, "minDate":"-1
 </param>
 </params>
         </element>
-        <element id="protocollo_preavviso_rigetto" title="Protocollo preavviso rigetto" type="PlominoField">
-          <id type="Products.Archetypes.Field.StringField">protocollo_preavviso_rigetto</id>
+        <element id="allegato_allafirma_richiesta_integrazione" title="Comunicazione da firmare" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">allegato_allafirma_richiesta_integrazione</id>
+          <FieldType type="Products.Archetypes.Field.StringField">ATTACHMENT</FieldType>
+          <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[]]></Formula>
+          <FieldReadTemplate type="Products.Archetypes.Field.StringField">IOL-ATTACHMENTIconFieldRead</FieldReadTemplate>
+          <FieldEditTemplate type="Products.Archetypes.Field.StringField">IOL-ATTACHMENTFieldEdit</FieldEditTemplate>
+          <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>
+          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
+          <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>
+          <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
+          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA[return'''
+data-plugin = "iolUploadFile" data-plugin-options='{"emptyMessage":"Nessun file","maxsize":"3","filetype":["pdf"]}'
+''']]></HTMLAttributesFormula>
+          <params>
+<param>
+<value><array><data>
+<value><struct>
+<member>
+<name>type</name>
+<value><string>SINGLE</string></value>
+</member>
+</struct></value>
+</data></array></value>
+</param>
+</params>
+        </element>
+        <element id="protocollo_richiesta_integrazione" title="Protocollo richiesta" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">protocollo_richiesta_integrazione</id>
           <FieldType type="Products.Archetypes.Field.StringField">NUMBER</FieldType>
           <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
           <Formula type="Products.Archetypes.Field.TextField"><![CDATA[]]></Formula>
@@ -371,8 +457,8 @@ data-datepicker-options='{"changeMonth": true, "changeYear": true, "minDate":"-1
           <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
           <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></HTMLAttributesFormula>
         </element>
-        <element id="data_protocollo_preavviso_rigetto" title="Data protocollo preavviso rigetto" type="PlominoField">
-          <id type="Products.Archetypes.Field.StringField">data_protocollo_preavviso_rigetto</id>
+        <element id="data_protocollo_richiesta_integrazione" title="Data protocollo comunicazione" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">data_protocollo_richiesta_integrazione</id>
           <FieldType type="Products.Archetypes.Field.StringField">DATETIME</FieldType>
           <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
           <Formula type="Products.Archetypes.Field.TextField"><![CDATA[]]></Formula>
@@ -403,20 +489,6 @@ data-datepicker-options='{"changeMonth": true, "changeYear": true, "minDate":"-1
 </data></array></value>
 </param>
 </params>
-        </element>
-        <element id="btn_invia_allafirma" title="Invia alla firma &gt;&gt;" type="PlominoAction">
-          <id type="Products.Archetypes.Field.StringField">btn_invia_allafirma</id>
-          <ActionType type="Products.Archetypes.Field.StringField">PYTHON</ActionType>
-          <ActionDisplay type="Products.Archetypes.Field.StringField">BUTTON</ActionDisplay>
-          <Content type="Products.Archetypes.Field.TextField"><![CDATA[context.doAction('alla_firma_preavviso_rigetto')
-return context.absolute_url()]]></Content>
-          <Hidewhen type="Products.Archetypes.Field.TextField"><![CDATA[return False
-
-try:
-    return context.isEditMode() or context.getItem('data_comunicazione_preavviso_rigetto')!='' or context.getItem('allegato_comunicazione_preavviso_rigetto',{})=={}
-except:
-    return True]]></Hidewhen>
-          <InActionBar type="Products.Archetypes.Field.BooleanField">False</InActionBar>
         </element>
       </elements>
     </element>

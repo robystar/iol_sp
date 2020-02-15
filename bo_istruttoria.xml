@@ -49,13 +49,10 @@ if 'btn_stampa_titolo' in context.REQUEST.keys():
 <p><span class="plominoFieldClass">istruttoria_prescrizioni_opt</span></p>
 <p><span class="plominoLabelClass">istruttoria_prescrizioni</span><span class="plominoFieldClass">istruttoria_prescrizioni</span></p>
 <p><span class="plominoLabelClass">istruttoria_annotazioni</span><span class="plominoFieldClass">istruttoria_annotazioni</span></p>
-<div class="row-fluid">
-<div class="span4">
+<div class="row-fluid"><div class="span4">
 <span class="plominoLabelClass">numero_titolo</span><span class="plominoFieldClass">numero_titolo</span>
-</div>
-</div>
-<span class="plominoHidewhenClass">start:hw_no_edit</span>
-<div class="row-fluid">
+</div></div>
+<span class="plominoHidewhenClass">start:hw_no_edit</span><div class="row-fluid">
 <div class="span8">
 <span class="plominoLabelClass">modello_stampa_titolo</span><span class="plominoFieldClass">modello_stampa_titolo</span>
 </div>
@@ -63,8 +60,7 @@ if 'btn_stampa_titolo' in context.REQUEST.keys():
 <br><span class="plominoActionClass">btn_stampa_titolo</span>
 </div>
 </div>
-<span class="plominoHidewhenClass">end:hw_no_edit</span>
-<p> </p>
+<span class="plominoHidewhenClass">end:hw_no_edit</span><p> </p>
 <div class="row-fluid">
 <div class="span6">
 <span class="plominoLabelClass">allegato_titolo</span><span class="plominoFieldClass">allegato_titolo</span>
@@ -474,7 +470,7 @@ else:
 </param>
 </params>
         </element>
-        <element id="allegato_titolo" title="Documento di autorizzazione" type="PlominoField">
+        <element id="allegato_titolo" title="Documento creato" type="PlominoField">
           <id type="Products.Archetypes.Field.StringField">allegato_titolo</id>
           <FieldType type="Products.Archetypes.Field.StringField">ATTACHMENT</FieldType>
           <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>

@@ -57,10 +57,11 @@ resources/iol-custom.css]]></ResourcesCSS>
           <FieldMode type="Products.Archetypes.Field.StringField">DISPLAY</FieldMode>
           <Formula type="Products.Archetypes.Field.TextField"><![CDATA[db=context.getParentDatabase()
 parentDoc = db.getDocument(context.getItem('id_autorizzazione'))
-tipo_app = parentDoc.getItem('iol_tipo_app')
-renderForm=db.getForm('sub_completa_' + tipo_app)
-content = renderForm.displayDocument(parentDoc)
-return content]]></Formula>
+if parentDoc:
+    tipo_app = parentDoc.getItem('iol_tipo_app')
+    renderForm=db.getForm('sub_completa_' + tipo_app)
+    content = renderForm.displayDocument(parentDoc)
+    return content]]></Formula>
           <FieldReadTemplate type="Products.Archetypes.Field.StringField">TEXTFieldCell</FieldReadTemplate>
           <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
           <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>

@@ -25,7 +25,8 @@
 <p><span class="plominoFieldClass">elenco_pareri</span></p>
 <!-- READERS  --><p><span class="plominoFieldClass">utenti_readers</span></p>
 <p><span class="plominoFieldClass">pratiche_collegate</span></p>
-<p><span class="plominoFieldClass">ricevute_pec</span></p>
+<p><span class="plominoLabelClass">elenco_firmadigitale</span><span class="plominoFieldClass">elenco_firmadigitale</span></p>
+<p><span class="plominoLabelClass">ricevute_pec</span><span class="plominoFieldClass">ricevute_pec</span></p>
 ]]></FormLayout>
       <FormMethod type="Products.Archetypes.Field.TextField"><![CDATA[Auto]]></FormMethod>
       <DocumentTitle type="Products.Archetypes.Field.TextField"><![CDATA[]]></DocumentTitle>
@@ -266,11 +267,11 @@ if not 'parent_document' in idx.indexes():
     return []
 
 #la ricerca deve restituire i documenti dei quali l'utente corrente è author
-brains = idx.dbsearch(dict(parent_document=context.getId(),Form='bo_integrazione_richiesta'))  
+brains = idx.dbsearch(dict(parent_document=context.getId(),Form='bo_richiesta_integrazione'))  
 html=''
 for brain in brains:
     doc=brain.getObject()
-    renderForm=db.getForm('bo_integrazione_richiesta')
+    renderForm=db.getForm('bo_richiesta_integrazione')
     content=asUnicode(renderForm.displayDocument(doc))    
     if content:
         html=html+'<fieldset class="scheduler-border"><legend class="scheduler-border"><a href="%s/EditDocument"> Richiesta di documentazione integrativa <i class="icon-edit"></i></a></legend>%s</fieldset>'%(doc.absolute_url(),content)
@@ -290,25 +291,35 @@ return html]]></Formula>
           <FieldType type="Products.Archetypes.Field.StringField">DOCLINK</FieldType>
           <FieldMode type="Products.Archetypes.Field.StringField">DISPLAY</FieldMode>
           <Formula type="Products.Archetypes.Field.TextField"><![CDATA[#NB il documento viene renderizzato usando la form specificata in settings/labelcolumn
+from iol.document.plomino_utils import getSelectionValue
+
 db=context.getParentDatabase()
 idx = db.getIndex()
 if not 'parent_document' in idx.indexes():
-    return []
+    return ''
+
 #la ricerca deve restituire i documenti dei queli l'utente corrente è author
-brains = idx.dbsearch(dict(parent_document=context.getId(),Form=['bo_parere_richiesta','bo_parere_risposta']))  
+brains = idx.dbsearch(dict(parent_document=context.getId(),Form=['bo_richiesta_parere','bo_parere_risposta']))  
 html=''
+
 for brain in brains:
     doc=brain.getObject()
-    renderForm = db.getForm('bo_parere_richiesta')
-    editForm = 'bo_parere_richiesta'
+    editForm = 'bo_richiesta_parere'
+    renderForm=db.getForm(editForm)
+    
+    if doc.getItem('parere_ente_opt')=='altro':
+        ente = doc.getItem('parere_ente_altro')
+    else:
+        ente = getSelectionValue(doc,'parere_ente_opt',editForm)    
     content=asUnicode(renderForm.displayDocument(doc))
+    
     if doc.getItem('data_comunicazione_richiesta_parere')!='':
-        renderForm=db.getForm('bo_parere_risposta')
-        editForm = 'bo_parere_risposta'
+        renderForm=db.getForm('bo_risposta_parere')
+        editForm = 'bo_risposta_parere'
         content=content + asUnicode(renderForm.displayDocument(doc))  
 
     if content:
-        html=html+'<fieldset class="scheduler-border"><legend class="scheduler-border"><a href="%s/EditDocument?openwithform=%s"> Richiesta di parere <i class="icon-edit"></i></a></legend>%s</fieldset>'%(doc.absolute_url(),editForm,content)
+        html=html+'<fieldset class="scheduler-border"><legend class="scheduler-border"><a href="%s/EditDocument?openwithform=%s"> Richiesta di parere / verifica <i class="icon-edit"></i></a></legend>%s</fieldset>'%(doc.absolute_url(),editForm,content)
 
     
 return html]]></Formula>
@@ -497,6 +508,19 @@ if content:
     
 return html]]></Formula>
           <FieldReadTemplate type="Products.Archetypes.Field.StringField">TEXTFieldCell</FieldReadTemplate>
+          <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
+          <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>
+          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
+          <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>
+          <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
+          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></HTMLAttributesFormula>
+        </element>
+        <element id="elenco_firmadigitale" title="Documenti alla firma" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">elenco_firmadigitale</id>
+          <FieldType type="Products.Archetypes.Field.StringField">TEXT</FieldType>
+          <FieldMode type="Products.Archetypes.Field.StringField">DISPLAY</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[return context.getItem('iol_firmadigitale')]]></Formula>
+          <FieldReadTemplate type="Products.Archetypes.Field.StringField">tabella_firma_digitale</FieldReadTemplate>
           <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
           <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>
           <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>

@@ -10,11 +10,9 @@
       <onSearch type="Products.Archetypes.Field.TextField"><![CDATA[]]></onSearch>
       <beforeCreateDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></beforeCreateDocument>
       <FormLayout type="Products.Archetypes.Field.TextField"><![CDATA[<div class="v-content well">
-<div class="row-fluid">
-<div class="span6">
+<div class="row-fluid"><div class="span6">
 <span class="plominoLabelClass">tipo_occupazione</span><span class="plominoFieldClass">tipo_occupazione</span>
-</div>
-</div>
+</div></div>
 <p><span class="plominoHidewhenClass">start:hw_no_temporanea</span></p>
 <div>
 <span class="plominoLabelClass">periodo_occupazione_dg</span><span class="plominoFieldClass">periodo_occupazione_dg</span>
@@ -29,8 +27,7 @@
 <span class="plominoLabelClass">autorizzata_al</span><span class="plominoFieldClass">autorizzata_al</span>
 </div>
 <div class="span6">
-<br>
-<div class="alert alert-info">La validità dell'autorizzazione decorrerà dalla data di firma del titolo</div>
+<br><div class="alert alert-info">La validità dell'autorizzazione decorrerà dalla data di firma del titolo</div>
 </div>
 </div>
 <p><span class="plominoHidewhenClass">end:hw_no_permanente</span></p>
@@ -46,8 +43,7 @@
 </div>
 </div>
 <p><span class="plominoHidewhenClass">end:hw_no_autorizzazione_scia</span></p>
-<span class="plominoSubformClass">sub_rinnovo_pratica</span>
-<p><span class="plominoHidewhenClass">start:hw_no_editor</span></p>
+<span class="plominoSubformClass">sub_rinnovo_pratica</span><p><span class="plominoHidewhenClass">start:hw_no_editor</span></p>
 <div>
 <span class="plominoLabelClass">ridotta_opt</span><span class="plominoFieldClass">ridotta_opt</span>
 </div>
