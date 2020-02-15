@@ -141,7 +141,7 @@ if len(elenco_occupazione+elenco_cavalletti)==0:
 </param>
 </params>
         </element>
-        <element id="elementi_cavalletti_dg" title="Cavalletti pubblicitari (un elemento per riga)" type="PlominoField">
+        <element id="elementi_cavalletti_dg" title="Cavalletti pubblicitari e banner (un elemento per riga)" type="PlominoField">
           <id type="Products.Archetypes.Field.StringField">elementi_cavalletti_dg</id>
           <FieldType type="Products.Archetypes.Field.StringField">DATAGRID</FieldType>
           <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>

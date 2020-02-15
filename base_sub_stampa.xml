@@ -322,10 +322,17 @@ return comune_val]]></Formula>
           <Formula type="Products.Archetypes.Field.TextField"><![CDATA[destinatari = []
 if context.getItem('delegato_opt'):
     destinatari.append(context.getItem('delegato_pec'))
+    #anche al richiedente
     if not context.getItem('consenso_pec'):
-        destinatari.append(context.getItem('giuridica_pec'))        
+        destinatari.append(context.getItem('giuridica_pec'))
 else:
-    destinatari.append(context.getItem('giuridica_pec'))]]></Formula>
+    #solo richiedente
+    destinatari.append(context.getItem('giuridica_pec'))
+    
+if not context.getItem('fisica_pec') in destinatari:
+    destinatari.append(context.getItem('fisica_pec'))
+    
+return destinatari]]></Formula>
           <FieldReadTemplate type="Products.Archetypes.Field.StringField"/>
           <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
           <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>

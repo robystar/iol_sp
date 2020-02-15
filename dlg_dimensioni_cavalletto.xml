@@ -1,6 +1,6 @@
 <plominodatabase id="iol_sp">
   <design>
-    <element id="dlg_dimensioni_cavalletto" title="dimensioni cavalletto" type="PlominoForm">
+    <element id="dlg_dimensioni_cavalletto" title="dimensioni cavalletto o banner" type="PlominoForm">
       <id type="Products.Archetypes.Field.StringField">dlg_dimensioni_cavalletto</id>
       <onCreateDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></onCreateDocument>
       <onOpenDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></onOpenDocument>
@@ -11,7 +11,7 @@
       <beforeCreateDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></beforeCreateDocument>
       <FormLayout type="Products.Archetypes.Field.TextField"><![CDATA[
 <fieldset class="scheduler-border">
-<legend class="scheduler-border"> Superfici in metri quadrati delle facce del cavalletto con contenuti pubblicitari: </legend>
+<legend class="scheduler-border"> Superfici in metri quadrati delle facce del cavalletto o banner con contenuti pubblicitari: </legend>
 <div class="row-fluid">
 <div class="span3">
 <span class="plominoLabelClass">sup_1</span><span class="plominoFieldClass">sup_1</span>
@@ -287,7 +287,7 @@ resources/iol-custom.css]]></ResourcesCSS>
 </param>
 </params>
         </element>
-        <element id="adiacente_opt" title="Posizione del cavalletto" type="PlominoField">
+        <element id="adiacente_opt" title="Posizione del cavalletto o banner" type="PlominoField">
           <id type="Products.Archetypes.Field.StringField">adiacente_opt</id>
           <FieldType type="Products.Archetypes.Field.StringField">SELECTION</FieldType>
           <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
@@ -316,7 +316,7 @@ resources/iol-custom.css]]></ResourcesCSS>
 <value><struct>
 <member>
 <name>selectionlistformula</name>
-<value><string>return ['''Nelle vetrine, nelle porte d'ingresso dell'esercizio e comunque all'interno del locale (esente COSAP e CIMP);|1''','''Nelle immediate adiacenze dell'esercizio (esente CIMP);|2''','''Non adiacente ma comunque all'interno dell'area di pertinenza dell'attività;|3''','''Fuori dell'area di pertinenza dell'attività;|4''']</string></value>
+<value><string>return ['''Cavalletto nelle vetrine, nelle porte d'ingresso dell'esercizio e comunque all'interno del locale (esente COSAP e CIMP);|1''','''Cavalletto nelle immediate adiacenze dell'esercizio (esente CIMP);|2''','''Cavalletto non adiacente ma comunque all'interno dell'area di pertinenza dell'attività;|3''','''Cavalletto fuori dell'area di pertinenza dell'attività;|4''','''Banner all'interno dell'area di pertinenza dell'attività;|5''']</string></value>
 </member>
 </struct></value>
 <value><struct>

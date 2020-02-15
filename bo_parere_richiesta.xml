@@ -4,7 +4,7 @@
       <id type="Products.Archetypes.Field.StringField">bo_parere_richiesta</id>
       <onCreateDocument type="Products.Archetypes.Field.TextField"><![CDATA[parentDoc = context.getParentDatabase().getDocument(context.getItem('parent_document'))
 if parentDoc:
-    context.setItem('Plomino_Readers',parentDoc.getItem('Plomino_Readers'))]]></onCreateDocument>
+    context.setItem('Plomino_Readers',parentDoc.getItem('Plomino_Readers',[])+['gw_istruttori'])]]></onCreateDocument>
       <onOpenDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></onOpenDocument>
       <beforeSaveDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></beforeSaveDocument>
       <onSaveDocument type="Products.Archetypes.Field.TextField"><![CDATA[parentDoc = context.getParentDatabase().getDocument(context.getItem('parent_document'))
@@ -327,9 +327,9 @@ parentDoc.doAction('richiedi_parere')
 context.setItem('data_comunicazione_richiesta_parere',Now())
 #Allineo i readers
 settings = context.getParentDatabase().resources.customscripts.getDocSettings()
-readers = [str(context.getItem('destinatario_parere')),str(settings.getItem('grp_istruttori'))]
-context.setItem('Plomino_Readers',readers)  
-context.setItem('Plomino_Authors',[str(settings.getItem('grp_istruttori'))])
+users = [str(context.getItem('destinatario_parere')),str(settings.getItem('grp_istruttori'))]
+context.setItem('Plomino_Readers',users)  
+context.setItem('Plomino_Authors',users)
 context.getParentDatabase().getIndex().indexDocument(context)
 
 return parentDoc.absolute_url()]]></Content>

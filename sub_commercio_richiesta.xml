@@ -10,9 +10,11 @@
       <onSearch type="Products.Archetypes.Field.TextField"><![CDATA[]]></onSearch>
       <beforeCreateDocument type="Products.Archetypes.Field.TextField"><![CDATA[]]></beforeCreateDocument>
       <FormLayout type="Products.Archetypes.Field.TextField"><![CDATA[<div class="v-content well">
-<div class="row-fluid"><div class="span6">
+<div class="row-fluid">
+<div class="span6">
 <span class="plominoLabelClass">tipo_occupazione</span><span class="plominoFieldClass">tipo_occupazione</span>
-</div></div>
+</div>
+</div>
 <p><span class="plominoHidewhenClass">start:hw_no_temporanea</span></p>
 <div>
 <span class="plominoLabelClass">periodo_occupazione_dg</span><span class="plominoFieldClass">periodo_occupazione_dg</span>
@@ -27,13 +29,14 @@
 <span class="plominoLabelClass">autorizzata_al</span><span class="plominoFieldClass">autorizzata_al</span>
 </div>
 <div class="span6">
-<br><div class="alert alert-info">La validità dell'autorizzazione decorrerà dalla data di firma del titolo</div>
+<br>
+<div class="alert alert-info">La validità dell'autorizzazione decorrerà dalla data di firma del titolo</div>
 </div>
 </div>
 <p><span class="plominoHidewhenClass">end:hw_no_permanente</span></p>
-<div>
-<span class="plominoLabelClass">tipologia_attivita</span><span class="plominoFieldClass">tipologia_attivita</span>
-</div>
+<p><span class="plominoLabelClass">tipologia_attivita</span><span class="plominoFieldClass">tipologia_attivita</span></p>
+<p><span class="plominoFieldClass">autorizzazione_commercio_opt</span><span class="plominoLabelClass">autorizzazione_commercio_opt</span></p>
+<p><span class="plominoHidewhenClass">start:hw_no_autorizzazione_scia</span></p>
 <div class="row-fluid">
 <div class="span6">
 <span class="plominoLabelClass">numero_autorizzazione_scia</span><span class="plominoFieldClass">numero_autorizzazione_scia</span>
@@ -42,7 +45,9 @@
 <span class="plominoLabelClass">data_autorizzazione_scia</span><span class="plominoFieldClass">data_autorizzazione_scia</span>
 </div>
 </div>
-<span class="plominoSubformClass">sub_rinnovo_pratica</span><p><span class="plominoHidewhenClass">start:hw_no_editor</span></p>
+<p><span class="plominoHidewhenClass">end:hw_no_autorizzazione_scia</span></p>
+<span class="plominoSubformClass">sub_rinnovo_pratica</span>
+<p><span class="plominoHidewhenClass">start:hw_no_editor</span></p>
 <div>
 <span class="plominoLabelClass">ridotta_opt</span><span class="plominoFieldClass">ridotta_opt</span>
 </div>
@@ -437,6 +442,24 @@ elif context.getItem('periodo_occupazione_dg',[])!=[]:
           <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>
           <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
           <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></HTMLAttributesFormula>
+        </element>
+        <element id="autorizzazione_commercio_opt" title="L'attività non prevede autorizzazione o comunicazione all'ufficio attività produttive" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">autorizzazione_commercio_opt</id>
+          <FieldType type="Products.Archetypes.Field.StringField">BOOLEAN</FieldType>
+          <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[]]></Formula>
+          <FieldReadTemplate type="Products.Archetypes.Field.StringField"/>
+          <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
+          <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>
+          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
+          <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>
+          <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
+          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA['data-dhw=sub_commercio_richiesta']]></HTMLAttributesFormula>
+        </element>
+        <element id="hw_no_autorizzazione_scia" title="hw_no_autorizzazione_scia" type="PlominoHidewhen">
+          <id type="Products.Archetypes.Field.StringField">hw_no_autorizzazione_scia</id>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[return context.getItem('autorizzazione_commercio_opt',False)]]></Formula>
+          <isDynamicHidewhen type="Products.Archetypes.Field.BooleanField">True</isDynamicHidewhen>
         </element>
       </elements>
     </element>

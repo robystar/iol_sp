@@ -1039,7 +1039,8 @@ def setIndiciProtocollo():
     doc.setItem('anno_protocollo',int(DateToString(dProtocollo,format='%Y')))
     doc.setItem('data_protocollo_testo',DateToString(Now(),format="%Y/%m/%d %H:%M"))
     doc.setItem('numero_protocollo_testo','Anno %s n. % 6d' %(DateToString(dProtocollo,format='%Y'),int(nProtocollo)))    
-    db.getIndex().indexDocument(doc)
+    doc.save(onSaveEvent=False)
+    doc.commitTransaction()
     
 def setActivity():
     #notifiche per integrazione inizio e fine
@@ -2348,6 +2349,9 @@ else:
 ##parameters=doc=None
 ##title=
 ##
+if isinstance(doc, basestring):
+    doc = context.getDocument(doc)
+    
 db=doc.getParentDatabase()
 db.resources.config_pagopa(doc=doc, azione='alla_firma')
 ]]></resource>
@@ -2488,6 +2492,9 @@ for destinatario in destinatari:
 ##parameters=doc=None
 ##title=
 ##
+if isinstance(doc, basestring):
+    doc = context.getDocument(doc)
+
 db=doc.getParentDatabase()
 db.resources.customscripts.sendMail(doc=doc,azione='pagamento-titolo')
 ]]></resource>
@@ -2609,13 +2616,15 @@ if isinstance(doc, basestring):
 db=context.getParentDatabase()
 parentDoc = db.getDocument(doc.getItem('documento_esistente_id'))
 tipo_app=parentDoc.getItem('iol_tipo_app')
-filename="autorizzazione-%s-%s-%s" %(doc.getItem("numero_titolo"),doc.getItem("anno_autorizzazione"),doc.getItem("iol_tipo_app"))
+
 
 if not doc.getItem('numero_titolo'):
     doc.setItem('numero_titolo',doc.getDocNumber('numero_titolo'))
     doc.setItem('data_titolo',StringToDate(DateToString(Now())))
     doc.setItem('anno_titolo',int(DateToString(Now(),format='%Y')))
-
+    
+filename="autorizzazione-%s-%s-%s" %(doc.getItem("numero_titolo"),doc.getItem("anno_autorizzazione"),doc.getItem("iol_tipo_app"))
+    
 context.stampaModulo(doc,
             model='autorizzazione-dehor',
             app=context.getParentDatabase().getId().replace('iol_',''),
@@ -2629,18 +2638,9 @@ context.stampaModulo(doc,
 #todo da mandare alla firma
 try:
     context.invia_firma(doc,'rinnovo')
+    doc.setWfActivity(activity="Invio del Rinnovo alla firma del dirigente",notifyTo=['sofia.roncone@comune.sp.it'])
 except:
     pass
-]]></resource>
-      <resource id="alla_firma_rigetto" title="" type="Script (Python)"><![CDATA[## Script (Python) "alla_firma_rigetto"
-##bind container=container
-##bind context=context
-##bind namespace=
-##bind script=script
-##bind subpath=traverse_subpath
-##parameters=doc=None
-##title=
-##
 ]]></resource>
       <resource id="invia_firma" title="" type="Script (Python)"><![CDATA[## Script (Python) "invia_firma"
 ##bind container=container
@@ -2668,16 +2668,62 @@ if azione=='rinnovo':
     oggetto = "Autorizzazione n. %s per il rinnovo dehor %s" %(doc.getItem('numero_titolo', ''),str(doc.getItem('numero_pratica','')))
     descrizione = "Documento per il rilascio del Rinnovo per il Dehor %s" %str(doc.getItem('numero_pratica',''))
     action = "rilascio_titolo"
+    campo_prot = "numero_protocollo_titolo"
+    campo_data_prot = 'data_protocollo_titolo'
+    raggruppamento=''
+    parent = doc.getId()
 elif azione=='titolo':
     campo = 'allegato_allafirma_titolo'
     campo_daallegare = 'allegato_comunicazione_titolo'
     oggetto = "Autorizzazione n. %s per il dehor %s" %(doc.getItem('numero_titolo', ''),str(doc.getItem('numero_pratica','')))
     descrizione = "Documento di Autorizzazione per il Dehor %s" %str(doc.getItem('numero_pratica',''))
+    campo_prot = "numero_protocollo_titolo"
+    campo_data_prot = 'data_protocollo_titolo'    
     action = "rilascio_titolo"
+    raggruppamento='',
+    parent = doc.getId()
 elif azione == 'rigetto':
+    campo = 'allegato_allafirma_rigetto'
+    campo_daallegare = 'allegato_comunicazione_rigetto'
+    oggetto = "Diniego per il dehor %s" %str(doc.getItem('numero_pratica',''))
+    descrizione = "Documento di Diniego per il Dehor %s" %str(doc.getItem('numero_pratica',''))
+    action = "rigetta"
+    campo_prot = "numero_protocollo_rigetto"
+    campo_data_prot = 'data_protocollo_rigetto'
+    raggruppamento=''
+    parent = doc.getId()
     pass
 elif azione == 'preavviso_rigetto':
+    campo = 'allegato_allafirma_preavviso_rigetto'
+    campo_daallegare = 'allegato_comunicazione_preavviso_rigetto'
+    oggetto = "Preavviso di Diniego per il dehor %s" %str(doc.getItem('numero_pratica',''))
+    descrizione = "Documento di Preavviso di Diniego per il Dehor %s" %str(doc.getItem('numero_pratica',''))
+    action = "preavviso_rigetto"
+    campo_prot = "numero_protocollo_preavviso_rigetto"
+    campo_data_prot = 'data_protocollo_preavviso_rigetto'   
+    raggruppamento=''
+    parent = doc.getId()
     pass
+elif azione == 'integrazione':
+    campo = ""
+    campo_daallegare = ""
+    oggetto = ""
+    descrizione = ""
+    campo_prot = ""
+    campo_data_prot = ""      
+    action = ""
+    raggruppamento=''
+    parent = context.getParentDatabase().getDocument(context.getItem('parent_document')).getId()
+elif azione == 'parere':
+    campo = ""
+    campo_daallegare = ""
+    oggetto = ""
+    descrizione = ""
+    campo_prot = ""
+    campo_data_prot = ""      
+    action = ""
+    raggruppamento=''
+    parent = context.getParentDatabase().getDocument(context.getItem('parent_document')).getId()
 else:
     return
 
@@ -2720,11 +2766,12 @@ enc_params = dict(
     docid = doc.getId(),
     db = db.id,
     field = campo_daallegare,
-    field_protocollo = "numero_protocollo_titolo",
-    field_data = "data_protocollo_titolo",
+    field_protocollo = campo_prot,
+    field_data = campo_data_prot,
     ufficio = params["idufficio"],
     fid = params["foreign_id_object"],
-    azione = action,
+    parent = parent,
+    azioni = action,
     agent = "onFirmaOk",
 )
 
@@ -2733,6 +2780,7 @@ params["override_callback_url"] = "%s?enc_parameters=%s" %(params["override_call
 
 #Invio alla firma
 res = invia_alla_firma(doc, params)
+
 #Se e' andata a buon fine inserisco le informazioni della firma del documento sul PlominoDocument
 if res["success"] == 1:
     doc.setItem('response_firma', str(res['message']))
@@ -2745,6 +2793,8 @@ if res["success"] == 1:
     firmadigitale['callback_url'] = params["override_callback_url"]
     elenco[params["foreign_id_object"]] = firmadigitale
     doc.setItem('elenco_firmadigitale',elenco)
+    params['file64']=''
+    doc.setItem('parametri_firma',params)
 #Altrimenti setto l'errore
 else:
     doc.setItem('response_firma',str(res['message']))
@@ -2862,6 +2912,93 @@ try:
         doc.setItem('elenco_firmadigitale', elencofirma)
 except:
     pass
+]]></resource>
+      <resource id="AllaFirma" title="" type="Script (Python)"><![CDATA[## Script (Python) "AllaFirma"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import StringToDate, DateToString, Now, json_dumps, sendMail
+
+db=context.getParentDatabase()
+
+if isinstance(doc, basestring):
+    doc = db.getDocument(doc)
+
+#todo da mandare alla firma
+try:
+    context.invia_firma(doc,'titolo')
+    doc.setWfActivity(activity="Invio del Titolo alla firma del dirigente",notifyTo=['sofia.roncone@comune.sp.it'])
+    #doc.setWfActivity(activity="Invio del Titolo alla firma del dirigente",notifyTo=['marco.carbone@gisweb.it'])
+except:
+    pass
+]]></resource>
+      <resource id="alla_firma_preavviso_rigetto" title="" type="Script (Python)"><![CDATA[## Script (Python) "alla_firma_preavviso_rigetto"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import StringToDate, DateToString, Now, json_dumps, sendMail
+
+db=context.getParentDatabase()
+
+if isinstance(doc, basestring):
+    doc = db.getDocument(doc)
+
+#todo da mandare alla firma
+try:
+    context.invia_firma(doc,'preavviso_rigetto')
+    #doc.setWfActivity(activity="Invio del Preavviso di Rigetto alla firma del dirigente",notifyTo=['sofia.roncone@comune.sp.it'])
+    doc.setWfActivity(activity="Invio del Preavviso di Rigetto alla firma del dirigente",notifyTo=['marco.carbone@gisweb.it'])
+except:
+    pass
+]]></resource>
+      <resource id="alla_firma_rigetto" title="" type="Script (Python)"><![CDATA[## Script (Python) "alla_firma_rigetto"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import StringToDate, DateToString, Now, json_dumps, sendMail
+
+db=context.getParentDatabase()
+
+if isinstance(doc, basestring):
+    doc = db.getDocument(doc)
+
+#todo da mandare alla firma
+try:
+    context.invia_firma(doc,'rigetto')
+    #doc.setWfActivity(activity="Invio del Diniego alla firma del dirigente",notifyTo=['sofia.roncone@comune.sp.it'])
+    doc.setWfActivity(activity="Invio del Diniego alla firma del dirigente",notifyTo=['marco.carbone@gisweb.it'])
+except:
+    pass
+]]></resource>
+      <resource id="getFirmaDigitaleEnabled" title="Vero se abilitata la firma digitale" type="Script (Python)"><![CDATA[## Script (Python) "getFirmaDigitaleEnabled"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=
+##title=Vero se abilitata la firma digitale
+##
+# Vero se abilitato il pagamento con PagoPa
+if context.getParentDatabase().resources.config().get('firma_digitale'):
+    return True
+else:
+    return False
 ]]></resource>
     </resource>
   </design>

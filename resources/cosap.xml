@@ -926,32 +926,31 @@ if textinfo:
 else:
     return totale
 ]]></resource>
-      <resource contenttype="application/javascript" id="controller_insegna.js" title="" type="File"><![CDATA[JCggZG9jdW1lbnQgKS5yZWFkeShmdW5jdGlvbigpIHsKW1siZXd0cnl3ZXR5ZXJ5IiwxMDAsMTAw
-LDIwLDE4MCwiIiwic2kiXV0KICBmdW5jdGlvbiBhZ2dpb3JuYUNvc2FwKHN1cD0wKXsKICAgIC8v
-c2Ugbm9uIHBhc3NvIGxhIHN1cCBsYSBjYWxjb2xhIGRhIGRhdGFncmlkCiAgICAgICB2YXIgc3Vw
-ID0gMDsKICAgICAgIHZhciBzaXplOwogICAgICAgdmFyIHJvd3MgPSAkLmV2YWxKU09OKCQoIiNl
-bGVtZW50aV9pbnNlZ25lX2RnX2dyaWR2YWx1ZSIpLnZhbCgpKTsKICAgICAgIGZvcih2YXIgaT0w
-O2k8cm93cy5sZW5ndGg7aSsrKXsKICAgICAgICAgIC8vQ0FMQ09MTyBMQSBTVVBFUkZJQ0lFIERF
-TExBIEZBQ0NJQSBQSVUnIEdSQU5ERSBERUxMJ0lOU0VHTkEKICAgICAgICAgIHNpemUgPSBbcm93
-c1tpXVsxXSxyb3dzW2ldWzJdLHJvd3NbaV1bM11dLnNvcnQoKTsKICAgICAgICAgIC8vQWdnaXVu
-Z28gbGEgc3VwZXJmaWNpZSBzb2xvIHNlIHNwb3JnZSArIGRpIDMwIGNtCiAgICAgICAgICBpZiAo
-cm93c1tpXVs1XSA+IDMwKXsKICAgICAgICAgICAgICBzdXAgPSBzdXAgKyBzaXplWzFdKnNpemVb
-Ml07CiAgICAgICAgICB9CiAgICAgICB9CiAgICAgICBzdXAgPSBzdXAgLyAxMDAwMDsKICAgICAg
-ICQoIiNzdXBlcmZpY2llX29jY3VwYXppb25lIikudmFsKHN1cC50b0ZpeGVkKDIpKTsKCiAgICB2
-YXIgZG9jdW1lbnRJZCA9ICQoIiNzdXBlcmZpY2llX29jY3VwYXppb25lIikuZGF0YSgiZG9jaWQi
-KTsKCiAgICAkLmFqYXgoewogICAgICAgJ3VybCc6InJlc291cmNlcy9jb3NhcC9nZXRJbXBvcnRv
-Q29zYXAiLAogICAgICAgJ3R5cGUnOidHRVQnLAogICAgICAgJ2RhdGEnOnsiZG9jIjpkb2N1bWVu
-dElkLCJzdXBfb2NjdXBhemlvbmUiOnN1cH0sCiAgICAgICAnZGF0YVR5cGUnOidKU09OJywKICAg
-ICAgICdzdWNjZXNzJzpmdW5jdGlvbihkYXRhLCB0ZXh0U3RhdHVzLCBqcVhIUil7CiAgICAgICAg
-ICAkKCJbbmFtZT0naW1wb3J0b19jb3NhcCddIikudGV4dChkYXRhLnRvdGFsZS50b0ZpeGVkKDIp
-KTsKICAgICAgICAgIHZhciAkaHcgPSAkKCIjcGxvbWlub19mb3JtIikuZmluZCgnLmhpZGV3aGVu
-LWh3X25vX3JhdGUnKQogICAgICAgICAgJGh3LmNzcygnZGlzcGxheScsIChkYXRhLnRvdGFsZTw9
-NDAwKT8nbm9uZSc6J2Jsb2NrJyk7CgogICAgICAgfQogICAgfSk7CiAgfQoKCiAgaWYodHlwZW9m
-KGVsZW1lbnRpX2luc2VnbmVfZGdfZGF0YXRhYmxlKSE9J3VuZGVmaW5lZCcpewogICAgIGVsZW1l
-bnRpX2luc2VnbmVfZGdfZGF0YXRhYmxlLmZuU2V0dGluZ3MoKS5hb0RyYXdDYWxsYmFjay5wdXNo
-KCB7CiAgICAgICAiZm4iOiBmdW5jdGlvbiggb1NldHRpbmdzICl7CiAgICAgICAgIC8vdmVkZXJl
-IHBlcmNoZSBsbyBmYSAyIHZvbHRlISEhCiAgICAgICAgIGFnZ2lvcm5hQ29zYXAoKTsKICAgICAg
-IH0KICAgICB9KTsKICB9Cgp9KTsK
+      <resource contenttype="application/javascript" id="controller_insegna.js" title="" type="File"><![CDATA[JCggZG9jdW1lbnQgKS5yZWFkeShmdW5jdGlvbigpIHsKICBmdW5jdGlvbiBhZ2dpb3JuYUNvc2Fw
+KHN1cD0wKXsKICAgIC8vc2Ugbm9uIHBhc3NvIGxhIHN1cCBsYSBjYWxjb2xhIGRhIGRhdGFncmlk
+CiAgICAgICB2YXIgc3VwID0gMDsKICAgICAgIHZhciBzaXplOwogICAgICAgdmFyIHJvd3MgPSAk
+LmV2YWxKU09OKCQoIiNlbGVtZW50aV9pbnNlZ25lX2RnX2dyaWR2YWx1ZSIpLnZhbCgpKTsKICAg
+ICAgIGZvcih2YXIgaT0wO2k8cm93cy5sZW5ndGg7aSsrKXsKICAgICAgICAgIC8vQ0FMQ09MTyBM
+QSBTVVBFUkZJQ0lFIERFTExBIEZBQ0NJQSBQSVUnIEdSQU5ERSBERUxMJ0lOU0VHTkEKICAgICAg
+ICAgIHNpemUgPSBbcm93c1tpXVsxXSxyb3dzW2ldWzJdLHJvd3NbaV1bM11dLnNvcnQoKTsKICAg
+ICAgICAgIC8vQWdnaXVuZ28gbGEgc3VwZXJmaWNpZSBzb2xvIHNlIHNwb3JnZSArIGRpIDMwIGNt
+CiAgICAgICAgICBpZiAocm93c1tpXVs1XSA+IDMwKXsKICAgICAgICAgICAgICBzdXAgPSBzdXAg
+KyBzaXplWzFdKnNpemVbMl07CiAgICAgICAgICB9CiAgICAgICB9CiAgICAgICBzdXAgPSBzdXAg
+LyAxMDAwMDsKICAgICAgICQoIiNzdXBlcmZpY2llX29jY3VwYXppb25lIikudmFsKHN1cC50b0Zp
+eGVkKDIpKTsKCiAgICB2YXIgZG9jdW1lbnRJZCA9ICQoIiNzdXBlcmZpY2llX29jY3VwYXppb25l
+IikuZGF0YSgiZG9jaWQiKTsKCiAgICAkLmFqYXgoewogICAgICAgJ3VybCc6InJlc291cmNlcy9j
+b3NhcC9nZXRJbXBvcnRvQ29zYXAiLAogICAgICAgJ3R5cGUnOidHRVQnLAogICAgICAgJ2RhdGEn
+OnsiZG9jIjpkb2N1bWVudElkLCJzdXBfb2NjdXBhemlvbmUiOnN1cH0sCiAgICAgICAnZGF0YVR5
+cGUnOidKU09OJywKICAgICAgICdzdWNjZXNzJzpmdW5jdGlvbihkYXRhLCB0ZXh0U3RhdHVzLCBq
+cVhIUil7CiAgICAgICAgICAkKCJbbmFtZT0naW1wb3J0b19jb3NhcCddIikudGV4dChkYXRhLnRv
+dGFsZS50b0ZpeGVkKDIpKTsKICAgICAgICAgIHZhciAkaHcgPSAkKCIjcGxvbWlub19mb3JtIiku
+ZmluZCgnLmhpZGV3aGVuLWh3X25vX3JhdGUnKQogICAgICAgICAgJGh3LmNzcygnZGlzcGxheScs
+IChkYXRhLnRvdGFsZTw9NDAwKT8nbm9uZSc6J2Jsb2NrJyk7CgogICAgICAgfQogICAgfSk7CiAg
+fQoKCiAgaWYodHlwZW9mKGVsZW1lbnRpX2luc2VnbmVfZGdfZGF0YXRhYmxlKSE9J3VuZGVmaW5l
+ZCcpewogICAgIGVsZW1lbnRpX2luc2VnbmVfZGdfZGF0YXRhYmxlLmZuU2V0dGluZ3MoKS5hb0Ry
+YXdDYWxsYmFjay5wdXNoKCB7CiAgICAgICAiZm4iOiBmdW5jdGlvbiggb1NldHRpbmdzICl7CiAg
+ICAgICAgIC8vdmVkZXJlIHBlcmNoZSBsbyBmYSAyIHZvbHRlISEhCiAgICAgICAgIGFnZ2lvcm5h
+Q29zYXAoKTsKICAgICAgIH0KICAgICB9KTsKICB9Cgp9KTsK
 ]]></resource>
       <resource contenttype="application/javascript" id="controller_dehor.js" title="" type="File"><![CDATA[JCggZG9jdW1lbnQgKS5yZWFkeShmdW5jdGlvbigpIHsKCiAgZnVuY3Rpb24gYWdnaW9ybmFDb3Nh
 cChzdXA9MCl7CiAgICAvL3NlIG5vbiBwYXNzbyBsYSBzdXAgbGEgY2FsY29sYSBkYSBkYXRhZ3Jp
@@ -1270,14 +1269,14 @@ for row in cavalletti:
 
 text=text + "Sup occupazione: %s mq.\n" %supTot
                 
-if supTot > 0.5:
+if supTot >= 0.5:
     #calcolo ogni singola occupazione arrotondata al metro
     for row in occupazione:
         totaleCosap = totaleCosap + math.ceil(row[0]*row[1]) * coefficiente * tariffaCosap * ngg
         
-    #importo COSAP cavalletti posizionati opzione 2 o 3 (non interno al locale)
+    #importo COSAP cavalletti posizionati opzione 2 o 3 (non interno al locale) oppure banner
     for row in cavalletti:
-        if row[8] in ['2','3']:
+        if row[8] in ['2','3','5']:
             totaleCosap =totaleCosap + math.ceil(row[0]*row[1]) * coefficiente * tariffaCosap * ngg   
 
 
@@ -1286,7 +1285,7 @@ if supTot > 0.5:
 for row in cavalletti:
     if row[8] == '4':
         sup = row[0]*row[1]
-        if sup > 0.5:
+        if sup >= 0.5:
             imp = math.ceil(sup) * coefficiente * tariffaCosap * ngg  
             totaleCosap = totaleCosap + imp
 
@@ -1309,7 +1308,7 @@ if len(cavalletti)==1:
         bCimp=False
 if bCimp:   
     for row in cavalletti:  
-        if row[8] in ['3','4']:
+        if row[8] in ['3','4','5']:
             for i in range(3,7):#le facce
                 if row[i]:
                     totaleCimp = totaleCimp + ngg*calcolaCIMP(

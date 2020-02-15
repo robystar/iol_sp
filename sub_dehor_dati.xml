@@ -120,7 +120,7 @@ resources/iol-custom.css]]></ResourcesCSS>
           <FieldReadTemplate type="Products.Archetypes.Field.StringField"/>
           <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
           <Mandatory type="Products.Archetypes.Field.BooleanField">True</Mandatory>
-          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[elenco=context.REQUEST.get('elementi_occupazione_dg') or context.getItem('elementi_occupazione_dg')
+          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[elenco=context.getItem('elementi_occupazione_dg')
 if len(elenco)==0:
     return 'Attenzione è obbligatorio compilare la tabella degli elementi di occupazione']]></ValidationFormula>
           <ToBeIndexed type="Products.Archetypes.Field.BooleanField">False</ToBeIndexed>

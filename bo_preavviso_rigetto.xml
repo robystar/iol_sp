@@ -54,10 +54,11 @@ context.REQUEST.set('returnurl',parentDoc.absolute_url())]]></onDeleteDocument>
 <div class="span4">
 <span class="plominoLabelClass">allegato_allafirma_preavviso_rigetto</span><span class="plominoFieldClass">allegato_allafirma_preavviso_rigetto</span>
 </div>
-<span class="plominoHidewhenClass">end:hw_no_istruttore_preavviso_rigetto</span>
+<span class="plominoHidewhenClass">end:hw_no_istruttore_preavviso_rigetto</span> <span class="plominoHidewhenClass">start:hw_firma_digitale_preavviso_rigetto</span>
 <div class="span4">
 <span class="plominoLabelClass">allegato_comunicazione_preavviso_rigetto</span><span class="plominoFieldClass">allegato_comunicazione_preavviso_rigetto</span>
 </div>
+<span class="plominoHidewhenClass">end:hw_firma_digitale_preavviso_rigetto</span>
 </div>
 <p><span class="plominoHidewhenClass">end:hw_new_comunicazione</span></p>
 </div>
@@ -299,6 +300,16 @@ elif context.getItem('data_comunicazione_preavviso_rigetto')!='':
           <id type="Products.Archetypes.Field.StringField">hw_no_istruttore_preavviso_rigetto</id>
           <Formula type="Products.Archetypes.Field.TextField"><![CDATA[try:
     return not 'PlominoEditor' in context.getCurrentUserRights()
+except:
+    return True]]></Formula>
+          <isDynamicHidewhen type="Products.Archetypes.Field.BooleanField">False</isDynamicHidewhen>
+        </element>
+        <element id="hw_firma_digitale_preavviso_rigetto" title="hw_firma_digitale_preavviso_rigetto" type="PlominoHidewhen">
+          <id type="Products.Archetypes.Field.StringField">hw_firma_digitale_preavviso_rigetto</id>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[return False
+try:
+    firmaenabled = context.getParentDatabase().resources.customscripts.getFirmaDigitaleEnabled()
+    return firmaenabled and context.isEditMode()
 except:
     return True]]></Formula>
           <isDynamicHidewhen type="Products.Archetypes.Field.BooleanField">False</isDynamicHidewhen>

@@ -255,7 +255,7 @@ menus=dict()
 
 menus['front'] = [
     {"label": "Dati del richiedente", "frm": "frm_passocarraio", "title": "Dati anagrafici dei richiedenti"},
-    {"label": "Ubicazione", "frm": "frm_ubicazione_passocarraio", "title": "Tipo di intervento"}, 
+    {"label": "Ubicazione", "frm": "frm_ubicazione", "title": "Tipo di intervento"}, 
     {"label": "Richiesta", "frm": "frm_passocarraio_richiesta", "title": "Tipo di intervento"}, 
     {"label": "Dati", "frm": "frm_passocarraio_dati", "title": "Tipo di intervento"}, 
     {"label": "Allegati", "frm": "frm_passocarraio_allegati", "title": "Documentazione allegata"},

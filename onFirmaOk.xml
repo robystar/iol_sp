@@ -57,18 +57,18 @@ if res['esito'] == 'OK' and res['file64_firmato']:
     setfile_b64encode(doc, field, documento_firmato, True)
     try:
         protocollo = int(res["numero_protocollo"])
-        data = StringToDate("%s %s" % (res["data_protocollo"].replace(" 00:00:00", ""), res["ora_protocollo"]),
+        dataprot = StringToDate("%s %s" % (res["data_protocollo"].replace(" 00:00:00", ""), res["ora_protocollo"]),
                             "%d/%m/%Y %H:%M:%S")
         if field_prot:
             doc.setItem(field_prot, protocollo)
         if field_data:
-            doc.setItem(field_data, data)
+            doc.setItem(field_data, dataprot)
 
 
     except:
         doc.setItem("azione_firma", 'Errore Protocollo')
         protocollo = ""
-        data = ""
+        dataprot = ""
         pass
     if 'azioni' in data:
         v = data['azioni'].split(',')
@@ -90,7 +90,7 @@ if fid in elencofirma.keys():
     if protocollo:
         elencofirma[fid]["protocollo"] = protocollo
     if data:
-        elencofirma[fid]["data_protocollo"] = DateToString(data,"%d/%m/%Y %H:%M:%S")
+        elencofirma[fid]["data_protocollo"] = DateToString(dataprot,"%d/%m/%Y %H:%M:%S")
     doc.setItem('elenco_firmadigitale', elencofirma)
 ]]></Content>
       <RunAs type="Products.Archetypes.Field.StringField">OWNER</RunAs>
