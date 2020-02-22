@@ -708,7 +708,7 @@ except:
 </param>
 </params>
         </element>
-        <element id="allegato_allafirma_titolo" title="Autorizzazione da inviare alla firma" type="PlominoField">
+        <element id="allegato_allafirma_titolo" title="Autorizzazione da firmare digitalmente" type="PlominoField">
           <id type="Products.Archetypes.Field.StringField">allegato_allafirma_titolo</id>
           <FieldType type="Products.Archetypes.Field.StringField">ATTACHMENT</FieldType>
           <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>

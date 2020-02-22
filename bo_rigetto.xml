@@ -27,7 +27,8 @@ context.REQUEST.set('returnurl',parentDoc.absolute_url())]]></onDeleteDocument>
 <div>
 <span class="plominoLabelClass">oggetto_rigetto</span><span class="plominoFieldClass">oggetto_rigetto</span>
 </div>
-<span class="plominoHidewhenClass">start:hw_no_edit</span><div class="row-fluid">
+<span class="plominoHidewhenClass">start:hw_no_edit</span>
+<div class="row-fluid">
 <div class="span8">
 <span class="plominoLabelClass">modello_stampa_rigetto</span><span class="plominoFieldClass">modello_stampa_rigetto</span>
 </div>
@@ -35,26 +36,32 @@ context.REQUEST.set('returnurl',parentDoc.absolute_url())]]></onDeleteDocument>
 <br><span class="plominoActionClass">btn_stampa_comunicazione</span>
 </div>
 </div>
-<span class="plominoHidewhenClass">end:hw_no_edit</span><p><span class="plominoHidewhenClass">start:hw_new_comunicazione</span></p>
+<span class="plominoHidewhenClass">end:hw_no_edit</span>
+<p><span class="plominoHidewhenClass">start:hw_new_comunicazione</span></p>
 <p><span class="plominoFieldClass">istruzioni_rigetto</span></p>
 <div class="row-fluid">
-<span class="plominoHidewhenClass">start:hw_no_istruttore_rigetto</span><div class="span4">
+<span class="plominoHidewhenClass">start:hw_no_istruttore_rigetto</span>
+<div class="span4">
 <span class="plominoLabelClass">allegato_documento_rigetto</span><span class="plominoFieldClass">allegato_documento_rigetto</span>
 </div>
 <div class="span4">
 <span class="plominoLabelClass">allegato_allafirma_rigetto</span><span class="plominoFieldClass">allegato_allafirma_rigetto</span>
 </div>
-<span class="plominoHidewhenClass">end:hw_no_istruttore_rigetto</span><div class="span4">
+<span class="plominoHidewhenClass">end:hw_no_istruttore_rigetto</span>
+<div class="span4">
 <span class="plominoLabelClass">allegato_comunicazione_rigetto</span><span class="plominoFieldClass">allegato_comunicazione_rigetto</span>
 </div>
 </div>
 <div>
-<span class="plominoHidewhenClass">start:hw_no_data_comunicazione</span><div class="row-fluid"><div class="span3">
+<span class="plominoHidewhenClass">start:hw_no_data_comunicazione</span>
+<div class="row-fluid">
+<div class="span3">
 <span class="plominoLabelClass">data_comunicazione_rigetto</span><span class="plominoFieldClass">data_comunicazione_rigetto</span>
-</div></div>
+</div>
+</div>
 <span class="plominoHidewhenClass">end:hw_no_data_comunicazione</span>
 </div>
-<p><span class="plominoActionClass">btn_invia_comunicazione</span></p>
+<p><span class="plominoActionClass">btn_invia_comunicazione</span><span class="plominoActionClass">btn_invia_allafirma</span></p>
 <p> </p>
 <p><span class="plominoHidewhenClass">end:hw_new_comunicazione</span></p>
 </div>
@@ -208,7 +215,7 @@ data-plugin = "iolUploadFile" data-plugin-options='{"emptyMessage":"Nessun file"
 </param>
 </params>
         </element>
-        <element id="allegato_allafirma_rigetto" title="Comunicazione da firmare" type="PlominoField">
+        <element id="allegato_allafirma_rigetto" title="Comunicazione di rigetto da firmare" type="PlominoField">
           <id type="Products.Archetypes.Field.StringField">allegato_allafirma_rigetto</id>
           <FieldType type="Products.Archetypes.Field.StringField">ATTACHMENT</FieldType>
           <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
@@ -283,8 +290,11 @@ except:
 context.setItem('data_comunicazione_rigetto',Now())
 context.setItem('data_rigetto',Now())
 return context.absolute_url()]]></Content>
-          <Hidewhen type="Products.Archetypes.Field.TextField"><![CDATA[try:
-    return context.isEditMode() or context.getItem('data_comunicazione_rigetto')!='' or context.getItem('allegato_comunicazione_rigetto',{})=={}
+          <Hidewhen type="Products.Archetypes.Field.TextField"><![CDATA[if context.getParentDatabase().resources.config().get('firma_digitale'):
+    return True
+
+try:
+    return context.isEditMode() or context.getItem('allegato_comunicazione_rigetto',{})=={}
 except:
     return True]]></Hidewhen>
           <InActionBar type="Products.Archetypes.Field.BooleanField">False</InActionBar>
@@ -301,10 +311,9 @@ except:
           <id type="Products.Archetypes.Field.StringField">istruzioni_rigetto</id>
           <FieldType type="Products.Archetypes.Field.StringField">TEXT</FieldType>
           <FieldMode type="Products.Archetypes.Field.StringField">DISPLAY</FieldMode>
-          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[if context.getItem('allegato_allafirma_rigetto',{})=={}:
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[return ''
+if context.getItem('allegato_allafirma_rigetto',{})=={}:
     return '<div class="alert alert-info">Dopo aver creato il documento desiderato, allegarlo in formato pdf nel campo “Comunicazione da firmare” per abilitare l’iter di invio alla firma del funzionario abilitato alla firma.</div>'
-elif context.getItem('allegato_comunicazione_rigetto',{})=={}:
-    return '''<div class="alert alert-info">Dopo aver fatto firmare digitalmente il documento, allegare il p7m nel campo “Comunicazione firmata” e salvare.</div>'''
 elif context.getItem('data_comunicazione_rigetto')!='':
     msg = '''Comunicazione di rigetto dell'istanza inviata in data ''' +  DateToString(context.getItem('data_comunicazione_rigetto'),format="%d/%m/%Y %H:%M")
     if context.getItem('protocollo_rigetto'):
@@ -403,6 +412,22 @@ data-datepicker-options='{"changeMonth": true, "changeYear": true, "minDate":"-1
 </data></array></value>
 </param>
 </params>
+        </element>
+        <element id="btn_invia_allafirma" title="Invia alla firma &gt;&gt;" type="PlominoAction">
+          <id type="Products.Archetypes.Field.StringField">btn_invia_allafirma</id>
+          <ActionType type="Products.Archetypes.Field.StringField">PYTHON</ActionType>
+          <ActionDisplay type="Products.Archetypes.Field.StringField">BUTTON</ActionDisplay>
+          <Content type="Products.Archetypes.Field.TextField"><![CDATA[context.doAction('alla_firma_rigetto')
+return context.absolute_url()]]></Content>
+          <Hidewhen type="Products.Archetypes.Field.TextField"><![CDATA[if not context.getParentDatabase().resources.config().get('firma_digitale'):
+    return True
+
+
+try:
+    return context.isEditMode() or context.getItem('allegato_allafirma_rigetto',{})=={} or context.getItem('allegato_comunicazione_rigetto',{})!={} or context.getItem('iol_workflow_status')=='attesa_firma_rigetto'
+except:
+    return True]]></Hidewhen>
+          <InActionBar type="Products.Archetypes.Field.BooleanField">False</InActionBar>
         </element>
       </elements>
     </element>

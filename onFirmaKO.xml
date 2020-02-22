@@ -1,0 +1,14 @@
+<plominodatabase id="iol_sp">
+  <design>
+    <element id="onFirmaKO" title="onFirmaKO" type="PlominoAgent">
+      <id type="Products.Archetypes.Field.StringField">onFirmaKO</id>
+      <Content type="Products.Archetypes.Field.TextField"><![CDATA[docId = args[0]
+action = args[1]
+db = context.getParentDatabase()
+doc = db.getDocument(docId)
+if doc and doc.isActionSupported(action):
+    doc.doAction(action)]]></Content>
+      <RunAs type="Products.Archetypes.Field.StringField">OWNER</RunAs>
+    </element>
+  </design>
+</plominodatabase>

@@ -2635,169 +2635,7 @@ context.stampaModulo(doc,
             addform='bo_istruttoria')
 
 
-#todo da mandare alla firma
-try:
-    context.invia_firma(doc,'rinnovo')
-    doc.setWfActivity(activity="Invio del Rinnovo alla firma del dirigente",notifyTo=['sofia.roncone@comune.sp.it'])
-except:
-    pass
-]]></resource>
-      <resource id="invia_firma" title="" type="Script (Python)"><![CDATA[## Script (Python) "invia_firma"
-##bind container=container
-##bind context=context
-##bind namespace=
-##bind script=script
-##bind subpath=traverse_subpath
-##parameters=doc = None, azione= ''
-##title=
-##
-from Products.CMFPlomino.PlominoUtils import StringToDate, DateToString, Now, json_dumps, sendMail
-from iol.firmadigitale.plomino_utils import get_config, b64encode_item, invia_alla_firma, unique_id, encodeb64
-
-db=context.getParentDatabase()
-
-if isinstance(doc, basestring):
-    doc = db.getDocument(doc)
-
-
-
-
-if azione=='rinnovo':
-    campo = 'allegato_allafirma_titolo'
-    campo_daallegare = 'allegato_comunicazione_titolo'
-    oggetto = "Autorizzazione n. %s per il rinnovo dehor %s" %(doc.getItem('numero_titolo', ''),str(doc.getItem('numero_pratica','')))
-    descrizione = "Documento per il rilascio del Rinnovo per il Dehor %s" %str(doc.getItem('numero_pratica',''))
-    action = "rilascio_titolo"
-    campo_prot = "numero_protocollo_titolo"
-    campo_data_prot = 'data_protocollo_titolo'
-    raggruppamento=''
-    parent = doc.getId()
-elif azione=='titolo':
-    campo = 'allegato_allafirma_titolo'
-    campo_daallegare = 'allegato_comunicazione_titolo'
-    oggetto = "Autorizzazione n. %s per il dehor %s" %(doc.getItem('numero_titolo', ''),str(doc.getItem('numero_pratica','')))
-    descrizione = "Documento di Autorizzazione per il Dehor %s" %str(doc.getItem('numero_pratica',''))
-    campo_prot = "numero_protocollo_titolo"
-    campo_data_prot = 'data_protocollo_titolo'    
-    action = "rilascio_titolo"
-    raggruppamento='',
-    parent = doc.getId()
-elif azione == 'rigetto':
-    campo = 'allegato_allafirma_rigetto'
-    campo_daallegare = 'allegato_comunicazione_rigetto'
-    oggetto = "Diniego per il dehor %s" %str(doc.getItem('numero_pratica',''))
-    descrizione = "Documento di Diniego per il Dehor %s" %str(doc.getItem('numero_pratica',''))
-    action = "rigetta"
-    campo_prot = "numero_protocollo_rigetto"
-    campo_data_prot = 'data_protocollo_rigetto'
-    raggruppamento=''
-    parent = doc.getId()
-    pass
-elif azione == 'preavviso_rigetto':
-    campo = 'allegato_allafirma_preavviso_rigetto'
-    campo_daallegare = 'allegato_comunicazione_preavviso_rigetto'
-    oggetto = "Preavviso di Diniego per il dehor %s" %str(doc.getItem('numero_pratica',''))
-    descrizione = "Documento di Preavviso di Diniego per il Dehor %s" %str(doc.getItem('numero_pratica',''))
-    action = "preavviso_rigetto"
-    campo_prot = "numero_protocollo_preavviso_rigetto"
-    campo_data_prot = 'data_protocollo_preavviso_rigetto'   
-    raggruppamento=''
-    parent = doc.getId()
-    pass
-elif azione == 'integrazione':
-    campo = ""
-    campo_daallegare = ""
-    oggetto = ""
-    descrizione = ""
-    campo_prot = ""
-    campo_data_prot = ""      
-    action = ""
-    raggruppamento=''
-    parent = context.getParentDatabase().getDocument(context.getItem('parent_document')).getId()
-elif azione == 'parere':
-    campo = ""
-    campo_daallegare = ""
-    oggetto = ""
-    descrizione = ""
-    campo_prot = ""
-    campo_data_prot = ""      
-    action = ""
-    raggruppamento=''
-    parent = context.getParentDatabase().getDocument(context.getItem('parent_document')).getId()
-else:
-    return
-
-d = b64encode_item(doc, campo)
-names = d.keys()
-
-pp = get_config(doc)
-params = pp["params"]
-
-if pp['log']['enabled']:
-    title = " Notifica Invio alla Firma Digitale - %s" %doc.getId()
-    message = u"Attenzione &egrave; stato inviato un documento alla firma <a target='_new' href='%s'>%s</a>" %(doc.absolute_url(),doc.getId())
-    sendMail(db, pp['log']['mail'], title, message, sender='assistenza@istanze-online.it',
-         immediate=True)
-
-params["idutente_orig"] = "azzfab64"
-#params["idutente_dest"] = "azzfab64"
-params["idutente_dest"] = "niglau69"
-params["idufficio"] = 4
-params["oggetto"] = oggetto
-params["foreign_id_object"] = "%s" %unique_id(doc, names[0])
-params["foreign_id_master"] = context.getParentDatabase().getId().replace('iol_','')
-params["protocollare"] = "si"
-params["firmare"] = "si"
-params["inviare"] = "no"
-params["descrizione_foreign_object"] = descrizione
-params["descrizione_foreign_master"] = "Dehor"
-
-params["file64"] = d[names[0]]
-params["nome_documento"] = names[0]
-params["descrizione_documento"] = descrizione
-
-params["nominativiolist"] = ""  
-params["destinatarimail"] = ""
-params["mail_object"] = ""  
-params["mail_body"] = ""
-params["is_mail_html"] = ""
-
-enc_params = dict(
-    docid = doc.getId(),
-    db = db.id,
-    field = campo_daallegare,
-    field_protocollo = campo_prot,
-    field_data = campo_data_prot,
-    ufficio = params["idufficio"],
-    fid = params["foreign_id_object"],
-    parent = parent,
-    azioni = action,
-    agent = "onFirmaOk",
-)
-
-# codifico in base64 i parametri aggiuntivi per evitare casini
-params["override_callback_url"] = "%s?enc_parameters=%s" %(params["override_callback_url"],encodeb64(json_dumps(enc_params)))
-
-#Invio alla firma
-res = invia_alla_firma(doc, params)
-
-#Se e' andata a buon fine inserisco le informazioni della firma del documento sul PlominoDocument
-if res["success"] == 1:
-    doc.setItem('response_firma', str(res['message']))
-    doc.setItem('foreign_id_firma', params["foreign_id_object"])
-    elenco = doc.getItem('elenco_firmadigitale',{})
-    firmadigitale = enc_params
-    firmadigitale['esito'] = ""
-    firmadigitale['protocollo'] = ""
-    firmadigitale['data_protocollo'] = ""
-    firmadigitale['callback_url'] = params["override_callback_url"]
-    elenco[params["foreign_id_object"]] = firmadigitale
-    doc.setItem('elenco_firmadigitale',elenco)
-    params['file64']=''
-    doc.setItem('parametri_firma',params)
-#Altrimenti setto l'errore
-else:
-    doc.setItem('response_firma',str(res['message']))
+return context.alla_firma_invio(doc,azione='rilascio_titolo')
 ]]></resource>
       <resource id="onFirmaOk" title="" type="Script (Python)"><![CDATA[## Script (Python) "onFirmaOk"
 ##bind container=container
@@ -2931,7 +2769,7 @@ if isinstance(doc, basestring):
 
 #todo da mandare alla firma
 try:
-    context.invia_firma(doc,'titolo')
+    context.alla_firma_invio(doc,'rilascio_titolo')
     doc.setWfActivity(activity="Invio del Titolo alla firma del dirigente",notifyTo=['sofia.roncone@comune.sp.it'])
     #doc.setWfActivity(activity="Invio del Titolo alla firma del dirigente",notifyTo=['marco.carbone@gisweb.it'])
 except:
@@ -2946,20 +2784,10 @@ except:
 ##parameters=doc=None
 ##title=
 ##
-from Products.CMFPlomino.PlominoUtils import StringToDate, DateToString, Now, json_dumps, sendMail
-
-db=context.getParentDatabase()
-
 if isinstance(doc, basestring):
-    doc = db.getDocument(doc)
+    doc = context.getDocument(doc)
 
-#todo da mandare alla firma
-try:
-    context.invia_firma(doc,'preavviso_rigetto')
-    #doc.setWfActivity(activity="Invio del Preavviso di Rigetto alla firma del dirigente",notifyTo=['sofia.roncone@comune.sp.it'])
-    doc.setWfActivity(activity="Invio del Preavviso di Rigetto alla firma del dirigente",notifyTo=['marco.carbone@gisweb.it'])
-except:
-    pass
+return context.alla_firma_invio(doc,azione='preavviso_rigetto')
 ]]></resource>
       <resource id="alla_firma_rigetto" title="" type="Script (Python)"><![CDATA[## Script (Python) "alla_firma_rigetto"
 ##bind container=container
@@ -2970,20 +2798,10 @@ except:
 ##parameters=doc=None
 ##title=
 ##
-from Products.CMFPlomino.PlominoUtils import StringToDate, DateToString, Now, json_dumps, sendMail
-
-db=context.getParentDatabase()
-
 if isinstance(doc, basestring):
-    doc = db.getDocument(doc)
+    doc = context.getDocument(doc)
 
-#todo da mandare alla firma
-try:
-    context.invia_firma(doc,'rigetto')
-    #doc.setWfActivity(activity="Invio del Diniego alla firma del dirigente",notifyTo=['sofia.roncone@comune.sp.it'])
-    doc.setWfActivity(activity="Invio del Diniego alla firma del dirigente",notifyTo=['marco.carbone@gisweb.it'])
-except:
-    pass
+return context.alla_firma_invio(doc,azione='rigetto')
 ]]></resource>
       <resource id="getFirmaDigitaleEnabled" title="Vero se abilitata la firma digitale" type="Script (Python)"><![CDATA[## Script (Python) "getFirmaDigitaleEnabled"
 ##bind container=container
@@ -2999,6 +2817,230 @@ if context.getParentDatabase().resources.config().get('firma_digitale'):
     return True
 else:
     return False
+]]></resource>
+      <resource id="alla_firma_titolo" title="" type="Script (Python)"><![CDATA[## Script (Python) "alla_firma_titolo"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None
+##title=
+##
+if isinstance(doc, basestring):
+    doc = context.getDocument(doc)
+
+return context.alla_firma_invio(doc,azione='rilascio_titolo')
+]]></resource>
+      <resource id="alla_firma_invio" title="" type="Script (Python)"><![CDATA[## Script (Python) "alla_firma_invio"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc=None, azione=''
+##title=
+##
+#from Products.CMFPlomino.PlominoUtils import Now
+from iol.firmadigitale.plomino_utils import inviaAllaFirma
+
+if isinstance(doc, basestring):
+    doc = context.getDocument(doc)
+
+istruttore=doc.getItem('istruttore')
+if not istruttore:
+    istruttore=context.getParentDatabase().resources.config().get("assegnazione_istruttore")
+    
+dirigente=doc.getItem('dirigente')
+if not dirigente:
+    dirigente=context.getParentDatabase().resources.config().get("assegnazione_dirigente")
+     
+items = context.getParentDatabase().resources.config_firmadigitale().get("items")    
+
+#doc.setItem('data_allafirma_' + azione, Now())
+
+if items and items.get(azione):
+    
+    v=items.get(azione).split(".")
+    if len(v)>1:
+        fieldTitle=doc.getParentDatabase().getForm(v[0]).getFormField(v[1]).Title()
+        doc.setWfActivity(activity=fieldTitle + " alla firma del dirigente",notifyTo=[istruttore])
+        
+        params=dict(
+            doc=doc,
+            idutente_dest=dirigente,
+            item=items.get(azione),
+            action_ok=azione,
+            action_ko='torna_istruttoria_ok',#cablato poi vedremo
+            action_mail=azione
+        )
+        #return params
+ 
+        return inviaAllaFirma(
+            doc=doc,
+            idutente_dest=dirigente,
+            item=items.get(azione),
+            action_ok=azione,
+            action_ko='torna_istruttoria_ok',#cablato poi vedremo
+            action_mail=azione
+        )
+]]></resource>
+      <resource id="invia_firma" title="" type="Script (Python)"><![CDATA[## Script (Python) "invia_firma"
+##bind container=container
+##bind context=context
+##bind namespace=
+##bind script=script
+##bind subpath=traverse_subpath
+##parameters=doc = None, azione= ''
+##title=
+##
+from Products.CMFPlomino.PlominoUtils import StringToDate, DateToString, Now, json_dumps, sendMail
+from iol.firmadigitale.plomino_utils import get_config, b64encode_item, invia_alla_firma, unique_id, encodeb64
+
+db=context.getParentDatabase()
+
+if isinstance(doc, basestring):
+    doc = db.getDocument(doc)
+
+
+
+
+if azione=='rilascio_titolo':
+    campo = 'allegato_allafirma_titolo'
+    campo_daallegare = 'allegato_comunicazione_titolo'
+    oggetto = "Autorizzazione n. %s per il rinnovo dehor %s" %(doc.getItem('numero_titolo', ''),str(doc.getItem('numero_pratica','')))
+    descrizione = "Documento per il rilascio del Rinnovo per il Dehor %s" %str(doc.getItem('numero_pratica',''))
+    action = "rilascio_titolo"
+    campo_prot = "numero_protocollo_titolo"
+    campo_data_prot = 'data_protocollo_titolo'
+    raggruppamento=''
+    parent = doc.getId()
+elif azione=='titolo':
+    campo = 'allegato_allafirma_titolo'
+    campo_daallegare = 'allegato_comunicazione_titolo'
+    oggetto = "Autorizzazione n. %s per il dehor %s" %(doc.getItem('numero_titolo', ''),str(doc.getItem('numero_pratica','')))
+    descrizione = "Documento di Autorizzazione per il Dehor %s" %str(doc.getItem('numero_pratica',''))
+    campo_prot = "numero_protocollo_titolo"
+    campo_data_prot = 'data_protocollo_titolo'    
+    action = "rilascio_titolo"
+    raggruppamento='',
+    parent = doc.getId()
+elif azione == 'rigetta':
+    campo = 'allegato_allafirma_rigetto'
+    campo_daallegare = 'allegato_comunicazione_rigetto'
+    oggetto = "Diniego per il dehor %s" %str(doc.getItem('numero_pratica',''))
+    descrizione = "Documento di Diniego per il Dehor %s" %str(doc.getItem('numero_pratica',''))
+    action = "rigetta"
+    campo_prot = "numero_protocollo_rigetto"
+    campo_data_prot = 'data_protocollo_rigetto'
+    raggruppamento=''
+    parent = doc.getId()
+    pass
+elif azione == 'preavviso_rigetto':
+    campo = 'allegato_allafirma_preavviso_rigetto'
+    campo_daallegare = 'allegato_comunicazione_preavviso_rigetto'
+    oggetto = "Preavviso di Diniego per il dehor %s" %str(doc.getItem('numero_pratica',''))
+    descrizione = "Documento di Preavviso di Diniego per il Dehor %s" %str(doc.getItem('numero_pratica',''))
+    action = "preavviso_rigetto"
+    campo_prot = "numero_protocollo_preavviso_rigetto"
+    campo_data_prot = 'data_protocollo_preavviso_rigetto'   
+    raggruppamento=''
+    parent = doc.getId()
+    pass
+elif azione == 'integrazione':
+    campo = ""
+    campo_daallegare = ""
+    oggetto = ""
+    descrizione = ""
+    campo_prot = ""
+    campo_data_prot = ""      
+    action = ""
+    raggruppamento=''
+    parent = context.getParentDatabase().getDocument(context.getItem('parent_document')).getId()
+elif azione == 'parere':
+    campo = ""
+    campo_daallegare = ""
+    oggetto = ""
+    descrizione = ""
+    campo_prot = ""
+    campo_data_prot = ""      
+    action = ""
+    raggruppamento=''
+    parent = context.getParentDatabase().getDocument(context.getItem('parent_document')).getId()
+else:
+    return
+
+d = b64encode_item(doc, campo)
+names = d.keys()
+
+pp = get_config(doc)
+params = pp["params"]
+
+if pp['log']['enabled']:
+    title = " Notifica Invio alla Firma Digitale - %s" %doc.getId()
+    message = u"Attenzione &egrave; stato inviato un documento alla firma <a target='_new' href='%s'>%s</a>" %(doc.absolute_url(),doc.getId())
+    sendMail(db, pp['log']['mail'], title, message, sender='assistenza@istanze-online.it',
+         immediate=True)
+
+params["idutente_orig"] = "azzfab64"
+#params["idutente_dest"] = "azzfab64"
+params["idutente_dest"] = "niglau69"
+params["idufficio"] = 4
+params["oggetto"] = oggetto
+params["foreign_id_object"] = "%s" %unique_id(doc, names[0])
+params["foreign_id_master"] = context.getParentDatabase().getId().replace('iol_','')
+params["protocollare"] = "si"
+params["firmare"] = "si"
+params["inviare"] = "no"
+params["descrizione_foreign_object"] = descrizione
+params["descrizione_foreign_master"] = "Dehor"
+
+params["file64"] = d[names[0]]
+params["nome_documento"] = names[0]
+params["descrizione_documento"] = descrizione
+
+params["nominativiolist"] = ""  
+params["destinatarimail"] = ""
+params["mail_object"] = ""  
+params["mail_body"] = ""
+params["is_mail_html"] = ""
+
+enc_params = dict(
+    docid = doc.getId(),
+    db = db.id,
+    field = campo_daallegare,
+    field_protocollo = campo_prot,
+    field_data = campo_data_prot,
+    ufficio = params["idufficio"],
+    fid = params["foreign_id_object"],
+    parent = parent,
+    azioni = action,
+    agent = "onFirmaOk",
+)
+
+# codifico in base64 i parametri aggiuntivi per evitare casini
+params["override_callback_url"] = "%s?enc_parameters=%s" %(params["override_callback_url"],encodeb64(json_dumps(enc_params)))
+
+#Invio alla firma
+res = invia_alla_firma(doc, params)
+
+#Se e' andata a buon fine inserisco le informazioni della firma del documento sul PlominoDocument
+if res["success"] == 1:
+    doc.setItem('response_firma', str(res['message']))
+    doc.setItem('foreign_id_firma', params["foreign_id_object"])
+    elenco = doc.getItem('elenco_firmadigitale',{})
+    firmadigitale = enc_params
+    firmadigitale['esito'] = ""
+    firmadigitale['protocollo'] = ""
+    firmadigitale['data_protocollo'] = ""
+    firmadigitale['callback_url'] = params["override_callback_url"]
+    elenco[params["foreign_id_object"]] = firmadigitale
+    doc.setItem('elenco_firmadigitale',elenco)
+    params['file64']=''
+    doc.setItem('parametri_firma',params)
+#Altrimenti setto l'errore
+else:
+    doc.setItem('response_firma',str(res['message']))
 ]]></resource>
     </resource>
   </design>
