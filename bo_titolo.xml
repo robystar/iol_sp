@@ -25,7 +25,9 @@ if context.getItem('allegato_comunicazione_titolo',{})!={}:
 <span class="plominoLabelClass">allegati_controfirmati</span><span class="plominoFieldClass">allegati_controfirmati</span>
 </div>
 </div>
-<span class="plominoHidewhenClass">start:hw_titolo</span><div>
+<div class="alert alert-info">i file firmati digitalmente (formato .p7m) possono essere aperti con programmi di lettura appositi, come ad esempio Dike (www.firma.infocert.it)</div>
+<span class="plominoHidewhenClass">start:hw_titolo</span>
+<div>
 <span class="plominoLabelClass">allegati_alla_controfirma</span><span class="plominoFieldClass">allegati_alla_controfirma</span>
 </div>
 <span class="plominoHidewhenClass">end:hw_titolo</span><hr>
@@ -300,6 +302,19 @@ data-datepicker-options='{"changeMonth": true, "changeYear": true, "minDate":"-1
 </data></array></value>
 </param>
 </params>
+        </element>
+        <element id="data_protocollo_titolo_testo" title="data_protocollo_titolo_testo" type="PlominoField">
+          <id type="Products.Archetypes.Field.StringField">data_protocollo_titolo_testo</id>
+          <FieldType type="Products.Archetypes.Field.StringField">TEXT</FieldType>
+          <FieldMode type="Products.Archetypes.Field.StringField">EDITABLE</FieldMode>
+          <Formula type="Products.Archetypes.Field.TextField"><![CDATA[]]></Formula>
+          <FieldReadTemplate type="Products.Archetypes.Field.StringField"/>
+          <FieldEditTemplate type="Products.Archetypes.Field.StringField"/>
+          <Mandatory type="Products.Archetypes.Field.BooleanField">False</Mandatory>
+          <ValidationFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></ValidationFormula>
+          <ToBeIndexed type="Products.Archetypes.Field.BooleanField">True</ToBeIndexed>
+          <IndexType type="Products.Archetypes.Field.StringField">DEFAULT</IndexType>
+          <HTMLAttributesFormula type="Products.Archetypes.Field.TextField"><![CDATA[]]></HTMLAttributesFormula>
         </element>
       </elements>
     </element>

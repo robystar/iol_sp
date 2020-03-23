@@ -52,6 +52,7 @@ context.REQUEST.set('returnurl',parentDoc.absolute_url())]]></onDeleteDocument>
 <span class="plominoLabelClass">allegato_comunicazione_rigetto</span><span class="plominoFieldClass">allegato_comunicazione_rigetto</span>
 </div>
 </div>
+<div class="alert alert-info">i file firmati digitalmente (formato .p7m) possono essere aperti con programmi di lettura appositi, come ad esempio Dike (www.firma.infocert.it)</div>
 <div>
 <span class="plominoHidewhenClass">start:hw_no_data_comunicazione</span>
 <div class="row-fluid">

@@ -2274,6 +2274,8 @@ db=doc.getParentDatabase()
 db.resources.customscripts.sendMail(doc=doc,azione='rigetto')
 doc.setWfActivity(activity="Rigetto dell'istanza")
 doc.setItem('data_comunicazione_rigetto',Now())
+doc.removeItem('iol_integrabile')
+context.getIndex().indexDocument(doc)
 ]]></resource>
       <resource id="RilascioTitolo" title="" type="Script (Python)"><![CDATA[## Script (Python) "RilascioTitolo"
 ##bind container=container

@@ -89,31 +89,35 @@ resources/iol-custom.css]]></ResourcesCSS>
 },
 {
     "mRender": function ( data, type, row ) {
-        console.log(data)
-        if (data=='attesa_integrazione')
-            return '&lt;div class="alert alert-warning"&gt;Sosp. integrazione&lt;/div&gt;'; 
+        if (data=='presentata')
+            return '&lt;div class="dichiarazione"&gt;Presentata&lt;/div&gt;'; 
+        else if (data=='istruttoria')
+            return '&lt;div class="alert alert-info"&gt;Istruttoria&lt;/div&gt;';   
+        else if (data=='istruttoria_ok')
+            return '&lt;div class="alert alert-success"&gt;Istruttoria completata&lt;/div&gt;';     
+        else if (data=='attesa_integrazione')
+            return '&lt;div class="alert alert-warning"&gt;Sosp. integrazione&lt;/div&gt;';
+         else if (data=='istruttoria_ko')
+            return '&lt;div class="alert alert-error"&gt;Preavviso di rigetto&lt;/div&gt;';        
+        else if (data=='rigettata')
+            return '&lt;div class="alert alert-error"&gt;Rigettata&lt;/div&gt;'; 
+        else if (data=='attesa_firma_preavviso_rigetto')
+            return '&lt;div class="alert alert-warning"&gt;Firma preavv.rigetto&lt;/div&gt;';    
+        else if (data=='attesa_firma_rigetto')
+            return '&lt;div class="alert alert-warning"&gt;Firma rigetto&lt;/div&gt;';       
+        else if (data=='attesa_firma_titolo')
+            return '&lt;div class="alert alert-warning"&gt;Firma titolo&lt;/div&gt;';               
         else if (data=='attesa_pagamento_titolo')
             return '&lt;div class="alert alert-warning"&gt;Attesa pagamento&lt;/div&gt;';
         else if (data=='autorizzata')
             return '&lt;div class="alert alert-success"&gt;Autorizzata&lt;/div&gt;';
-        else if (data=='istruttoria')
-            return '&lt;div class="alert alert-info"&gt;Istruttoria&lt;/div&gt;';        
-        else if (data=='istruttoria_ok')
-            return '&lt;div class="alert alert-success"&gt;Istruttoria completata&lt;/div&gt;';        
-        else if (data=='istruttoria_ko')
-            return '&lt;div class="alert alert-error"&gt;Preavviso di rigetto&lt;/div&gt;';    
-        else if (data=='attesa_firma_titolo')
-            return '&lt;div class="alert alert-warning"&gt;Attesa firma autorizzazione&lt;/div&gt;';    
-        else if (data=='rigettata')
-            return '&lt;div class="alert alert-error"&gt;Rigettata&lt;/div&gt;';         
         else
-            return data
+            return data                                                     
                                                              
-               attesa_firma_titolo	                                              
     },
    "bVisible":true,
    "bSortable":true,
-   "aTargets": [10]
+   "aTargets": [11]
  
 },
 { "aTargets": [ 3,4 ], "bSortable": false }         

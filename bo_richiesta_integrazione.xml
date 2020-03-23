@@ -36,7 +36,8 @@ context.REQUEST.set('returnurl',parentDoc.absolute_url())]]></onDeleteDocument>
 <div>
 <span class="plominoLabelClass">oggetto_richiesta_integrazione</span><span class="plominoFieldClass">oggetto_richiesta_integrazione</span>
 </div>
-<span class="plominoHidewhenClass">start:hw_no_edit</span><div class="row-fluid">
+<span class="plominoHidewhenClass">start:hw_no_edit</span>
+<div class="row-fluid">
 <div class="span8">
 <span class="plominoLabelClass">modello_stampa_richiesta_integrazione</span><span class="plominoFieldClass">modello_stampa_richiesta_integrazione</span>
 </div>
@@ -44,23 +45,30 @@ context.REQUEST.set('returnurl',parentDoc.absolute_url())]]></onDeleteDocument>
 <br><span class="plominoActionClass">btn_stampa_comunicazione</span>
 </div>
 </div>
-<span class="plominoHidewhenClass">end:hw_no_edit</span><p><span class="plominoHidewhenClass">start:hw_new_comunicazione</span></p>
+<span class="plominoHidewhenClass">end:hw_no_edit</span>
+<p><span class="plominoHidewhenClass">start:hw_new_comunicazione</span></p>
 <p><span class="plominoFieldClass">istruzioni_richiesta_integrazione</span></p>
 <div class="row-fluid">
-<span class="plominoHidewhenClass">start:hw_no_istruttore_richiesta_integrazione</span><div class="span4">
+<span class="plominoHidewhenClass">start:hw_no_istruttore_richiesta_integrazione</span>
+<div class="span4">
 <span class="plominoLabelClass">allegato_documento_richiesta_integrazione</span><span class="plominoFieldClass">allegato_documento_richiesta_integrazione</span>
 </div>
 <div class="span4">
 <span class="plominoLabelClass">allegato_allafirma_richiesta_integrazione</span><span class="plominoFieldClass">allegato_allafirma_richiesta_integrazione</span>
 </div>
-<span class="plominoHidewhenClass">end:hw_no_istruttore_richiesta_integrazione</span><div class="span4">
+<span class="plominoHidewhenClass">end:hw_no_istruttore_richiesta_integrazione</span>
+<div class="span4">
 <span class="plominoLabelClass">allegato_comunicazione_richiesta_integrazione</span><span class="plominoFieldClass">allegato_comunicazione_richiesta_integrazione</span>
 </div>
 </div>
+<div class="alert alert-info">i file firmati digitalmente (formato .p7m) possono essere aperti con programmi di lettura appositi, come ad esempio Dike (www.firma.infocert.it)</div>
 <div>
-<span class="plominoHidewhenClass">start:hw_no_data_comunicazione</span><div class="row-fluid"><div class="span3">
+<span class="plominoHidewhenClass">start:hw_no_data_comunicazione</span>
+<div class="row-fluid">
+<div class="span3">
 <span class="plominoLabelClass">data_comunicazione_richiesta_integrazione</span><span class="plominoFieldClass">data_comunicazione_richiesta_integrazione</span>
-</div></div>
+</div>
+</div>
 <span class="plominoHidewhenClass">end:hw_no_data_comunicazione</span>
 </div>
 <p><span class="plominoActionClass">btn_invia_comunicazione</span></p>
